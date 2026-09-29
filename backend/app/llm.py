@@ -91,6 +91,7 @@ def reason(tender: dict, bidder_name: str, checks: list, score: int, verdict: st
         {"role": "user", "content": (f"Tender: {tender['title']}\nMandatory specification: {tender['spec']}\n"
                                      f"Bidder: {bidder_name}\nEvaluate this bid and give your recommendation.")},
     ]
+    step = "first call"
     try:
         first = _post({"model": LLM_MODEL, "messages": messages, "tools": TOOLS, "tool_choice": "auto", "max_tokens": 1500})
         msg = first["choices"][0]["message"]
@@ -104,6 +105,7 @@ def reason(tender: dict, bidder_name: str, checks: list, score: int, verdict: st
                 else:
                     result = {"error": "unknown tool"}
                 messages.append({"role": "tool", "tool_call_id": call.get("id"), "content": json.dumps(result)})
+            step = "second call"
             final = _post({"model": LLM_MODEL, "messages": messages, "max_tokens": 1500})
             text = _clean(final["choices"][0]["message"].get("content") or "")
         else:
@@ -118,7 +120,8 @@ def reason(tender: dict, bidder_name: str, checks: list, score: int, verdict: st
             body = json.loads(e.read().decode() or "{}")
             err = body.get("error") if isinstance(body.get("error"), dict) else body  # OpenAI-style or flat
             code = str(err.get("code") or err.get("type") or "")[:60]
-            detail = f" {code}" if code else ""
+            msg = str(err.get("message") or "")[:220]
+            detail = (f" {code}" if code else "") + (f" on {step}: {msg}" if msg else f" on {step}")
         except (ValueError, OSError):
             pass
         print(f"[llm] HTTP {e.code}{detail} from {LLM_BASE_URL} model={LLM_MODEL}", flush=True)
