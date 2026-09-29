@@ -50,30 +50,109 @@ def test_api_needs_token():
 
 def test_tenders_shape():
     t = client.get("/api/tenders", headers=OFF).json()
-    assert len(t) == 5
+    assert len(t) == 5 and sum(len(x["bidders"]) for x in t) == 11
     assert all("price" in b and "name" in b for x in t for b in x["bidders"])
+
+
+def checks_by_name(r):
+    return {c["name"]: c for c in r["checks"]}
+
+
+def test_weights_cover_fifteen_checks_and_sum_to_100():
+    from app import checks as C
+    assert len(C.CHECKS) == 15 and sum(C.WEIGHTS.values()) == 100
+    assert set(C.FAMILY.values()) == set(C.FAMILIES)
 
 
 def test_clean_bid_scores_100():
     r = evaluate("pipeline-valves", "Petrotech Valve Industries Private Limited")
-    assert r["compliance_score"] == 100 and r["verdict"] == "Compliant"
-    assert len(r["checks"]) == 10
+    assert r["compliance_score"] == 100 and r["verdict"] == "Compliant" and r["risk_level"] == "Low"
+    assert len(r["checks"]) == 15
+    assert all(c.get("source") and c.get("family") for c in r["checks"])
     assert r["ai_source"] == "deterministic"
 
 
-def test_name_mismatch_is_corroborated_by_registry():
+def test_name_mismatch_is_corroborated_by_gst_and_pan():
     r = evaluate("pipeline-valves", "Vantage Flow Systems Pvt Ltd")
-    st = {c["name"]: c["status"] for c in r["checks"]}
-    assert st["Entity name consistency"] == "FLAG" and st["Registry verification"] == "FLAG"
-    assert r["compliance_score"] == 90 and r["verdict"] == "Needs review"
+    st = {k: c["status"] for k, c in checks_by_name(r).items()}
+    assert st["Entity name consistency"] == "FLAG" and st["GST registration and returns"] == "FLAG" and st["PAN and income tax"] == "FLAG"
+    assert st["OEM authorisation"] == "PASS"
+    assert r["compliance_score"] == 89 and r["verdict"] == "Needs review" and r["risk_level"] == "Medium"
 
 
-def test_hard_fail_caps_score():
+def test_hard_fail_caps_score_and_is_critical():
     r = evaluate("refinery-ppe", "Trident Protective Gear & Co")
-    st = {c["name"]: c["status"] for c in r["checks"]}
-    assert st["EMD compliance"] == "FAIL" and st["Statutory documents"] == "FAIL"
-    assert "check-digit" in [c for c in r["checks"] if c["name"] == "Registry verification"][0]["reason"]
-    assert r["compliance_score"] <= 45 and r["verdict"] == "Non-compliant"
+    c = checks_by_name(r)
+    assert c["EMD compliance"]["status"] == "FAIL" and c["Statutory documents"]["status"] == "FAIL"
+    assert c["Make in India local content"]["status"] == "FAIL"
+    assert "check-digit" in c["GST registration and returns"]["reason"]
+    assert "AY 2025-26" in c["PAN and income tax"]["reason"]
+    assert r["compliance_score"] <= 45 and r["verdict"] == "Non-compliant" and r["risk_level"] == "Critical"
+
+
+def test_startup_is_exempt_from_emd():
+    r = evaluate("refinery-ppe", "SafeGuard Industrial Wear Pvt Ltd")
+    c = checks_by_name(r)
+    assert c["EMD compliance"]["status"] == "PASS" and "exempt" in c["EMD compliance"]["reason"]
+    assert c["MSE and Startup status"]["status"] == "PASS" and "DPIIT" in c["MSE and Startup status"]["reason"]
+    assert r["compliance_score"] == 100
+
+
+def test_debarred_bidder_without_oem_authorisation():
+    r = evaluate("refinery-ppe", "Apex Safety Products Pvt Ltd")
+    c = checks_by_name(r)
+    assert c["Debarment status"]["status"] == "FAIL" and c["OEM authorisation"]["status"] == "FAIL"
+    assert r["risk_level"] == "Critical" and r["compliance_score"] <= 45
+
+
+def test_new_company_and_missing_esic():
+    r = evaluate("tanker-transport", "Swift Tanker Logistics Pvt Ltd")
+    c = checks_by_name(r)
+    assert c["Shell company indicators"]["status"] == "FLAG" and "days before bidding" in c["Shell company indicators"]["reason"]
+    assert c["EPFO and ESIC compliance"]["status"] == "FLAG" and "ESIC" in c["EPFO and ESIC compliance"]["reason"]
+    assert c["PAN and income tax"]["status"] == "PASS"   # incorporated after the last assessment year
+
+
+def test_self_attested_document_is_flagged():
+    r = evaluate("tanker-transport", "Ratnagiri Roadlines Pvt Ltd")
+    assert checks_by_name(r)["Statutory documents"]["status"] == "FLAG"
+
+
+def test_epfo_challans_behind_and_gst_returns_missed():
+    r = evaluate("depot-security", "Falcon Inspection Technologies")
+    c = checks_by_name(r)
+    assert c["EPFO and ESIC compliance"]["status"] == "FLAG" and "months behind" in c["EPFO and ESIC compliance"]["reason"]
+    assert "4 of the last 6" in c["GST registration and returns"]["reason"]
+
+
+def test_registries_endpoint():
+    assert client.get("/api/registries").status_code == 401
+    r = client.get("/api/registries", headers=OFF).json()
+    assert len(r["adapters"]) == 10 and all(a["mode"] == "simulated" for a in r["adapters"])
+
+
+def _sample(name):
+    import pathlib
+    return (pathlib.Path(__file__).resolve().parents[2] / "frontend" / "samples" / name).read_bytes()
+
+
+def test_document_extraction_cross_checks_the_bid():
+    form = {"tender_id": "pipeline-valves", "bidder_name": "Vantage Flow Systems Pvt Ltd"}
+    r = client.post("/api/documents/extract", data=form, headers=OFF,
+                    files={"file": ("v.pdf", _sample("vantage-registration-sample.pdf"), "application/pdf")})
+    assert r.status_code == 200, r.text
+    got = {f["field"]: f["status"] for f in r.json()["fields"]}
+    assert got["GSTIN"] == "MATCH" and got["Legal name"] == "MISMATCH"
+    r = client.post("/api/documents/extract", data={"tender_id": "refinery-ppe", "bidder_name": "Trident Protective Gear & Co"},
+                    headers=OFF, files={"file": ("t.pdf", _sample("trident-registration-sample.pdf"), "application/pdf")})
+    assert {f["field"]: f["status"] for f in r.json()["fields"]}["GSTIN"] == "INVALID"
+
+
+def test_document_extraction_rejects_non_pdf_and_needs_sign_in():
+    form = {"tender_id": "pipeline-valves", "bidder_name": "Vantage Flow Systems Pvt Ltd"}
+    assert client.post("/api/documents/extract", data=form, files={"file": ("x.pdf", b"%PDF-1.4", "application/pdf")}).status_code == 401
+    assert client.post("/api/documents/extract", data=form, headers=OFF,
+                       files={"file": ("x.txt", b"hello", "text/plain")}).status_code == 415
 
 
 def test_gstin_checksum():

@@ -12,6 +12,6 @@ for tid, t in TENDERS.items():
     for n, b in t["bidders"].items():
         r = C.run_all_checks(tid, t, n, b)
         s, v, _ = C.score_and_verdict(r)
-        out[f"{tid}|{n}"] = {"score": s, "verdict": v, "st": [c["status"] for c in r], "names": [c["name"] for c in r]}
+        out[f"{tid}|{n}"] = {"score": s, "verdict": v, "risk": _["risk_level"], "st": [c["status"] for c in r], "names": [c["name"] for c in r], "reasons": [c["reason"] for c in r]}
     out[f"col|{tid}"] = [[f["signal"], f["severity"]] for f in collusion.screen(tid, t)["findings"]]
 print(json.dumps(out))

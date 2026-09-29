@@ -49,9 +49,10 @@ Both repos can point at each other in their READMEs if you want the lineage visi
 
 | Real | Simulated or seeded |
 |---|---|
-| All ten checks and the scoring | Tenders, bids and addresses |
-| GSTIN format and check-digit validation | GSTIN legal-name registry |
-| Collusion screen maths | Debarment list |
+| All fifteen checks, the scoring and the risk level | Tenders, bids and addresses |
+| GSTIN format and check-digit validation; PAN read from the GSTIN, holder-type and name codes | GSTN, Income Tax, MCA21, Udyam, DPIIT, NSIC, EPFO, ESIC and DigiLocker records |
+| PDF text reading and identifier cross-check | Debarment list |
+| Collusion screen maths | Sample bid PDFs (labelled as samples) |
 | JWT sign-in, roles, override rule | Demo accounts |
 | Retention and logged export | Reasoning layer runs only if `LLM_API_KEY` is set |
 

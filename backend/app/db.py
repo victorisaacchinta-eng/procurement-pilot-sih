@@ -83,7 +83,8 @@ _AUDIT_COLUMNS = """
     decided_by TEXT,
     decided_role TEXT,
     decided_at TEXT,
-    anonymised INTEGER NOT NULL DEFAULT 0
+    anonymised INTEGER NOT NULL DEFAULT 0,
+    risk_level TEXT
 """
 _ACCESS_COLUMNS = """
     ts TEXT NOT NULL,
@@ -93,7 +94,8 @@ _ACCESS_COLUMNS = """
     detail TEXT
 """
 _ADDED_LATER = [("override_reason", "TEXT"), ("evaluated_by", "TEXT"), ("decided_by", "TEXT"),
-                ("decided_role", "TEXT"), ("decided_at", "TEXT"), ("anonymised", "INTEGER NOT NULL DEFAULT 0")]
+                ("decided_role", "TEXT"), ("decided_at", "TEXT"), ("anonymised", "INTEGER NOT NULL DEFAULT 0"),
+                ("risk_level", "TEXT")]
 
 
 def init_db():

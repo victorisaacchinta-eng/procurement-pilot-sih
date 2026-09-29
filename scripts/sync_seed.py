@@ -20,21 +20,28 @@ sys.path.insert(0, str(ROOT / "backend"))
 os.environ.setdefault("DB_PATH", os.path.join(tempfile.mkdtemp(), "seed.db"))
 os.environ.pop("DEMO_USERS", None)
 
-from app.data import TENDERS, SIMULATED_GST_REGISTRY, DEBARRED  # noqa: E402
-from app.checks import WEIGHTS, HARD_CAP_CHECKS, ADVERSE_DECISIONS  # noqa: E402
-from app import collusion  # noqa: E402
+from app import data as D  # noqa: E402
+from app.data import TENDERS  # noqa: E402
+from app.checks import CHECKS, FAMILIES, HARD_CAP_CHECKS, ADVERSE_DECISIONS  # noqa: E402
+from app import collusion, registry  # noqa: E402
 from app.auth import _DEFAULT_USERS  # noqa: E402
 from app.main import DECISIONS, OVERRIDE_MIN_CHARS  # noqa: E402
 
 seed = {
     "tenders": [
-        {"id": tid, **{k: t[k] for k in ("title", "category", "authority", "authority_full", "spec", "min_turnover", "benchmark_price")},
+        {"id": tid, **{k: t[k] for k in ("title", "category", "authority", "authority_full", "spec", "min_turnover", "benchmark_price",
+                                          "required_documents", "oem_authorisation_required", "labour_services")},
          "bidders": [{"name": n, **b} for n, b in t["bidders"].items()]}
         for tid, t in TENDERS.items()
     ],
-    "registry": SIMULATED_GST_REGISTRY,
-    "debarred": sorted(DEBARRED),
-    "weights": WEIGHTS,
+    "mode": registry.MODE,
+    "adapters": registry.ADAPTERS,
+    "registries": {"gst": D.SIMULATED_GST_REGISTRY, "itd": D.SIMULATED_ITD_REGISTRY, "mca21": D.SIMULATED_MCA21,
+                   "udyam": D.SIMULATED_UDYAM, "dpiit": D.SIMULATED_DPIIT, "nsic": D.SIMULATED_NSIC,
+                   "epfo": D.SIMULATED_EPFO, "esic": D.SIMULATED_ESIC, "debarred": D.DEBARRED},
+    "itr_years_required": D.ITR_YEARS_REQUIRED,
+    "checks": [{"name": n, "weight": w, "family": f} for n, w, f in CHECKS],
+    "families": FAMILIES,
     "hard_cap_checks": sorted(HARD_CAP_CHECKS),
     "adverse_decisions": sorted(ADVERSE_DECISIONS),
     "decisions": list(DECISIONS),

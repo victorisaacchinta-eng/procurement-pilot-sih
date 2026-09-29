@@ -144,7 +144,8 @@ a{color:inherit}
 .statement{font-size:clamp(2.1rem,7.4vw,7.2rem);line-height:.92;color:var(--on-ink-faint);max-width:15ch}
 .statement.clone{position:absolute;inset:0;color:var(--on-ink);clip-path:inset(0 calc(100% - var(--pw,0) * 100%) 0 0)}
 .statement.clone .hl{color:var(--saffron)}
-.wipe-facts{margin-top:34px;border-top:2px solid var(--on-ink);padding-top:18px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;max-width:1100px}
+.wipe-facts{margin-top:34px;border-top:2px solid var(--on-ink);padding-top:18px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;max-width:1180px}
+.fact:nth-child(4) b{color:var(--on-ink)}
 .fact b{display:block;font:400 clamp(34px,4.4vw,60px)/1 var(--f-display)}
 .fact:nth-child(1) b{color:var(--saffron)}
 .fact:nth-child(2) b{color:var(--on-ink)}
@@ -376,6 +377,46 @@ a{color:inherit}
 .chk .st small{display:block;color:var(--grey-text);letter-spacing:.06em}
 .chk.fail .st{color:var(--fail)}
 .chk.flag .st{color:var(--saffron-deep)}
+.fam-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:16px 0 8px;border-bottom:2px solid var(--ink);margin-top:6px}
+.fam-h h6{font:400 20px/1 var(--f-display);text-transform:uppercase;letter-spacing:.01em}
+.fam-h .lbl{color:var(--grey-text);letter-spacing:.16em}
+.chk .src{display:inline-block;margin-top:5px;font:500 10px/1.4 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--navy)}
+.risk{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;padding:5px 10px;border:2px solid var(--ink);font:600 11px/1 var(--f-mono);letter-spacing:.18em;text-transform:uppercase}
+.risk.r-low{background:var(--green);color:#fff;border-color:var(--green)}
+.risk.r-medium{background:var(--saffron);color:var(--ink)}
+.risk.r-high{background:var(--paper);color:var(--fail);border-color:var(--fail)}
+.risk.r-critical{background:var(--fail);color:#fff;border-color:var(--fail)}
+.docv{margin:0 26px;padding:18px 0;border-top:2px solid var(--ink)}
+.docv-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.docv-row .btn{min-height:40px;padding:0 14px;font-size:12px}
+.docv-note{font-size:13px;color:var(--grey-text);margin-top:8px}
+.smp{font:600 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;border:2px solid var(--ink);background:var(--paper);color:var(--ink);padding:6px 9px;margin:2px 2px;cursor:pointer}
+.smp:hover,.smp:focus-visible{background:var(--ink);color:var(--paper)}
+.docv table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}
+.docv th,.docv td{text-align:left;padding:8px 10px 8px 0;border-bottom:1px solid var(--hair);vertical-align:top}
+.docv th{font:400 10px/1.4 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--grey-text)}
+.docv td.mono{font:500 12px/1.4 var(--f-mono);overflow-wrap:anywhere}
+.docv .ok{color:var(--green);font-weight:600}.docv .no{color:var(--fail);font-weight:600}
+.docv-sum{margin-top:10px;font-weight:600}
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.tag{font:500 9.5px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;padding:3px 5px;border:1px solid var(--ink);color:var(--ink)}
+.tag.t-g{background:var(--green);border-color:var(--green);color:#fff}.tag.t-s{background:var(--saffron)}.tag.t-r{border-color:var(--fail);color:var(--fail)}
+.reg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1px;background:var(--hair);border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)}
+.reg{background:var(--paper);padding:18px 18px 20px;display:grid;gap:8px;align-content:start}
+.reg h4{font:400 24px/1 var(--f-display);text-transform:uppercase}
+.reg p{font-size:13.5px;color:var(--grey-text)}
+.reg .live{font:400 10.5px/1.5 var(--f-mono);letter-spacing:.08em;color:var(--ink)}
+.reg .mode{justify-self:start;font:600 10px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;background:var(--saffron);padding:4px 7px}
+.ps-map{border-top:2px solid var(--ink)}
+.ps-row{display:grid;grid-template-columns:44px minmax(0,1.2fr) minmax(0,1.3fr) minmax(0,.9fr);gap:18px;align-items:baseline;padding:13px 0;border-bottom:1px solid var(--hair)}
+.ps-row .n{color:var(--grey-text)}
+.ps-row h4{font:600 15px/1.35 var(--f-body)}
+.ps-row p{font-size:14px;color:var(--grey-text)}
+.ps-row .st{font:600 10.5px/1.5 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--green)}
+.ps-row .st.sim{color:var(--saffron-deep)}
+@media (max-width:760px){.ps-row{grid-template-columns:minmax(0,1fr);gap:4px}.ps-row .n{display:none}}
+.rate-fam{font:400 clamp(22px,2.2vw,30px)/1 var(--f-display);text-transform:uppercase;padding:22px 0 10px;border-bottom:2px solid var(--ink);display:flex;justify-content:space-between;align-items:baseline}
+.rate-fam .lbl{color:var(--grey-text)}
 .chk.pass .st{color:var(--green)}
 .sq{width:14px;height:14px;margin-top:3px;display:inline-block;flex:none;background:var(--green)}
 .sq.flag{background:repeating-linear-gradient(45deg,var(--saffron) 0 2px,transparent 2px 5px);box-shadow:inset 0 0 0 2px var(--saffron-deep)}
@@ -462,7 +503,7 @@ td .why-o{display:block;font-size:12.5px;color:var(--grey-text);margin-top:4px;m
         <h1 class="disp wordmark" aria-label="Procurement Pilot"><span class="ln">Procurement</span><span class="ln ln2">Pilot</span></h1>
         <div class="ribbon" aria-hidden="true"><i></i><i></i><i></i></div>
         <div class="hero-foot">
-          <p data-split>Bid compliance checking for government procurement officers. Every bid runs through ten fixed checks, a reasoning layer explains what it found, and a named officer makes the call on the record.</p>
+          <p data-split>Bid compliance checking for government procurement officers. Every bid runs through fifteen fixed checks, from EMD and Make in India to GSTN, Income Tax, MCA21 and EPFO records. A reasoning layer explains what it found, and a named officer makes the call on the record.</p>
           <div class="hero-actions" data-rev>
             <button class="btn btn--saf" data-open-ws type="button">Open workstation <span class="arr">&rarr;</span></button>
             <a class="btn" href="#method">How it works</a>
@@ -477,11 +518,12 @@ td .why-o{display:block;font-size:12.5px;color:var(--grey-text);margin-top:4px;m
     <div class="pin">
       <div class="lbl wipe-k" data-rev>What the officer gets</div>
       <div class="statement-wrap">
-        <p class="disp statement">Ten checks on every bid, before anyone signs.</p>
-        <p class="disp statement clone" aria-hidden="true">Ten checks on every bid, <span class="hl">before anyone signs.</span></p>
+        <p class="disp statement">Fifteen checks on every bid, before anyone signs.</p>
+        <p class="disp statement clone" aria-hidden="true">Fifteen checks on every bid, <span class="hl">before anyone signs.</span></p>
       </div>
       <div class="wipe-facts">
-        <div class="fact" data-rev><b class="num">10</b><span class="lbl">Checks per bid, same order every time</span></div>
+        <div class="fact" data-rev><b class="num">15</b><span class="lbl">Checks per bid, same order every time</span></div>
+        <div class="fact" data-rev><b class="num">10</b><span class="lbl">Registry sources behind one interface</span></div>
         <div class="fact" data-rev><b class="num">30+</b><span class="lbl">Characters of written reason to overrule it</span></div>
         <div class="fact" data-rev><b class="num">180 d</b><span class="lbl">Then records are anonymised (DPDP)</span></div>
       </div>
@@ -494,8 +536,8 @@ td .why-o{display:block;font-size:12.5px;color:var(--grey-text);margin-top:4px;m
         <h2 class="disp t-head" data-split>One bid, start to <span class="grn">signature.</span></h2>
         <div class="t-rows" id="tRows">
           <div class="t-row"><span class="lbl ts num">00:00</span><h4>Intake</h4><span class="note">Tender spec and bid details loaded</span></div>
-          <div class="t-row"><span class="lbl ts num">00:01</span><h4>Registry</h4><span class="note">GSTIN check digit, legal name match</span></div>
-          <div class="t-row"><span class="lbl ts num">00:02</span><h4>Rules</h4><span class="note">EMD, documents, turnover, price, shell signals</span></div>
+          <div class="t-row"><span class="lbl ts num">00:01</span><h4>Registry</h4><span class="note">GSTN, Income Tax, MCA21, Udyam, EPFO, ESIC</span></div>
+          <div class="t-row"><span class="lbl ts num">00:02</span><h4>Rules</h4><span class="note">EMD, documents, turnover, price, Make in India, OEM</span></div>
           <div class="t-row"><span class="lbl ts num">00:04</span><h4>Reasoning</h4><span class="note">Model reads the results and explains each flag</span></div>
           <div class="t-row"><span class="lbl ts num">00:09</span><h4>Officer</h4><span class="note">Decision recorded with name and time</span></div>
         </div>
@@ -506,7 +548,7 @@ td .why-o{display:block;font-size:12.5px;color:var(--grey-text);margin-top:4px;m
           <div class="clock-status" id="cStatus">Loading tender</div>
           <div class="lbl clock-el">Elapsed</div>
           <div class="clock-t" id="cTime">00:00</div>
-          <div class="clock-sub lbl"><span>Checks cleared</span><span class="num" id="cChecks">0 / 10</span></div>
+          <div class="clock-sub lbl"><span>Checks cleared</span><span class="num" id="cChecks">0 / 15</span></div>
           <div class="meter" aria-hidden="true"></div>
         </div>
         <div class="lbl illus">Illustrative timing. Real runs vary with the model.</div>
@@ -531,7 +573,7 @@ td .why-o{display:block;font-size:12.5px;color:var(--grey-text);margin-top:4px;m
       <p data-rev>The split of work is the product. Code handles anything with a right answer, the model explains, and a named officer carries the decision.</p>
     </div>
     <div class="cells">
-      <div class="cell" data-rev><span class="lbl saf">Code</span><h3>Rules first</h3><p data-split>EMD, documents, turnover and price are pass or fail. Code decides those, so the model never guesses a number.</p></div>
+      <div class="cell" data-rev><span class="lbl saf">Code</span><h3>Rules first</h3><p data-split>EMD, documents, turnover, price, registries and debarment are pass or fail. Code decides those, so the model never guesses a number.</p></div>
       <div class="cell" data-rev><span class="lbl nvy">Model</span><h3>It explains, it never approves</h3><p data-split>The reasoning layer reads the check results, then names every flag in plain language. The score and verdict are computed, not written.</p></div>
       <div class="cell" data-rev><span class="lbl grn">Officer</span><h3>A name on every decision</h3><p data-split>Decisions are stamped with who and when. Overruling a flagged bid takes a senior approver and a written reason, both kept in the audit log.</p></div>
     </div>
@@ -539,11 +581,27 @@ td .why-o{display:block;font-size:12.5px;color:var(--grey-text);margin-top:4px;m
 
   <section class="band" id="checks">
     <div class="band-head">
-      <h2 class="disp" data-split>The ten <span class="saf">checks.</span></h2>
-      <p data-rev>Each check returns pass, flag or fail with a sentence that names the real numbers. A pass earns the full weight, a flag half, a fail nothing. A fail on EMD, documents or debarment caps the score at 45.</p>
+      <h2 class="disp" data-split>The fifteen <span class="saf">checks.</span></h2>
+      <p data-rev>Each check returns pass, flag or fail with a sentence that names the real numbers and the source it checked. A pass earns the full weight, a flag half, a fail nothing. A fail on EMD, documents, GST registration or debarment caps the score at 45 and makes the risk Critical.</p>
     </div>
     <div class="rate" id="rate"></div>
-    <p class="lbl rate-note" data-rev>* Registry lookups run against a simulated GST registry in this prototype and say so on every result. Check-digit validation is real.</p>
+    <p class="lbl rate-note" data-rev>Registry lookups read sample records in this prototype and say "simulated" on every result. Rules that need no lookup are real: the GSTIN check digit, and the PAN inside the GSTIN with its holder-type and name codes.</p>
+  </section>
+
+  <section class="band" id="coverage">
+    <div class="band-head">
+      <h2 class="disp" data-split>All fourteen <span class="grn">asks.</span></h2>
+      <p data-rev>SIH26100 lists fourteen things the platform must do. Each one is a working part of Procurement Pilot. Where a government source is involved, the logic is built and the data is simulated until live access is approved.</p>
+    </div>
+    <div class="ps-map" id="psMap"></div>
+  </section>
+
+  <section class="band" id="sources">
+    <div class="band-head">
+      <h2 class="disp" data-split>Every source, <span class="nvy">one interface.</span></h2>
+      <p data-rev>One adapter per government source named in the problem statement. Each returns sample records today and says so. Going live replaces one lookup function per source; the checks, the score and the screens stay the same.</p>
+    </div>
+    <div class="reg-grid" id="regGrid"></div>
   </section>
 
   <section class="band" id="faq">
@@ -552,12 +610,14 @@ td .why-o{display:block;font-size:12.5px;color:var(--grey-text);margin-top:4px;m
       <p data-rev>Short answers. The workstation shows each one in practice.</p>
     </div>
     <div class="faq">
-      <details data-rev><summary>What does the model actually see?</summary><p>The tender title and specification, the bidder name, and the results of the ten checks. It does not receive bank details or raw bid documents, and it cannot change the score or the verdict.</p></details>
-      <details data-rev><summary>What happens if the model is down?</summary><p>The ten checks and the score still run, because they are plain code. The recommendation falls back to a deterministic summary and says so on screen. The model provider is a setting, so it can point at an Indian or self-hosted model without code changes.</p></details>
+      <details data-rev><summary>What does the model actually see?</summary><p>The tender title and specification, the bidder name, and the results of the fifteen checks. It does not receive bank details, PAN or raw bid documents, and it cannot change the score or the verdict.</p></details>
+      <details data-rev><summary>What happens if the model is down?</summary><p>The fifteen checks and the score still run, because they are plain code. The recommendation falls back to a deterministic summary and says so on screen. The model provider is a setting, so it can point at an Indian or self-hosted model without code changes.</p></details>
       <details data-rev><summary>Can someone quietly approve a flagged bid?</summary><p>No. Qualifying a bid the system did not mark compliant needs a senior approver and at least 30 characters of written reason. An officer gets refused by the server, not just the screen, and every override is kept in the audit log.</p></details>
       <details data-rev><summary>Who can see and export the audit log?</summary><p>Any signed-in user can view it. Only an admin can export it, and every export is itself written to an access log.</p></details>
       <details data-rev><summary>How long are records kept?</summary><p>180 days by default. After that the bidder's identity and free-text notes are irreversibly anonymised while the scores stay for audit continuity. The period is configurable.</p></details>
-      <details data-rev><summary>Is the GSTIN lookup live?</summary><p>Not yet. The prototype validates GSTIN structure and the check digit for real, then matches the legal name against a simulated registry and labels every result as simulated. Going live needs a GST data provider key and one API call.</p></details>
+      <details data-rev><summary>Are the registry lookups live?</summary><p>Not yet. Ten adapters cover GSTN, Income Tax, MCA21, Udyam, DPIIT, NSIC, EPFO, ESIC, DigiLocker and the debarment list. In this prototype they read sample records, and every result says simulated. Rules that need no lookup are real: the GSTIN check digit, and the PAN inside the GSTIN with its holder-type and name codes. Going live needs approved access, through API Setu or a GST Suvidha Provider, and one lookup function per source.</p></details>
+      <details data-rev><summary>Can it read bid documents?</summary><p>Yes, for PDFs with a text layer. It finds the GSTIN, PAN, Udyam, CIN and DPIIT numbers and the legal name, then cross-checks each against the bid. Scanned PDFs need OCR, which is planned. The workstation has sample documents to try.</p></details>
+      <details data-rev><summary>What does the risk level mean?</summary><p>Low: every check passed. Medium: something needs a look. High: a check failed. Critical: a failure on EMD, documents, GST registration or debarment, which also caps the score at 45.</p></details>
     </div>
   </section>
 
@@ -611,6 +671,7 @@ td .why-o{display:block;font-size:12.5px;color:var(--grey-text);margin-top:4px;m
       <span class="brand"><svg class="mark" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" fill="#FBF8F2"/><rect x="5" y="5" width="20" height="6.67" fill="#FF9933"/><rect x="5" y="11.67" width="20" height="6.66" fill="#FFFFFF" stroke="#111010" stroke-width=".5"/><rect x="5" y="18.33" width="20" height="6.67" fill="#138808"/></svg><span class="brand-name">Workstation</span></span>
       <ul class="rn" id="wsNav" aria-label="Workstation views">
         <li><a class="rn-item" href="#" data-view="tenders" aria-current="page">Tenders</a></li>
+        <li><a class="rn-item" href="#" data-view="registries">Registries</a></li>
         <li><a class="rn-item" href="#" data-view="audit">Audit log</a></li>
       </ul>
       <span class="mode lbl" id="modeTag"><i></i><span>Live</span></span>
@@ -627,6 +688,15 @@ td .why-o{display:block;font-size:12.5px;color:var(--grey-text);margin-top:4px;m
       <article class="ws-detail" id="detail"></article>
     </div>
 
+    <div class="audit" id="viewReg" hidden>
+      <div class="audit-top">
+        <div><span class="lbl grey">Where each check looks</span><h2 class="disp" style="margin-top:8px">Registry <span class="saf">sources</span></h2></div>
+        <span class="lbl grey" id="regMode"></span>
+      </div>
+      <p class="docv-note" style="margin:0 0 18px">One adapter per government source named in SIH26100. In this prototype each reads sample records and labels every result as simulated. Going live replaces one lookup function per source.</p>
+      <div class="reg-grid" id="regView"></div>
+    </div>
+
     <div class="audit" id="viewAudit" hidden>
       <div class="audit-top">
         <div><span class="lbl grey">Every evaluation and decision</span><h2 class="disp" style="margin-top:8px">Audit <span class="saf">log</span></h2></div>
@@ -635,7 +705,7 @@ td .why-o{display:block;font-size:12.5px;color:var(--grey-text);margin-top:4px;m
           <span class="lbl grey" id="exportNote"></span>
         </div>
       </div>
-      <div class="tbl-wrap"><table><thead><tr><th>Time</th><th>Tender</th><th>Bidder</th><th>Score</th><th>Recommendation</th><th>Decision</th><th>By</th></tr></thead><tbody id="auditBody"></tbody></table></div>
+      <div class="tbl-wrap"><table><thead><tr><th>Time</th><th>Tender</th><th>Bidder</th><th>Score</th><th>Risk</th><th>Recommendation</th><th>Decision</th><th>By</th></tr></thead><tbody id="auditBody"></tbody></table></div>
       <div class="export" id="exportBox" hidden>
         <span class="lbl grey">Export (JSON). This export has been written to the access log.</span>
         <textarea id="exportTxt" readonly aria-label="Exported audit log"></textarea>
@@ -648,7 +718,7 @@ td .why-o{display:block;font-size:12.5px;color:var(--grey-text);margin-top:4px;m
 <div class="toast" id="toast" hidden role="status"></div>
 
 <!-- Generated from backend/app/*.py by scripts/sync_seed.py. Do not edit by hand. -->
-<script type="application/json" id="pp-seed">{"tenders":[{"id":"pipeline-valves","title":"Supply of API 6D fire-safe pipeline valves","category":"Goods","authority":"CPCL","authority_full":"Chennai Petroleum Corporation Limited","spec":"All valves must be API 6D certified fire-safe ball valves with independent API 607 fire-safe testing.","min_turnover":6000000,"benchmark_price":15500000,"bidders":[{"name":"Petrotech Valve Industries Private Limited","emd":250000,"turnover":90000000,"price":15300000,"cert":"udyam","reputational_note":"","documents_missing":[],"document_name":"Petrotech Valve Industries Private Limited","incorporated_years_ago":11,"address":"Plot 14, Manali Industrial Estate, Chennai","gstin":"33AABCP4821K1ZJ","udyam":"UDYAM-TN-02-0048211","submitted_at":"2026-09-06T11:42:00+05:30"},{"name":"Vantage Flow Systems Pvt Ltd","emd":250000,"turnover":78000000,"price":15200000,"cert":"msme","reputational_note":"","documents_missing":[],"document_name":"Vantage Flow Solutions Ltd","incorporated_years_ago":6,"address":"Unit 7, Guindy Industrial Estate, Chennai","gstin":"33AADCV7310L1ZB","udyam":"UDYAM-TN-02-0073102","submitted_at":"2026-09-06T16:05:00+05:30"}]},{"id":"refinery-ppe","title":"Supply of flame-retardant PPE kits for refinery operations (2,000 kits)","category":"Goods","authority":"ONGC","authority_full":"Oil and Natural Gas Corporation","spec":"All coveralls must be IS 15298 (Part 2) certified flame-retardant garments, with a valid BIS licence.","min_turnover":2500000,"benchmark_price":4200000,"bidders":[{"name":"SafeGuard Industrial Wear Pvt Ltd","emd":90000,"turnover":31000000,"price":4180000,"cert":"startup","reputational_note":"","documents_missing":[],"document_name":"SafeGuard Industrial Wear Pvt Ltd","incorporated_years_ago":8,"address":"44 Peenya Industrial Area, Bengaluru","gstin":"29AAHCS5516M1ZT","udyam":"","submitted_at":"2026-09-04T12:10:00+05:30"},{"name":"Trident Protective Gear & Co","emd":0,"turnover":1900000,"price":3990000,"cert":"none","reputational_note":"","documents_missing":["BIS licence copy"],"document_name":"Trident Protective Gear & Co","incorporated_years_ago":4,"address":"12 Whitefield Road, Bengaluru","gstin":"29AANFT2204Q1ZX","udyam":"","submitted_at":"2026-09-04T17:55:00+05:30"}]},{"id":"tanker-transport","title":"Tank truck transportation services for petroleum product distribution (12 months)","category":"Services","authority":"CPCL","authority_full":"Chennai Petroleum Corporation Limited","spec":"Bidder must hold a valid PESO licence for petroleum tanker transport and a fleet of at least 8 verified vehicles.","min_turnover":4000000,"benchmark_price":9500000,"bidders":[{"name":"Konkan Bulk Carriers Ltd","emd":180000,"turnover":51000000,"price":9350000,"cert":"msme","reputational_note":"","documents_missing":[],"document_name":"Konkan Bulk Carriers Ltd","incorporated_years_ago":9,"address":"Plot 3, JNPT Road, Navi Mumbai","gstin":"27AABCK9043R1ZV","udyam":"UDYAM-MH-33-0090431","submitted_at":"2026-09-07T11:20:00+05:30"},{"name":"Swift Tanker Logistics Pvt Ltd","emd":180000,"turnover":42000000,"price":9100000,"cert":"none","reputational_note":"","documents_missing":[],"document_name":"Swift Tanker Logistics Pvt Ltd","incorporated_years_ago":0.2,"address":"204 Business Park, Navi Mumbai","gstin":"27AAMCS1187T1ZB","udyam":"","submitted_at":"2026-09-07T16:01:00+05:30"},{"name":"Ratnagiri Roadlines Pvt Ltd","emd":180000,"turnover":38000000,"price":9135000,"cert":"none","reputational_note":"","documents_missing":[],"document_name":"Ratnagiri Roadlines Pvt Ltd","incorporated_years_ago":3,"address":"11 MIDC Road, Ratnagiri","gstin":"27AAHCR6652N1ZP","udyam":"","submitted_at":"2026-09-07T16:03:00+05:30"}]},{"id":"depot-security","title":"Security and surveillance services for fuel storage depots","category":"Services","authority":"MoPNG","authority_full":"Ministry of Petroleum and Natural Gas","spec":"Bidder must be PSARA-licensed with a minimum of 5 years operating a static guarding and CCTV monitoring contract of comparable scale.","min_turnover":3000000,"benchmark_price":6800000,"bidders":[{"name":"Meridian Guard Solutions Pvt Ltd","emd":120000,"turnover":42000000,"price":6650000,"cert":"msme","documents_missing":[],"document_name":"Meridian Guard Solutions Pvt Ltd","incorporated_years_ago":7,"address":"9 Rajaji Salai, Chennai","gstin":"33AAECM3390P1Z3","udyam":"UDYAM-TN-02-0033901","submitted_at":"2026-09-05T10:14:00+05:30","reputational_note":"Adverse media on record: a labour dispute involving the promoter was reported in regional press. Officer should review before award."},{"name":"Falcon Inspection Technologies","emd":0,"turnover":18000000,"price":6500000,"cert":"none","reputational_note":"","documents_missing":["PSARA licence copy"],"document_name":"Falcon Inspection Technologies","incorporated_years_ago":5,"address":"17 Anna Salai, Chennai","gstin":"33AAGFF8120H1ZP","udyam":"","submitted_at":"2026-09-05T17:40:00+05:30"}]},{"id":"pipeline-survey","title":"Pipeline integrity inspection and NDT survey services","category":"Services","authority":"CPCL","authority_full":"Chennai Petroleum Corporation Limited","spec":"Bidder must hold a valid PESO-recognised NDT (non-destructive testing) accreditation and ASNT Level II certified inspectors on staff.","min_turnover":3500000,"benchmark_price":8000000,"bidders":[{"name":"Falcon Inspection Technologies","emd":0,"turnover":18000000,"price":7900000,"cert":"none","reputational_note":"","documents_missing":[],"document_name":"Falcon Inspection Technologies","incorporated_years_ago":5,"address":"17 Anna Salai, Chennai","gstin":"33AAGFF8120H1ZP","udyam":"","submitted_at":"2026-09-08T09:20:00+05:30"}]}],"registry":{"33AABCP4821K1ZJ":"Petrotech Valve Industries Private Limited","33AADCV7310L1ZB":"Vantage Flow Solutions Ltd","29AAHCS5516M1ZT":"SafeGuard Industrial Wear Pvt Ltd","27AABCK9043R1ZV":"Konkan Bulk Carriers Ltd","27AAMCS1187T1ZB":"Swift Tanker Logistics Pvt Ltd","27AAHCR6652N1ZP":"Ratnagiri Roadlines Pvt Ltd","33AAECM3390P1Z3":"Meridian Guard Solutions Pvt Ltd","33AAGFF8120H1ZP":"Falcon Inspection Technologies"},"debarred":[],"weights":{"EMD compliance":15,"Statutory documents":15,"Financial turnover":15,"Price reasonability":10,"Entity name consistency":10,"Registry verification":10,"Debarment status":10,"Public interest screening":5,"Shell company indicators":5,"Past performance history":5},"hard_cap_checks":["Debarment status","EMD compliance","Statutory documents"],"adverse_decisions":["Hold for Review","Mark Non-Compliant"],"decisions":["Qualified","Request Clarification","Hold for Review","Mark Non-Compliant"],"override_min_chars":30,"collusion":{"price_gap_pct":0.5,"timing_minutes":5,"cover_bid_pct":25},"demo_users":{"officer1":{"password":"officer123","role":"officer"},"approver1":{"password":"approver123","role":"senior_approver"},"admin1":{"password":"admin123","role":"admin"}}}</script>
+<script type="application/json" id="pp-seed">{"tenders":[{"id":"pipeline-valves","title":"Supply of API 6D fire-safe pipeline valves","category":"Goods","authority":"CPCL","authority_full":"Chennai Petroleum Corporation Limited","spec":"All valves must be API 6D certified fire-safe ball valves with independent API 607 fire-safe testing.","min_turnover":6000000,"benchmark_price":15500000,"required_documents":["GST registration certificate","PAN card","Audited financial statements","API 6D licence","API 607 fire-test report"],"oem_authorisation_required":true,"labour_services":false,"bidders":[{"name":"Petrotech Valve Industries Private Limited","emd":250000,"turnover":90000000,"price":15300000,"claims":["mse"],"reputational_note":"","document_name":"Petrotech Valve Industries Private Limited","incorporated_years_ago":11,"address":"Plot 14, Manali Industrial Estate, Chennai","gstin":"33AABCP4821K1ZJ","udyam":"UDYAM-TN-02-0048211","cin":"U29120TN2015PTC098765","local_content_pct":72,"oem":{"is_oem":true},"epfo":"TNMAS0048211000","esic":"51000482110001001","submitted_at":"2026-09-06T11:42:00+05:30","documents":{"GST registration certificate":"verified","PAN card":"verified","Audited financial statements":"verified","API 6D licence":"verified","API 607 fire-test report":"verified"},"dpiit":"","nsic":""},{"name":"Vantage Flow Systems Pvt Ltd","emd":250000,"turnover":78000000,"price":15200000,"claims":["mse"],"reputational_note":"","document_name":"Vantage Flow Solutions Ltd","incorporated_years_ago":6,"address":"Unit 7, Guindy Industrial Estate, Chennai","gstin":"33AADCV7310L1ZB","udyam":"UDYAM-TN-02-0073102","cin":"U51909TN2020PTC137310","local_content_pct":55,"oem":{"is_oem":false,"authorisation":"verified"},"epfo":"TNMAS0073102000","esic":"51000731020001001","submitted_at":"2026-09-06T16:05:00+05:30","documents":{"GST registration certificate":"verified","PAN card":"verified","Audited financial statements":"verified","API 6D licence":"verified","API 607 fire-test report":"verified"},"dpiit":"","nsic":""}]},{"id":"refinery-ppe","title":"Supply of flame-retardant PPE kits for refinery operations (2,000 kits)","category":"Goods","authority":"ONGC","authority_full":"Oil and Natural Gas Corporation","spec":"All coveralls must be IS 15298 (Part 2) certified flame-retardant garments, with a valid BIS licence.","min_turnover":2500000,"benchmark_price":4200000,"required_documents":["GST registration certificate","PAN card","Audited financial statements","BIS licence copy"],"oem_authorisation_required":true,"labour_services":false,"bidders":[{"name":"SafeGuard Industrial Wear Pvt Ltd","emd":0,"turnover":31000000,"price":4180000,"claims":["startup"],"reputational_note":"","document_name":"SafeGuard Industrial Wear Pvt Ltd","incorporated_years_ago":8,"address":"44 Peenya Industrial Area, Bengaluru","gstin":"29AAHCS5516M1ZT","udyam":"","dpiit":"DIPP45516","cin":"U18101KA2018PTC115516","local_content_pct":64,"oem":{"is_oem":true},"epfo":"KABNG0055160000","esic":"53000551600001001","submitted_at":"2026-09-04T12:10:00+05:30","documents":{"GST registration certificate":"verified","PAN card":"verified","Audited financial statements":"verified","BIS licence copy":"verified"},"nsic":""},{"name":"Trident Protective Gear & Co","emd":0,"turnover":1900000,"price":3990000,"claims":[],"reputational_note":"","document_name":"Trident Protective Gear & Co","incorporated_years_ago":4,"address":"12 Whitefield Road, Bengaluru","gstin":"29AANFT2204Q1ZX","udyam":"","cin":"","local_content_pct":15,"oem":{"is_oem":true},"epfo":"","esic":"","submitted_at":"2026-09-04T17:55:00+05:30","documents":{"GST registration certificate":"verified","PAN card":"verified","Audited financial statements":"verified","BIS licence copy":"missing"},"dpiit":"","nsic":""},{"name":"Apex Safety Products Pvt Ltd","emd":90000,"turnover":26000000,"price":4350000,"claims":[],"reputational_note":"","document_name":"Apex Safety Products Pvt Ltd","incorporated_years_ago":9,"address":"7 Bommasandra Industrial Area, Bengaluru","gstin":"29AAKCA7741E1ZI","udyam":"","cin":"U51397KA2017PTC107741","local_content_pct":58,"oem":{"is_oem":false,"authorisation":"missing"},"epfo":"KABNG0077410000","esic":"53000774100001001","submitted_at":"2026-09-04T13:30:00+05:30","documents":{"GST registration certificate":"verified","PAN card":"verified","Audited financial statements":"verified","BIS licence copy":"verified"},"dpiit":"","nsic":""}]},{"id":"tanker-transport","title":"Tank truck transportation services for petroleum product distribution (12 months)","category":"Services","authority":"CPCL","authority_full":"Chennai Petroleum Corporation Limited","spec":"Bidder must hold a valid PESO licence for petroleum tanker transport and a fleet of at least 8 verified vehicles.","min_turnover":4000000,"benchmark_price":9500000,"required_documents":["GST registration certificate","PAN card","Audited financial statements","PESO licence","Vehicle registration certificates"],"oem_authorisation_required":false,"labour_services":true,"bidders":[{"name":"Konkan Bulk Carriers Ltd","emd":180000,"turnover":51000000,"price":9350000,"claims":["mse"],"reputational_note":"","document_name":"Konkan Bulk Carriers Ltd","incorporated_years_ago":9,"address":"Plot 3, JNPT Road, Navi Mumbai","gstin":"27AABCK9043R1ZV","udyam":"UDYAM-MH-33-0090431","cin":"U60231MH2017PLC090431","local_content_pct":100,"oem":{"is_oem":false},"epfo":"MHBAN0090431000","esic":"35000904310001001","submitted_at":"2026-09-07T11:20:00+05:30","documents":{"GST registration certificate":"verified","PAN card":"verified","Audited financial statements":"verified","PESO licence":"verified","Vehicle registration certificates":"verified"},"dpiit":"","nsic":""},{"name":"Swift Tanker Logistics Pvt Ltd","emd":180000,"turnover":42000000,"price":9100000,"claims":[],"reputational_note":"","document_name":"Swift Tanker Logistics Pvt Ltd","incorporated_years_ago":0.2,"address":"204 Business Park, Navi Mumbai","gstin":"27AAMCS1187T1ZB","udyam":"","cin":"U60231MH2026PTC211187","local_content_pct":100,"oem":{"is_oem":false},"epfo":"MHBAN0211870000","esic":"","submitted_at":"2026-09-07T16:01:00+05:30","documents":{"GST registration certificate":"verified","PAN card":"verified","Audited financial statements":"verified","PESO licence":"verified","Vehicle registration certificates":"verified"},"dpiit":"","nsic":""},{"name":"Ratnagiri Roadlines Pvt Ltd","emd":180000,"turnover":38000000,"price":9135000,"claims":[],"reputational_note":"","document_name":"Ratnagiri Roadlines Pvt Ltd","incorporated_years_ago":3,"address":"11 MIDC Road, Ratnagiri","gstin":"27AAHCR6652N1ZP","udyam":"","cin":"U60231MH2023PTC166520","local_content_pct":100,"oem":{"is_oem":false},"epfo":"MHRAT0166520000","esic":"35001665200001001","submitted_at":"2026-09-07T16:03:00+05:30","documents":{"GST registration certificate":"verified","PAN card":"verified","Audited financial statements":"verified","PESO licence":"verified","Vehicle registration certificates":"self-attested"},"dpiit":"","nsic":""}]},{"id":"depot-security","title":"Security and surveillance services for fuel storage depots","category":"Services","authority":"MoPNG","authority_full":"Ministry of Petroleum and Natural Gas","spec":"Bidder must be PSARA-licensed with a minimum of 5 years operating a static guarding and CCTV monitoring contract of comparable scale.","min_turnover":3000000,"benchmark_price":6800000,"required_documents":["GST registration certificate","PAN card","Audited financial statements","PSARA licence copy"],"oem_authorisation_required":false,"labour_services":true,"bidders":[{"name":"Meridian Guard Solutions Pvt Ltd","emd":120000,"turnover":42000000,"price":6650000,"claims":["mse"],"document_name":"Meridian Guard Solutions Pvt Ltd","incorporated_years_ago":7,"address":"9 Rajaji Salai, Chennai","gstin":"33AAECM3390P1Z3","udyam":"UDYAM-TN-02-0033901","cin":"U74920TN2019PTC133901","local_content_pct":100,"oem":{"is_oem":false},"epfo":"TNMAS0133901000","esic":"51001339010001001","submitted_at":"2026-09-05T10:14:00+05:30","reputational_note":"Adverse media on record: a labour dispute involving the promoter was reported in regional press. Officer should review before award.","documents":{"GST registration certificate":"verified","PAN card":"verified","Audited financial statements":"verified","PSARA licence copy":"verified"},"dpiit":"","nsic":""},{"name":"Falcon Inspection Technologies","emd":0,"turnover":18000000,"price":6500000,"claims":[],"reputational_note":"","document_name":"Falcon Inspection Technologies","incorporated_years_ago":5,"address":"17 Anna Salai, Chennai","gstin":"33AAGFF8120H1ZP","udyam":"","cin":"","local_content_pct":100,"oem":{"is_oem":false},"epfo":"TNMAS0081200000","esic":"51000812000001001","submitted_at":"2026-09-05T17:40:00+05:30","documents":{"GST registration certificate":"verified","PAN card":"verified","Audited financial statements":"verified","PSARA licence copy":"missing"},"dpiit":"","nsic":""}]},{"id":"pipeline-survey","title":"Pipeline integrity inspection and NDT survey services","category":"Services","authority":"CPCL","authority_full":"Chennai Petroleum Corporation Limited","spec":"Bidder must hold a valid PESO-recognised NDT (non-destructive testing) accreditation and ASNT Level II certified inspectors on staff.","min_turnover":3500000,"benchmark_price":8000000,"required_documents":["GST registration certificate","PAN card","Audited financial statements","NDT accreditation certificate"],"oem_authorisation_required":false,"labour_services":true,"bidders":[{"name":"Falcon Inspection Technologies","emd":0,"turnover":18000000,"price":7900000,"claims":[],"reputational_note":"","document_name":"Falcon Inspection Technologies","incorporated_years_ago":5,"address":"17 Anna Salai, Chennai","gstin":"33AAGFF8120H1ZP","udyam":"","cin":"","local_content_pct":100,"oem":{"is_oem":false},"epfo":"TNMAS0081200000","esic":"51000812000001001","submitted_at":"2026-09-08T09:20:00+05:30","documents":{"GST registration certificate":"verified","PAN card":"verified","Audited financial statements":"verified","NDT accreditation certificate":"verified"},"dpiit":"","nsic":""}]}],"mode":"simulated","adapters":[{"id":"gstn","source":"GSTN","verifies":"GST registration status, legal name, GSTR-3B return filing","live":"GSTN through a GST Suvidha Provider"},{"id":"itd","source":"Income Tax Department","verifies":"PAN holder and income tax return filing","live":"Income Tax Department PAN and ITR verification"},{"id":"mca21","source":"MCA21","verifies":"Company name, status and date of incorporation","live":"MCA21 company master data"},{"id":"udyam","source":"Udyam","verifies":"MSE registration and category","live":"Udyam Registration portal"},{"id":"dpiit","source":"Startup India (DPIIT)","verifies":"Startup recognition and validity","live":"Startup India recognition records"},{"id":"nsic","source":"NSIC","verifies":"NSIC single-point registration","live":"NSIC registration records"},{"id":"epfo","source":"EPFO","verifies":"Establishment code and monthly challans","live":"EPFO establishment search"},{"id":"esic","source":"ESIC","verifies":"Employer code and monthly contributions","live":"ESIC employer records"},{"id":"digilocker","source":"DigiLocker","verifies":"Issuer-verified copies of bid documents","live":"DigiLocker requester API"},{"id":"debarment","source":"GeM / CPPP debarment list","verifies":"Debarred and banned bidders","live":"Published GeM and CPPP debarment lists"}],"registries":{"gst":{"33AABCP4821K1ZJ":{"legal_name":"Petrotech Valve Industries Private Limited","status":"Active","returns_filed":6,"returns_due":6},"33AADCV7310L1ZB":{"legal_name":"Vantage Flow Solutions Ltd","status":"Active","returns_filed":6,"returns_due":6},"29AAHCS5516M1ZT":{"legal_name":"SafeGuard Industrial Wear Pvt Ltd","status":"Active","returns_filed":6,"returns_due":6},"29AAKCA7741E1ZI":{"legal_name":"Apex Safety Products Pvt Ltd","status":"Active","returns_filed":6,"returns_due":6},"27AABCK9043R1ZV":{"legal_name":"Konkan Bulk Carriers Ltd","status":"Active","returns_filed":6,"returns_due":6},"27AAMCS1187T1ZB":{"legal_name":"Swift Tanker Logistics Pvt Ltd","status":"Active","returns_filed":2,"returns_due":2},"27AAHCR6652N1ZP":{"legal_name":"Ratnagiri Roadlines Pvt Ltd","status":"Active","returns_filed":6,"returns_due":6},"33AAECM3390P1Z3":{"legal_name":"Meridian Guard Solutions Pvt Ltd","status":"Active","returns_filed":6,"returns_due":6},"33AAGFF8120H1ZP":{"legal_name":"Falcon Inspection Technologies","status":"Active","returns_filed":4,"returns_due":6}},"itd":{"AABCP4821K":{"name":"Petrotech Valve Industries Private Limited","itr_filed":["AY 2024-25","AY 2025-26"]},"AADCV7310L":{"name":"Vantage Flow Solutions Ltd","itr_filed":["AY 2024-25","AY 2025-26"]},"AAHCS5516M":{"name":"SafeGuard Industrial Wear Pvt Ltd","itr_filed":["AY 2024-25","AY 2025-26"]},"AANFT2204Q":{"name":"Trident Protective Gear & Co","itr_filed":["AY 2024-25"]},"AAKCA7741E":{"name":"Apex Safety Products Pvt Ltd","itr_filed":["AY 2024-25","AY 2025-26"]},"AABCK9043R":{"name":"Konkan Bulk Carriers Ltd","itr_filed":["AY 2024-25","AY 2025-26"]},"AAMCS1187T":{"name":"Swift Tanker Logistics Pvt Ltd","itr_filed":[]},"AAHCR6652N":{"name":"Ratnagiri Roadlines Pvt Ltd","itr_filed":["AY 2024-25","AY 2025-26"]},"AAECM3390P":{"name":"Meridian Guard Solutions Pvt Ltd","itr_filed":["AY 2024-25","AY 2025-26"]},"AAGFF8120H":{"name":"Falcon Inspection Technologies","itr_filed":["AY 2024-25","AY 2025-26"]}},"mca21":{"U29120TN2015PTC098765":{"name":"Petrotech Valve Industries Private Limited","status":"Active","incorporated":"2015-04-12"},"U51909TN2020PTC137310":{"name":"Vantage Flow Systems Pvt Ltd","status":"Active","incorporated":"2020-08-03"},"U18101KA2018PTC115516":{"name":"SafeGuard Industrial Wear Pvt Ltd","status":"Active","incorporated":"2018-06-21"},"U51397KA2017PTC107741":{"name":"Apex Safety Products Pvt Ltd","status":"Active","incorporated":"2017-02-14"},"U60231MH2017PLC090431":{"name":"Konkan Bulk Carriers Ltd","status":"Active","incorporated":"2017-01-09"},"U60231MH2026PTC211187":{"name":"Swift Tanker Logistics Pvt Ltd","status":"Active","incorporated":"2026-07-14"},"U60231MH2023PTC166520":{"name":"Ratnagiri Roadlines Pvt Ltd","status":"Active","incorporated":"2023-05-30"},"U74920TN2019PTC133901":{"name":"Meridian Guard Solutions Pvt Ltd","status":"Active","incorporated":"2019-03-18"}},"udyam":{"UDYAM-TN-02-0048211":{"name":"Petrotech Valve Industries Private Limited","category":"Small"},"UDYAM-TN-02-0073102":{"name":"Vantage Flow Systems Pvt Ltd","category":"Small"},"UDYAM-MH-33-0090431":{"name":"Konkan Bulk Carriers Ltd","category":"Small"},"UDYAM-TN-02-0033901":{"name":"Meridian Guard Solutions Pvt Ltd","category":"Micro"}},"dpiit":{"DIPP45516":{"name":"SafeGuard Industrial Wear Pvt Ltd","valid_until":"2028-06-20"}},"nsic":{},"epfo":{"TNMAS0048211000":{"name":"Petrotech Valve Industries Private Limited","last_challan":"2026-08"},"TNMAS0073102000":{"name":"Vantage Flow Systems Pvt Ltd","last_challan":"2026-08"},"KABNG0055160000":{"name":"SafeGuard Industrial Wear Pvt Ltd","last_challan":"2026-08"},"KABNG0077410000":{"name":"Apex Safety Products Pvt Ltd","last_challan":"2026-08"},"MHBAN0090431000":{"name":"Konkan Bulk Carriers Ltd","last_challan":"2026-08"},"MHBAN0211870000":{"name":"Swift Tanker Logistics Pvt Ltd","last_challan":"2026-08"},"MHRAT0166520000":{"name":"Ratnagiri Roadlines Pvt Ltd","last_challan":"2026-08"},"TNMAS0133901000":{"name":"Meridian Guard Solutions Pvt Ltd","last_challan":"2026-08"},"TNMAS0081200000":{"name":"Falcon Inspection Technologies","last_challan":"2026-05"}},"esic":{"51000482110001001":{"name":"Petrotech Valve Industries Private Limited","last_challan":"2026-08"},"51000731020001001":{"name":"Vantage Flow Systems Pvt Ltd","last_challan":"2026-08"},"53000551600001001":{"name":"SafeGuard Industrial Wear Pvt Ltd","last_challan":"2026-08"},"53000774100001001":{"name":"Apex Safety Products Pvt Ltd","last_challan":"2026-08"},"35000904310001001":{"name":"Konkan Bulk Carriers Ltd","last_challan":"2026-08"},"35001665200001001":{"name":"Ratnagiri Roadlines Pvt Ltd","last_challan":"2026-08"},"51001339010001001":{"name":"Meridian Guard Solutions Pvt Ltd","last_challan":"2026-08"},"51000812000001001":{"name":"Falcon Inspection Technologies","last_challan":"2026-07"}},"debarred":{"Apex Safety Products Pvt Ltd":{"until":"2027-03-31","reason":"debarred by a procuring entity for supplying non-conforming goods"}}},"itr_years_required":["AY 2024-25","AY 2025-26"],"checks":[{"name":"EMD compliance","weight":10,"family":"Tender eligibility"},{"name":"Statutory documents","weight":10,"family":"Tender eligibility"},{"name":"Financial turnover","weight":10,"family":"Tender eligibility"},{"name":"Price reasonability","weight":8,"family":"Tender eligibility"},{"name":"Make in India local content","weight":6,"family":"Tender eligibility"},{"name":"OEM authorisation","weight":6,"family":"Tender eligibility"},{"name":"GST registration and returns","weight":8,"family":"Registry verification"},{"name":"PAN and income tax","weight":7,"family":"Registry verification"},{"name":"MSE and Startup status","weight":6,"family":"Registry verification"},{"name":"EPFO and ESIC compliance","weight":6,"family":"Registry verification"},{"name":"Entity name consistency","weight":7,"family":"Integrity and risk"},{"name":"Debarment status","weight":8,"family":"Integrity and risk"},{"name":"Public interest screening","weight":3,"family":"Integrity and risk"},{"name":"Shell company indicators","weight":3,"family":"Integrity and risk"},{"name":"Past performance history","weight":2,"family":"Integrity and risk"}],"families":["Tender eligibility","Registry verification","Integrity and risk"],"hard_cap_checks":["Debarment status","EMD compliance","GST registration and returns","Statutory documents"],"adverse_decisions":["Hold for Review","Mark Non-Compliant"],"decisions":["Qualified","Request Clarification","Hold for Review","Mark Non-Compliant"],"override_min_chars":30,"collusion":{"price_gap_pct":0.5,"timing_minutes":5,"cover_bid_pct":25},"demo_users":{"officer1":{"password":"officer123","role":"officer"},"approver1":{"password":"approver123","role":"senior_approver"},"admin1":{"password":"admin123","role":"admin"}}}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
 /* ENGINE START
@@ -656,68 +726,161 @@ td .why-o{display:block;font-size:12.5px;color:var(--grey-text);margin-top:4px;m
    Pure functions, no DOM, so scripts/parity_test.js can run it against the backend's results. */
 var PPEngine = (function(SEED){
   'use strict';
-  var W=SEED.weights, HARD=SEED.hard_cap_checks, ADVERSE=SEED.adverse_decisions, REG=SEED.registry, DEBAR=SEED.debarred||[], TH=SEED.collusion;
+  var W={}, FAM={}, HARD=SEED.hard_cap_checks, ADVERSE=SEED.adverse_decisions, RG=SEED.registries, TH=SEED.collusion;
+  SEED.checks.forEach(function(c){ W[c.name]=c.weight; FAM[c.name]=c.family; });
+  var SIM=' ('+SEED.mode+')';
   var CH='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  var PAN_TYPES={C:'company',P:'individual',H:'HUF',F:'firm or LLP',A:'association of persons',T:'trust',B:'body of individuals',L:'local authority',J:'artificial juridical person',G:'government body'};
   function rs(n){ return 'Rs '+Math.round(n).toLocaleString('en-US'); }
+  function fix1(v){ var a=Math.abs(v)*10, f=Math.floor(a), d=a-f, r=Math.abs(d-.5)<1e-9?(f%2===0?f:f+1):Math.round(a); return (v<0&&r!==0?'-':'')+(r/10).toFixed(1); }
   function longest(a,b,alo,ahi,blo,bhi){ var bi=alo,bj=blo,bs=0,j2={}; for(var i=alo;i<ahi;i++){ var n2={}; for(var j=blo;j<bhi;j++){ if(a[i]===b[j]){ var k=(j2[j-1]||0)+1; n2[j]=k; if(k>bs){ bi=i-k+1; bj=j-k+1; bs=k; } } } j2=n2; } return [bi,bj,bs]; }
   function ratio(a,b){ if(!a.length&&!b.length) return 1; var tot=0,q=[[0,a.length,0,b.length]]; while(q.length){ var x=q.pop(), m=longest(a,b,x[0],x[1],x[2],x[3]); if(m[2]){ tot+=m[2]; if(x[0]<m[0]&&x[2]<m[1]) q.push([x[0],m[0],x[2],m[1]]); if(m[0]+m[2]<x[1]&&m[1]+m[2]<x[3]) q.push([m[0]+m[2],x[1],m[1]+m[2],x[3]]); } } return 2*tot/(a.length+b.length); }
+  function similar(a,b){ return ratio(String(a||'').toLowerCase().trim(),String(b||'').toLowerCase().trim()); }
   function checkDigit(s){ var t=0; for(var i=0;i<14;i++){ var p=CH.indexOf(s[i])*(i%2===0?1:2); t+=Math.floor(p/36)+p%36; } return CH[(36-t%36)%36]; }
   function gstin(g){ g=String(g||'').trim().toUpperCase(); if(!g) return [false,'No GSTIN supplied.'];
     if(!/^[0-3][0-9][A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/.test(g)) return [false,'GSTIN '+g+' does not follow the 15-character GSTIN format.'];
     if(checkDigit(g.slice(0,14))!==g[14]) return [false,'GSTIN '+g+' fails the check-digit test, so it cannot be a valid registration.'];
     return [true,'GSTIN format and check digit are valid.']; }
-  function registry(name,b){ var tag=' (simulated registry)', v=gstin(b.gstin); if(!v[0]) return {status:'FLAG',reason:v[1]+tag,mode:'simulated'};
-    var legal=REG[String(b.gstin).toUpperCase()]; if(!legal) return {status:'FLAG',reason:'GSTIN '+b.gstin+' is valid but not found in the registry.'+tag,mode:'simulated'};
-    var r=ratio(legal.toLowerCase(),name.toLowerCase());
-    if(r>=.85){ if((b.cert==='msme'||b.cert==='udyam') && b.udyam && !/^UDYAM-[A-Z]{2}-\d{2}-\d{7}$/.test(String(b.udyam).toUpperCase())) return {status:'FLAG',reason:'GSTIN matches, but Udyam number '+b.udyam+' is malformed.'+tag,mode:'simulated'};
-      return {status:'PASS',reason:'GSTIN legal name "'+legal+'" matches the bidder.'+(b.udyam?' Udyam '+b.udyam+' format valid.':'')+tag,mode:'simulated'}; }
-    return {status:'FLAG',reason:'GSTIN legal name is "'+legal+'", which does not match the bidder "'+name+'" ('+Math.round(r*100)+'% match).'+tag,mode:'simulated'}; }
+  function udyamOk(u){ return /^UDYAM-[A-Z]{2}-\d{2}-\d{7}$/.test(String(u||'').trim().toUpperCase()); }
+  function panFromGstin(g){ g=String(g||'').trim().toUpperCase(); return g.length===15?g.slice(2,12):''; }
+  function expectedPanType(n){ n=String(n||'').toLowerCase(); if(/\b(pvt\.?|private)\s+(ltd\.?|limited)\b|\b(ltd\.?|limited)$/.test(n)) return 'C'; if(/&\s*co\.?$|\bllp$|\bpartners$/.test(n)) return 'F'; return null; }
+  function nameInitial(n){ var w=String(n||'').trim().split(/\s+/).filter(Boolean); if(w.length>1&&w[0].toLowerCase()==='the') w=w.slice(1); return w.length?w[0][0].toUpperCase():''; }
+  function ymd(s){ var p=s.slice(0,10).split('-'); return Date.UTC(+p[0],+p[1]-1,+p[2]); }
+  function daysBetween(a,b){ return Math.round((ymd(b)-ymd(a))/86400000); }
+  function yearsBetween(a,b){ return daysBetween(a,b)/365.25; }
+  function monthsBehind(last,sub){ var y=+last.slice(0,4), m=+last.slice(5,7); return (+sub.slice(0,4)-y)*12+(+sub.slice(5,7)-m); }
+  function mca(b){ return b.cin?RG.mca21[b.cin]||null:null; }
+  function res(name,status,reason,source){ return {name:name,status:status,reason:reason,source:source,family:FAM[name]}; }
+  function worst(issues){ var st=issues.some(function(x){return x[0]==='FAIL';})?'FAIL':'FLAG'; return [st, issues.map(function(x){return x[1];}).join(' ')]; }
+  function verifyClaims(name,b){
+    var out=[]; (b.claims||[]).forEach(function(cl){
+      if(cl==='mse'){ var num=b.udyam||'', rec=udyamOk(num)?RG.udyam[num.toUpperCase()]:null;
+        if(!udyamOk(num)) out.push({claim:'MSE',ok:false,detail:'Udyam number '+(num||'(none)')+' is not in the Udyam format'});
+        else if(!rec) out.push({claim:'MSE',ok:false,detail:'Udyam '+num+' not found'});
+        else if(similar(rec.name,name)<.85) out.push({claim:'MSE',ok:false,detail:'Udyam '+num+' is registered to '+rec.name});
+        else out.push({claim:'MSE',ok:true,detail:'Udyam '+num+' verified, '+rec.category+' enterprise'}); }
+      else if(cl==='startup'){ var d=b.dpiit||'', r=RG.dpiit[d.toUpperCase()];
+        if(!r) out.push({claim:'Startup',ok:false,detail:'DPIIT recognition '+(d||'(none)')+' not found'});
+        else if(similar(r.name,name)<.85) out.push({claim:'Startup',ok:false,detail:'DPIIT '+d+' is recognised for '+r.name});
+        else if(r.valid_until<b.submitted_at.slice(0,10)) out.push({claim:'Startup',ok:false,detail:'DPIIT '+d+' recognition expired on '+r.valid_until});
+        else out.push({claim:'Startup',ok:true,detail:'DPIIT '+d+' recognised startup, valid to '+r.valid_until}); }
+      else if(cl==='nsic'){ var ns=b.nsic||'', nr=RG.nsic[ns.toUpperCase()], ok=!!nr&&similar(nr.name,name)>=.85; out.push({claim:'NSIC',ok:ok,detail:'NSIC '+ns+' '+(ok?'verified':'not verified')}); }
+    }); return out; }
+  function claimSrc(c){ return c==='MSE'?'Udyam':c==='Startup'?'DPIIT':'NSIC'; }
+
   function runChecks(tid,t,name,b,history){
-    var out=[], dev=(b.price-t.benchmark_price)/t.benchmark_price*100;
-    out.push({name:'EMD compliance',status:b.emd>0?'PASS':'FAIL',reason:b.emd>0?'EMD of '+rs(b.emd)+' recorded against this tender.':'No EMD payment on record and no exemption claimed.'});
-    var miss=b.documents_missing||[]; out.push({name:'Statutory documents',status:miss.length?'FAIL':'PASS',reason:miss.length?'Missing from the submission: '+miss.join(', ')+'.':'All mandatory statutory documents present.'});
-    out.push({name:'Financial turnover',status:b.turnover>=t.min_turnover?'PASS':'FAIL',reason:'Annual turnover '+rs(b.turnover)+' against a minimum of '+rs(t.min_turnover)+'.'});
-    var pst=Math.abs(dev)<=12?'PASS':'FLAG'; out.push({name:'Price reasonability',status:pst,reason:'Quoted '+rs(b.price)+', '+(dev>=0?'+':'')+dev.toFixed(1)+'% against the benchmark of '+rs(t.benchmark_price)+'.'+(pst==='FLAG'?(dev<0?' Abnormally low quotes need a costing justification.':' Well above the benchmark estimate.'):'')});
-    var doc=b.document_name||name, er=ratio(name.toLowerCase().trim(),doc.toLowerCase().trim());
-    if(doc.trim().toLowerCase()===name.trim().toLowerCase()) out.push({name:'Entity name consistency',status:'PASS',reason:'Documents are in the exact name of the bidding entity.'});
-    else if(er>=.85) out.push({name:'Entity name consistency',status:'PASS',reason:'Document name is a '+Math.round(er*100)+'% textual match to the bidding entity, within tolerance.'});
-    else out.push({name:'Entity name consistency',status:'FLAG',reason:'Documents read "'+doc+'" against a bidding entity of "'+name+'", only a '+Math.round(er*100)+'% match.'});
-    var rg=registry(name,b); out.push({name:'Registry verification',status:rg.status,reason:rg.reason,mode:rg.mode});
-    out.push(DEBAR.indexOf(name)>=0?{name:'Debarment status',status:'FAIL',reason:'Bidder is on the debarment list.'}:{name:'Debarment status',status:'PASS',reason:'Not on the seeded debarment list (prototype list, not a live GeM lookup).'});
-    out.push(b.reputational_note?{name:'Public interest screening',status:'FLAG',reason:b.reputational_note}:{name:'Public interest screening',status:'PASS',reason:'No adverse public-interest record on file.'});
-    var age=b.incorporated_years_ago==null?99:b.incorporated_years_ago, addr=String(b.address||'').trim().toLowerCase(), young=age<.25;
-    var shared=t.bidders.filter(function(o){ return o.name!==name && addr && String(o.address||'').trim().toLowerCase()===addr; }).map(function(o){return o.name;});
-    if(young&&shared.length) out.push({name:'Shell company indicators',status:'FLAG',reason:'Incorporated about '+Math.round(age*365)+' days ago and shares a registered address with '+shared.join(', ')+'.'});
-    else if(young) out.push({name:'Shell company indicators',status:'FLAG',reason:'Incorporated only about '+Math.max(1,Math.round(age*12))+' month(s) before this tender. Recommend enhanced scrutiny before award.'});
-    else if(shared.length) out.push({name:'Shell company indicators',status:'FLAG',reason:'Registered address matches '+shared.join(', ')+' on this same tender.'});
-    else out.push({name:'Shell company indicators',status:'PASS',reason:'Incorporated '+age+' years ago; no address overlap with other bidders on this tender.'});
+    var out=[], issues, w;
+    // Tender eligibility
+    if(b.emd>0) out.push(res('EMD compliance','PASS','EMD of '+rs(b.emd)+' recorded against this tender.','Bid record'));
+    else { var okc=verifyClaims(name,b).filter(function(c){return c.ok;});
+      out.push(okc.length?res('EMD compliance','PASS','No EMD paid; exempt as a verified '+okc[0].claim+' bidder ('+okc[0].detail+')'+SIM+'.','Bid record + '+claimSrc(okc[0].claim))
+        :res('EMD compliance','FAIL','No EMD payment on record and no verified MSE, Startup or NSIC exemption.','Bid record')); }
+    var docs=b.documents||{}, req=t.required_documents, miss=req.filter(function(d){return (docs[d]||'missing')==='missing';}), unv=req.filter(function(d){return docs[d]==='self-attested';});
+    if(miss.length) out.push(res('Statutory documents','FAIL','Missing from the submission: '+miss.join(', ')+'.','DigiLocker'));
+    else if(unv.length) out.push(res('Statutory documents','FLAG','Self-attested only, not verifiable at source: '+unv.join(', ')+'. '+(req.length-unv.length)+' of '+req.length+' verified through DigiLocker'+SIM+'.','DigiLocker'));
+    else out.push(res('Statutory documents','PASS','All '+req.length+' required documents verified at source through DigiLocker'+SIM+'.','DigiLocker'));
+    out.push(res('Financial turnover',b.turnover>=t.min_turnover?'PASS':'FAIL','Annual turnover '+rs(b.turnover)+' against a minimum of '+rs(t.min_turnover)+'.','Bid record'));
+    var dev=(b.price-t.benchmark_price)/t.benchmark_price*100, pst=Math.abs(dev)<=12?'PASS':'FLAG';
+    out.push(res('Price reasonability',pst,'Quoted '+rs(b.price)+', '+(dev>=0?'+':'')+fix1(dev)+'% against the benchmark of '+rs(t.benchmark_price)+'.'+(pst==='FLAG'?(dev<0?' Abnormally low quotes need a costing justification.':' Well above the benchmark estimate.'):''),'Tender record'));
+    var lc=b.local_content_pct;
+    if(lc==null) out.push(res('Make in India local content','FLAG','No local content self-certification submitted.','Bid declaration'));
+    else if(lc>=50) out.push(res('Make in India local content','PASS','Class-I local supplier ('+lc+'% local content), eligible for purchase preference.','Bid declaration'));
+    else if(lc>=20) out.push(res('Make in India local content','PASS','Class-II local supplier ('+lc+'% local content).','Bid declaration'));
+    else out.push(res('Make in India local content','FAIL','Non-local supplier ('+lc+'% local content, below the 20% floor for Class-II).','Bid declaration'));
+    var oem=b.oem||{}, au=oem.authorisation||'missing';
+    if(!t.oem_authorisation_required) out.push(res('OEM authorisation','PASS','Not required for this '+t.category.toLowerCase()+' tender.','Tender record'));
+    else if(oem.is_oem) out.push(res('OEM authorisation','PASS','Bidder is the original equipment manufacturer (declared).','Bid declaration'));
+    else if(au==='verified') out.push(res('OEM authorisation','PASS','Bidder is a reseller; OEM authorisation letter verified'+SIM+'.','DigiLocker'));
+    else if(au==='self-attested') out.push(res('OEM authorisation','FLAG','Bidder is a reseller; the OEM authorisation letter is self-attested only.','Bid declaration'));
+    else out.push(res('OEM authorisation','FAIL','Bidder is not the OEM and has no OEM authorisation letter on file.','Bid declaration'));
+    // Registry verification
+    var gv=gstin(b.gstin);
+    if(!gv[0]) out.push(res('GST registration and returns','FLAG',gv[1],'GSTN'));
+    else { var g=String(b.gstin).toUpperCase(), gr=RG.gst[g];
+      if(!gr) out.push(res('GST registration and returns','FLAG','GSTIN '+g+' is valid but not found'+SIM+'.','GSTN'));
+      else { issues=[]; if(gr.status!=='Active') issues.push(['FAIL','GST registration is '+gr.status.toLowerCase()+'.']);
+        var lr=similar(gr.legal_name,name); if(lr<.85) issues.push(['FLAG','GSTIN legal name is "'+gr.legal_name+'", not the bidder "'+name+'" ('+Math.round(lr*100)+'% match).']);
+        if(gr.returns_filed<gr.returns_due) issues.push(['FLAG','Filed '+gr.returns_filed+' of the last '+gr.returns_due+' GSTR-3B returns.']);
+        if(issues.length){ w=worst(issues); out.push(res('GST registration and returns',w[0],w[1]+SIM,'GSTN')); }
+        else out.push(res('GST registration and returns','PASS','GSTIN '+g+' active, legal name matches, '+gr.returns_filed+' of '+gr.returns_due+' returns filed'+SIM+'.','GSTN')); } }
+    var pan=panFromGstin(b.gstin);
+    if(!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(pan)) out.push(res('PAN and income tax','FLAG','PAN could not be read from the GSTIN.','Income Tax Department'));
+    else { issues=[]; var exp=expectedPanType(name), ini=nameInitial(name), itr_note='';
+      if(exp&&pan[3]!==exp) issues.push(['FLAG','PAN '+pan+' is held by a '+(PAN_TYPES[pan[3]]||'unknown type')+", but the bidder's name indicates a "+PAN_TYPES[exp]+'.']);
+      if(pan[3]!=='P'&&ini&&pan[4]!==ini) issues.push(['FLAG','PAN '+pan+" name code '"+pan[4]+"' does not match the bidder's initial '"+ini+"'."]);
+      var ir=RG.itd[pan];
+      if(!ir) issues.push(['FLAG','PAN '+pan+' not found.']);
+      else { if(similar(ir.name,name)<.85) issues.push(['FLAG','PAN '+pan+' is held by "'+ir.name+'".']);
+        var mc=mca(b), inc=mc?mc.incorporated:null, due=SEED.itr_years_required.filter(function(ay){ var fe=ay.slice(3,7)+'-03-31';
+          return inc?(inc<=fe):((b.incorporated_years_ago==null?99:b.incorporated_years_ago)>=yearsBetween(fe,b.submitted_at)); });
+        var mis=due.filter(function(ay){return ir.itr_filed.indexOf(ay)<0;});
+        if(mis.length) issues.push(['FLAG','No income tax return on record for '+mis.join(', ')+'.']);
+        itr_note=due.length?'returns filed for '+due.join(', '):'incorporated after the last assessment year, so no return is due yet'; }
+      if(issues.length){ w=worst(issues); out.push(res('PAN and income tax',w[0],w[1]+SIM,'Income Tax Department')); }
+      else out.push(res('PAN and income tax','PASS','PAN '+pan+' ('+PAN_TYPES[pan[3]]+') matches the bidder; '+itr_note+SIM+'.','Income Tax Department')); }
+    var cl=verifyClaims(name,b);
+    if(!cl.length) out.push(res('MSE and Startup status','PASS','No MSE, Startup or NSIC benefit claimed; standard terms apply.','Bid declaration'));
+    else { var srcs={}; cl.forEach(function(c){ srcs[claimSrc(c.claim)]=1; }); var src=Object.keys(srcs).sort().join(' + '), bad=cl.filter(function(c){return !c.ok;});
+      out.push(bad.length?res('MSE and Startup status','FLAG','Claimed benefit not verified: '+bad.map(function(c){return c.detail;}).join('; ')+SIM+'.',src)
+        :res('MSE and Startup status','PASS',cl.map(function(c){return c.detail;}).join('; ')+SIM+'.',src)); }
+    var recs=[['EPFO',b.epfo,b.epfo?RG.epfo[b.epfo]||null:null],['ESIC',b.esic,b.esic?RG.esic[b.esic]||null:null]];
+    if(!t.labour_services){ var on=recs.filter(function(r){return r[2];}).map(function(r){return r[0];});
+      out.push(res('EPFO and ESIC compliance','PASS','Not mandatory for a goods supply'+(on.length?'; '+on.join(' and ')+' registration on record'+SIM+'.':'; no registration on record.'),'EPFO + ESIC')); }
+    else if(!recs.some(function(r){return r[2];})) out.push(res('EPFO and ESIC compliance','FAIL','Labour services tender, but no EPFO or ESIC registration found'+SIM+'.','EPFO + ESIC'));
+    else { issues=[]; recs.forEach(function(r){ if(!r[2]){ issues.push(['FLAG','No '+r[0]+' registration found for a labour services contract.']); return; }
+        var lag=monthsBehind(r[2].last_challan,b.submitted_at); if(lag>1) issues.push(['FLAG',r[0]+' '+r[1]+': last challan '+r[2].last_challan+', '+lag+' months behind.']); });
+      if(issues.length){ w=worst(issues); out.push(res('EPFO and ESIC compliance',w[0],w[1]+SIM,'EPFO + ESIC')); }
+      else out.push(res('EPFO and ESIC compliance','PASS','EPFO and ESIC registered, challans current to '+recs[0][2].last_challan+SIM+'.','EPFO + ESIC')); }
+    // Integrity and risk
+    var doc=b.document_name||name, m=mca(b); issues=[];
+    var er=similar(doc,name); if(er<.85) issues.push(['FLAG','Documents read "'+doc+'" against a bidding entity of "'+name+'", only a '+Math.round(er*100)+'% match.']);
+    if(m&&similar(m.name,name)<.85) issues.push(['FLAG','MCA21 lists CIN '+b.cin+' as "'+m.name+'"'+SIM+'.']);
+    if(issues.length){ w=worst(issues); out.push(res('Entity name consistency',w[0],w[1],'Documents + MCA21')); }
+    else out.push(res('Entity name consistency','PASS','Bid, documents'+(m?' and MCA21':'')+' carry the same name.',m?'Documents + MCA21':'Documents'));
+    var db=RG.debarred[name];
+    out.push(db?res('Debarment status','FAIL','On the debarment list until '+db.until+': '+db.reason+SIM+'.','GeM / CPPP list'):res('Debarment status','PASS','Not on the GeM / CPPP debarment list'+SIM+'.','GeM / CPPP list'));
+    out.push(b.reputational_note?res('Public interest screening','FLAG',b.reputational_note,'Adverse media record'):res('Public interest screening','PASS','No adverse public-interest record on file.','Adverse media record'));
+    var addr=String(b.address||'').trim().toLowerCase(), shared=t.bidders.filter(function(o){ return o.name!==name && addr && String(o.address||'').trim().toLowerCase()===addr; }).map(function(o){return o.name;}), age_txt;
+    issues=[];
+    if(m){ var days=daysBetween(m.incorporated,b.submitted_at); age_txt='incorporated '+m.incorporated+' (MCA21, '+SEED.mode+')';
+      if(m.status!=='Active') issues.push(['FLAG','MCA21 status is '+m.status+'.']);
+      if(days<91) issues.push(['FLAG','Incorporated only '+days+' days before bidding (MCA21, '+SEED.mode+'). Recommend enhanced scrutiny before award.']); }
+    else { var age=b.incorporated_years_ago==null?99:b.incorporated_years_ago; age_txt='declared '+age+' years in business (not an MCA-registered company)';
+      if(age<.25) issues.push(['FLAG','Declared only '+Math.max(1,Math.round(age*12))+' month(s) in business.']); }
+    if(shared.length) issues.push(['FLAG','Registered address matches '+shared.join(', ')+' on this same tender.']);
+    if(issues.length){ w=worst(issues); out.push(res('Shell company indicators',w[0],w[1],'MCA21 + tender')); }
+    else out.push(res('Shell company indicators','PASS',age_txt[0].toUpperCase()+age_txt.slice(1)+'; no address overlap with other bidders on this tender.','MCA21 + tender'));
     var rows=(history||[]).filter(function(h){ return h.bidder===name && h.decision && h.tender!==tid; }), adv=rows.filter(function(h){ return ADVERSE.indexOf(h.decision)>=0; });
-    if(adv.length){ var hit={}; adv.forEach(function(h){hit[h.tender]=1;}); out.push({name:'Past performance history',status:'FLAG',reason:adv.length+' earlier adverse officer decision(s) on this platform, on '+Object.keys(hit).sort().join(', ')+'.'}); }
-    else if(rows.length) out.push({name:'Past performance history',status:'PASS',reason:rows.length+' earlier decision(s) on this platform, none adverse.'});
-    else out.push({name:'Past performance history',status:'PASS',reason:'No earlier decisions for this bidder on this platform yet.'});
-    out.forEach(function(c){ var w=W[c.name]; c.weight=w; c.points=c.status==='PASS'?w:c.status==='FLAG'?w/2:0; });
+    if(adv.length){ var hit={}; adv.forEach(function(h){hit[h.tender]=1;}); out.push(res('Past performance history','FLAG',adv.length+' earlier adverse officer decision(s) on this platform, on '+Object.keys(hit).sort().join(', ')+'.','Platform audit log')); }
+    else if(rows.length) out.push(res('Past performance history','PASS',rows.length+' earlier decision(s) on this platform, none adverse.','Platform audit log'));
+    else out.push(res('Past performance history','PASS','No earlier decisions for this bidder on this platform yet.','Platform audit log'));
+    out.forEach(function(c){ var wt=W[c.name]; c.weight=wt; c.points=c.status==='PASS'?wt:c.status==='FLAG'?wt/2:0; });
     return out;
   }
   function scoreVerdict(checks){
     var raw=0; checks.forEach(function(c){ raw+=c.points; });
-    var fails=checks.filter(function(c){return c.status==='FAIL';}), flags=checks.filter(function(c){return c.status==='FLAG';}), cap=null;
-    if(fails.some(function(c){return HARD.indexOf(c.name)>=0;})) cap=45; else if(fails.length) cap=72;
+    var fails=checks.filter(function(c){return c.status==='FAIL';}), flags=checks.filter(function(c){return c.status==='FLAG';});
+    var hard=fails.filter(function(c){return HARD.indexOf(c.name)>=0;}).map(function(c){return c.name;});
+    var cap=hard.length?45:fails.length?72:null;
     var score=Math.floor((cap!==null?Math.min(raw,cap):raw)+.5);
-    var verdict = (fails.length||score<60)?'Non-compliant':flags.length?'Needs review':'Compliant';
-    return {score:score, verdict:verdict, breakdown:{raw:raw, cap:cap,
-      cap_reason: cap===45?'A FAIL on '+fails.filter(function(c){return HARD.indexOf(c.name)>=0;}).map(function(c){return c.name;}).join(', ')+' caps the score at 45.':cap===72?'A failed check caps the score at 72.':null,
-      lost: checks.filter(function(c){return c.status!=='PASS';}).map(function(c){ return {name:c.name,status:c.status,points_lost:c.weight-c.points}; })}};
+    var verdict=(fails.length||score<60)?'Non-compliant':flags.length?'Needs review':'Compliant';
+    var risk=hard.length?'Critical':fails.length?'High':flags.length?'Medium':'Low';
+    var fam={}; SEED.families.forEach(function(f){ var inF=checks.filter(function(c){return c.family===f;}); fam[f]={pass:inF.filter(function(c){return c.status==='PASS';}).length,total:inF.length}; });
+    return {score:score, verdict:verdict, risk:risk, breakdown:{raw:raw, cap:cap,
+      cap_reason: cap===45?'A FAIL on '+hard.join(', ')+' caps the score at 45.':cap===72?'A failed check caps the score at 72.':null,
+      lost: checks.filter(function(c){return c.status!=='PASS';}).map(function(c){ return {name:c.name,status:c.status,points_lost:c.weight-c.points}; }),
+      risk_level:risk, families:fam}};
   }
   function summary(name,checks,score,verdict){
     var bad=checks.filter(function(c){return c.status!=='PASS';});
-    if(!bad.length) return 'All ten checks passed for '+name+'. Nothing needs officer attention beyond the standard sign-off.';
-    return [bad.length+' of 10 checks need attention for '+name+' (score '+score+', '+verdict.toLowerCase()+').'].concat(bad.map(function(c){ return c.name+' ('+c.status+'): '+c.reason; })).concat(['Verify these in person before recording a decision.']).join('\n');
+    if(!bad.length) return 'All '+checks.length+' checks passed for '+name+'. Nothing needs officer attention beyond the standard sign-off.';
+    return [bad.length+' of '+checks.length+' checks need attention for '+name+' (score '+score+', '+verdict.toLowerCase()+').'].concat(bad.map(function(c){ return c.name+' ('+c.status+'): '+c.reason; })).concat(['Verify these in person before recording a decision.']).join('\n');
   }
   function tender(tid){ return SEED.tenders.filter(function(t){return t.id===tid;})[0]; }
   function evaluate(tid,name,history){
     var t=tender(tid), b=t.bidders.filter(function(x){return x.name===name;})[0];
     var checks=runChecks(tid,t,name,b,history), sv=scoreVerdict(checks);
-    return {tender_id:tid,bidder_name:name,checks:checks,compliance_score:sv.score,score_breakdown:sv.breakdown,verdict:sv.verdict,ai_reasoning:summary(name,checks,sv.score,sv.verdict),ai_source:'demo-engine',registry_mode:'simulated'};
+    return {tender_id:tid,bidder_name:name,checks:checks,compliance_score:sv.score,score_breakdown:sv.breakdown,verdict:sv.verdict,risk_level:sv.risk,ai_reasoning:summary(name,checks,sv.score,sv.verdict),ai_source:'demo-engine',registry_mode:SEED.mode};
   }
   function screen(tid){
     var t=tender(tid), bs=t.bidders, f=[], pairs=0;
@@ -731,7 +894,7 @@ var PPEngine = (function(SEED){
     bs.forEach(function(b){ var over=(b.price/t.benchmark_price-1)*100; if(over>TH.cover_bid_pct) f.push({signal:'Possible cover bid',severity:'FLAG',bidders:[b.name],detail:b.name+' quoted '+over.toFixed(0)+'% above the benchmark, which can signal a bid placed only to lose.'}); });
     return {tender_id:tid,bidders_compared:bs.length,pairs_compared:pairs,findings:f,note:f.length?null:'Prices, timing, addresses and benchmark spread look like normal competition.',thresholds:TH};
   }
-  return {evaluate:evaluate, screen:screen, tenders:SEED.tenders, decisions:SEED.decisions, overrideMin:SEED.override_min_chars, users:SEED.demo_users};
+  return {evaluate:evaluate, screen:screen, tenders:SEED.tenders, checks:SEED.checks, families:SEED.families, adapters:SEED.adapters, mode:SEED.mode, decisions:SEED.decisions, overrideMin:SEED.override_min_chars, users:SEED.demo_users};
 })(JSON.parse(document.getElementById('pp-seed').textContent));
 /* ENGINE END */
 </script>
@@ -747,19 +910,41 @@ var clamp=function(v,a,b){return v<a?a:v>b?b:v;};
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
 var E=PPEngine;
 var ROLE_LABEL={officer:'Officer',senior_approver:'Senior approver',admin:'Admin'};
-var CHECK_DESC=[
-  ['EMD compliance','Earnest money deposit recorded against this tender.'],
-  ['Statutory documents','Every mandatory document in the submission.'],
-  ['Financial turnover','Annual turnover clears the tender minimum.'],
-  ['Price reasonability','Quote within 12 percent of the benchmark estimate.'],
-  ['Entity name consistency','Name on the documents matches the bidding entity.'],
-  ['Registry verification *','GSTIN check digit, then legal name against the registry.'],
-  ['Debarment status','Not on the debarred bidders list.'],
-  ['Public interest screening','No adverse public-interest record on file.'],
-  ['Shell company indicators','Very recent incorporation, or an address shared with another bidder.'],
-  ['Past performance history','Adverse officer decisions on earlier tenders here.']
+var DESC={
+  'EMD compliance':'EMD paid, or a verified MSE, Startup or NSIC exemption.',
+  'Statutory documents':'Every required document present and verified at source (DigiLocker).',
+  'Financial turnover':'Annual turnover clears the tender minimum.',
+  'Price reasonability':'Quote within 12 percent of the benchmark estimate.',
+  'Make in India local content':'Class-I or Class-II local supplier under the Make in India order.',
+  'OEM authorisation':'Bidder is the OEM, or holds a verified OEM authorisation.',
+  'GST registration and returns':'GSTIN check digit, active status, legal name and GSTR-3B filing (GSTN).',
+  'PAN and income tax':'PAN inside the GSTIN, holder type, name code and ITR filing (Income Tax).',
+  'MSE and Startup status':'Claimed MSE, Startup or NSIC status verified (Udyam, DPIIT, NSIC).',
+  'EPFO and ESIC compliance':'Registration and current challans for labour services (EPFO, ESIC).',
+  'Entity name consistency':'Same name on the bid, the documents and MCA21.',
+  'Debarment status':'Not on the GeM or CPPP debarment list.',
+  'Public interest screening':'No adverse public-interest record on file.',
+  'Shell company indicators':'Recent incorporation (MCA21) or an address shared with another bidder.',
+  'Past performance history':'Adverse officer decisions on earlier tenders here.'
+};
+var PS_ASKS=[
+  ['Integrate with government portals and databases','Ten registry adapters behind one interface. See Registries in the workstation.','Adapters built · data simulated',1],
+  ['Verify Udyam / MSME status','MSE and Startup status: Udyam number, category and name, and the EMD exemption it allows.','Built · Udyam simulated',1],
+  ['Verify GST registration and return filing','GST registration and returns: check digit, active status, legal name, GSTR-3B returns filed.','Built · GSTN simulated',1],
+  ['Verify PAN and income tax compliance','PAN and income tax: PAN read from the GSTIN, holder type, name code, returns for the last two years.','Built · PAN rules real, ITR simulated',1],
+  ['Check Make in India / local content','Make in India local content: Class-I, Class-II or non-local supplier.','Built',0],
+  ['Verify EPFO / ESIC compliance','EPFO and ESIC compliance: registration and current challans on labour services tenders.','Built · EPFO and ESIC simulated',1],
+  ['Verify Startup India, NSIC and OEM authorisation','MSE and Startup status (DPIIT, NSIC) and OEM authorisation.','Built · DPIIT and NSIC simulated',1],
+  ['DigiLocker / document verification','Statutory documents checked at source, plus a PDF reader that cross-checks GSTIN, PAN, Udyam, CIN and name against the bid.','Built · DigiLocker simulated, PDF reading real',1],
+  ['Identify blacklisting and debarment','Debarment status against the GeM / CPPP list. A debarred bidder is Critical.','Built · list seeded',1],
+  ['Other statutory and tender-specific checks','EMD, turnover and price against the tender; the reasoning layer names any spec requirement no check covers.','Built',0],
+  ['AI to find missing or inconsistent information','Names compared across the bid, documents, GSTN, PAN and MCA21, plus the reasoning layer.','Built',0],
+  ['Compliance score and risk level','Score out of 100 with a why-not-100 line, and a risk level: Low, Medium, High or Critical.','Built',0],
+  ['AI recommendation to the procurement officer','Sarvam sarvam-105b writes the recommendation. It cannot change the score or verdict.','Built',0],
+  ['Auditable record of verification','Every evaluation, decision, override, export and document check logged; anonymised after 180 days.','Built',0]
 ];
-var WEIGHT_LIST=[15,15,15,10,10,10,10,5,5,5];
+function riskCls(r){ return 'risk r-'+String(r||'').toLowerCase(); }
+function regCards(list){ return list.map(function(a){ return '<div class="reg"><span class="mode">'+esc(a.mode||E.mode)+'</span><h4>'+esc(a.source)+'</h4><p>'+esc(a.verifies)+'</p><span class="live">Live source: '+esc(a.live)+'</span></div>'; }).join(''); }
 
 /* ---------- formatting ---------- */
 var inr=new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0});
@@ -791,7 +976,10 @@ menuBtn.addEventListener('click',function(){ var open=menuPanel.hidden; menuPane
 $$('a',menuPanel).forEach(function(a){ a.addEventListener('click',function(){ menuPanel.hidden=true; menuBtn.setAttribute('aria-expanded','false'); }); });
 
 /* ---------- checks table ---------- */
-$('#rate').innerHTML=CHECK_DESC.map(function(c,i){ return '<div class="rate-row" data-rev><span class="lbl n num">'+pad(i+1)+'</span><h4>'+esc(c[0])+'</h4><p>'+esc(c[1])+'</p><span class="lbl w num">'+WEIGHT_LIST[i]+' pts</span></div>'; }).join('');
+$('#rate').innerHTML=E.families.map(function(f){ var list=E.checks.filter(function(c){return c.family===f;}), pts=0; list.forEach(function(c){pts+=c.weight;});
+  return '<div class="rate-fam" data-rev>'+esc(f)+'<span class="lbl">'+list.length+' checks &middot; '+pts+' pts</span></div>'+list.map(function(c){ var i=E.checks.indexOf(c); return '<div class="rate-row" data-rev><span class="lbl n num">'+pad(i+1)+'</span><h4>'+esc(c.name)+'</h4><p>'+esc(DESC[c.name]||'')+'</p><span class="lbl w num">'+c.weight+' pts</span></div>'; }).join(''); }).join('');
+$('#psMap').innerHTML=PS_ASKS.map(function(a,i){ return '<div class="ps-row" data-rev><span class="lbl n num">'+pad(i+1)+'</span><h4>'+esc(a[0])+'</h4><p>'+esc(a[1])+'</p><span class="st'+(a[3]?' sim':'')+'">'+esc(a[2])+'</span></div>'; }).join('');
+$('#regGrid').innerHTML=regCards(E.adapters);
 
 /* ---------- reveal ---------- */
 function splitWords(el){ var i=0; (function walk(node){ Array.prototype.slice.call(node.childNodes).forEach(function(ch){ if(ch.nodeType===3){ var frag=document.createDocumentFragment(); ch.textContent.split(/(\s+)/).forEach(function(p){ if(!p) return; if(/^\s+$/.test(p)) frag.appendChild(document.createTextNode(p)); else { var s=document.createElement('span'); s.className='w'; s.style.setProperty('--i',i++); s.textContent=p; frag.appendChild(s);} }); ch.parentNode.replaceChild(frag,ch); } else if(ch.nodeType===1) walk(ch); }); })(el); }
@@ -818,7 +1006,7 @@ function onScroll(){ ticking=false; stages.forEach(function(st){ var p=stageP(st
 function updateTimeline(p){
   var x=p*5, idx=Math.min(4,Math.floor(x)), f=x-idx, secs=MARKS[idx]+(MARKS[idx+1]-MARKS[idx])*(p>=1?1:f);
   cTime.textContent=pad(Math.floor(secs/60))+':'+pad(Math.floor(secs%60));
-  cChecks.textContent=Math.round(clamp((secs-MARKS[1])/(MARKS[3]-MARKS[1]),0,1)*10)+' / 10';
+  cChecks.textContent=Math.round(clamp((secs-MARKS[1])/(MARKS[3]-MARKS[1]),0,1)*E.checks.length)+' / '+E.checks.length;
   var cw=$('#clock').clientWidth; meterEl.style.setProperty('--mw',cw+'px');
   if(idx!==lastRow){ lastRow=idx; cStatus.textContent=STATUS[idx]; tRows.forEach(function(r,i){ r.classList.toggle('on',i<=idx); }); }
 }
@@ -951,6 +1139,7 @@ var S={token:null,user:null,role:null,mode:'demo',tenders:[],current:null,result
 var demoAudit=[];
 function demoHistory(){ return demoAudit.filter(function(r){return r.officer&&r.officer!=='Pending';}).map(function(r){ return {tender:r.tender,bidder:r.bidder,decision:r.officer}; }); }
 function normTender(t){ return {id:t.id, authority:t.authority, authority_full:t.authority_full||'', category:t.category, title:t.title, spec:t.spec, min_turnover:+t.min_turnover, benchmark_price:+t.benchmark_price,
+  required_documents:t.required_documents||[], oem_authorisation_required:!!t.oem_authorisation_required, labour_services:!!t.labour_services,
   bidders:(t.bidders||[]).map(function(b){ return typeof b==='string'?{name:b}:b; })}; }
 
 /* ---------- ui helpers ---------- */
@@ -1001,7 +1190,9 @@ $('#loginForm').addEventListener('submit',function(e){
 });
 
 /* ---------- views ---------- */
-function setView(v){ $$('#wsNav .rn-item').forEach(function(a){ if(a.dataset.view===v) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); }); $('#viewTenders').hidden=v!=='tenders'; $('#viewAudit').hidden=v!=='audit'; if(v==='audit') loadAudit(); }
+function setView(v){ $$('#wsNav .rn-item').forEach(function(a){ if(a.dataset.view===v) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); }); $('#viewTenders').hidden=v!=='tenders'; $('#viewAudit').hidden=v!=='audit'; $('#viewReg').hidden=v!=='registries'; if(v==='audit') loadAudit(); if(v==='registries') loadRegistries(); }
+function loadRegistries(){ var paint=function(r){ $('#regView').innerHTML=regCards(r.adapters); $('#regMode').textContent=r.adapters.length+' sources · '+(r.mode||E.mode); };
+  if(S.mode==='live') api('/api/registries').then(paint,function(){ paint({adapters:E.adapters,mode:E.mode}); }); else paint({adapters:E.adapters,mode:E.mode}); }
 $$('#wsNav .rn-item').forEach(function(a){ a.addEventListener('click',function(e){ e.preventDefault(); setView(a.dataset.view); }); });
 
 function loadTenders(){
@@ -1014,7 +1205,7 @@ function renderList(){
   $('#tList').innerHTML=S.tenders.map(function(t){ return '<button type="button" class="t-item" data-id="'+esc(t.id)+'"><span class="lbl">'+esc(t.authority)+' &middot; '+esc(t.category)+' &middot; '+t.bidders.length+' bid'+(t.bidders.length===1?'':'s')+'</span><h4>'+esc(t.title)+'</h4></button>'; }).join('');
   $$('#tList .t-item').forEach(function(b){ b.addEventListener('click',function(){ selectTender(b.dataset.id); }); });
 }
-function idle(msg){ return '<div class="run-idle"><span class="lbl grey">Evaluation</span><h4>Choose a bid to evaluate.</h4><p>'+esc(msg||'The ten checks run first, then the reasoning layer writes a recommendation. You record the decision.')+'</p></div>'; }
+function idle(msg){ return '<div class="run-idle"><span class="lbl grey">Evaluation</span><h4>Choose a bid to evaluate.</h4><p>'+esc(msg||'The fifteen checks run first, then the reasoning layer writes a recommendation. You record the decision.')+'</p></div>'; }
 function selectTender(id){
   var t=S.tenders.filter(function(x){return x.id===id;})[0]||S.tenders[0]; S.current=t;
   $$('#tList .t-item').forEach(function(b){ b.setAttribute('aria-current',String(b.dataset.id===t.id)); });
@@ -1022,10 +1213,17 @@ function selectTender(id){
   d.innerHTML='<div class="d-head"><span class="lbl">'+esc(t.authority)+(t.authority_full?' &middot; '+esc(t.authority_full):'')+' &middot; '+esc(t.id)+'</span><h2 class="disp">'+esc(t.title)+'</h2></div>'+
     '<p class="d-spec">'+esc(t.spec)+'</p>'+
     '<div class="d-facts"><div><span class="lbl">Minimum turnover</span><b class="num">'+short(t.min_turnover)+'</b></div><div><span class="lbl">Benchmark</span><b class="num">'+short(t.benchmark_price)+'</b></div><div><span class="lbl">Bids received</span><b class="num">'+t.bidders.length+'</b></div></div>'+
+    '<p class="docv-note" style="margin-top:10px"><b>Required documents:</b> '+esc((t.required_documents||[]).join(', '))+'. '+(t.oem_authorisation_required?'OEM authorisation required. ':'')+(t.labour_services?'Labour services: EPFO and ESIC compliance required.':'Goods supply.')+'</p>'+
     '<div class="sec-title"><h3>Bids</h3><button class="btn" type="button" id="screenBtn"'+(t.bidders.length<2?' disabled title="Needs two or more bids"':'')+'>Screen for collusion</button></div>'+
     '<div class="bid bid-head lbl"><span>Bidder</span><span>Quoted</span><span>vs benchmark</span><span>Submitted</span><span></span></div>'+
     t.bidders.map(function(b,i){ var dev=(b.price&&t.benchmark_price)?(b.price-t.benchmark_price)/t.benchmark_price*100:null;
-      return '<div class="bid"><div class="nm">'+esc(b.name)+'<small>'+esc(b.gstin?'GSTIN '+b.gstin:'')+(b.address?' &middot; '+esc(b.address):'')+'</small></div>'+
+      var docs=b.documents||{}, dk=Object.keys(docs), dv=dk.filter(function(k){return docs[k]==='verified';}).length, tg=[];
+      (b.claims||[]).forEach(function(c){ tg.push('<span class="tag t-g">'+esc(c==='mse'?'MSE':c==='startup'?'Startup':'NSIC')+' claimed</span>'); });
+      if(b.local_content_pct!=null) tg.push('<span class="tag">'+esc(b.local_content_pct)+'% local</span>');
+      if(t.oem_authorisation_required) tg.push('<span class="tag">'+(b.oem&&b.oem.is_oem?'OEM':'Reseller')+'</span>');
+      if(dk.length) tg.push('<span class="tag'+(dv<dk.length?' t-r':'')+'">'+dv+' / '+dk.length+' docs verified</span>');
+      if(!b.emd) tg.push('<span class="tag t-s">No EMD</span>');
+      return '<div class="bid"><div class="nm">'+esc(b.name)+'<small>'+esc(b.gstin?'GSTIN '+b.gstin:'')+(b.address?' &middot; '+esc(b.address):'')+'</small><div class="tags">'+tg.join('')+'</div></div>'+
         '<span class="mono num">'+short(b.price)+'</span><span class="mono num dev">'+(dev===null?'-':(dev>0?'+':'')+dev.toFixed(1)+'%')+'</span><span class="mono num">'+fmtTs(b.submitted_at)+'</span>'+
         '<button class="btn btn--ink" type="button" data-eval="'+i+'">Evaluate</button></div>'; }).join('')+
     '<div id="colOut"></div><div class="run" id="run">'+idle()+'</div>';
@@ -1066,15 +1264,15 @@ function evaluate(t,b){
   var fallback=false;
   var work=function(){ if(S.mode==='live') return api('/api/evaluate-seed?tender_id='+encodeURIComponent(t.id)+'&bidder_name='+encodeURIComponent(b.name),{timeout:70000}).then(null,function(e){ if(e.kind==='http'&&e.status===401) throw e; fallback=true; return E.evaluate(t.id,b.name,demoHistory()); });
     return new Promise(function(res){ setTimeout(function(){ res(E.evaluate(t.id,b.name,demoHistory())); },900); }); };
-  var lines=['Loading tender '+t.id,'Reading bid from '+b.name].concat(CHECK_DESC.map(function(c){return c[0].replace(' *','');})).concat([S.mode==='live'?'Reasoning layer: writing the recommendation':'Writing deterministic summary']);
+  var lines=['Loading tender '+t.id,'Reading bid from '+b.name].concat(E.checks.map(function(c){return c.name;})).concat([S.mode==='live'?'Reasoning layer: writing the recommendation':'Writing deterministic summary']);
   $('#run').scrollIntoView({behavior:RM?'auto':'smooth',block:'start'});
-  think({kicker:'Evaluating',title:esc(b.name.split(' ').slice(0,3).join(' '))+' <span class="hl">&rarr; '+esc(t.id)+'</span>',meta:(S.mode==='live'?'Live backend':'Demo engine')+' · 10 checks',lines:lines,work:work}).then(function(o){
+  think({kicker:'Evaluating',title:esc(b.name.split(' ').slice(0,3).join(' '))+' <span class="hl">&rarr; '+esc(t.id)+'</span>',meta:(S.mode==='live'?'Live backend':'Demo engine')+' · '+E.checks.length+' checks',lines:lines,work:work}).then(function(o){
     $$('[data-eval]').forEach(function(x){x.disabled=false;});
     if(o.error && o.error.status===401){ $('#run').innerHTML=idle('Your session expired. Sign out and sign in again.'); return; }
     var r=o.result, key=t.id+'|'+b.name;
     if(!r){ $('#run').innerHTML=idle('The evaluation did not complete. Try again.'); return; }
-    if(S.mode==='demo'||fallback){ demoAudit.unshift({ts:nowIso(),tender:t.id,bidder:b.name,score:r.compliance_score,aiVerdict:r.verdict,officer:'Pending',by:null,evaluatedBy:S.user}); }
-    var res={checks:r.checks,score:r.compliance_score,verdict:r.verdict,breakdown:r.score_breakdown,reasoning:r.ai_reasoning,source:fallback?'backend did not answer, demo engine':r.ai_source,ms:o.ms,local:S.mode==='demo'||fallback};
+    if(S.mode==='demo'||fallback){ demoAudit.unshift({ts:nowIso(),tender:t.id,bidder:b.name,score:r.compliance_score,aiVerdict:r.verdict,risk:r.risk_level,officer:'Pending',by:null,evaluatedBy:S.user}); }
+    var res={checks:r.checks,score:r.compliance_score,verdict:r.verdict,risk:r.risk_level||(r.score_breakdown&&r.score_breakdown.risk_level),breakdown:r.score_breakdown,reasoning:r.ai_reasoning,source:fallback?'backend did not answer, demo engine':r.ai_source,ms:o.ms,local:S.mode==='demo'||fallback};
     S.results[key]={bidder:b,res:res}; S.lastKey=key; delete S.decided[key];
     renderResult(t,b,res);
   });
@@ -1087,14 +1285,19 @@ function renderResult(t,b,res){
   var lost=(res.breakdown&&res.breakdown.lost)||[], why=lost.length? '<div class="why"><b>Why not 100:</b> '+lost.map(function(l){ return esc(l.name)+' −'+(+l.points_lost).toString()+' pts'; }).join(', ')+(res.breakdown.cap_reason?'. '+esc(res.breakdown.cap_reason):'.')+'</div>':'';
   run.innerHTML='<div class="result">'+
     '<div class="res-top"><div class="score'+vcls+'" style="--s:0"><span class="lbl">Compliance score</span><div class="score-n num"><span id="scoreN" class="'+(res.verdict==='Non-compliant'?'bad':'')+'">0</span><small>/ 100</small></div><div class="bar"></div></div>'+
-    '<div class="verdict"><span class="lbl grey">Recommendation &middot; advisory only</span><h3 class="'+(res.verdict==='Non-compliant'?'bad':res.verdict==='Needs review'?'saf':'grn')+'">'+esc(res.verdict)+'</h3><span class="who-bid">'+esc(b.name)+'</span><span class="lbl src-tag">'+esc(srcLabel(res.source))+(res.ms?' &middot; '+(res.ms/1000).toFixed(1)+' s':'')+'</span>'+
+    '<div class="verdict"><span class="lbl grey">Recommendation &middot; advisory only</span><h3 class="'+(res.verdict==='Non-compliant'?'bad':res.verdict==='Needs review'?'saf':'grn')+'">'+esc(res.verdict)+'</h3><span class="who-bid">'+esc(b.name)+'</span>'+(res.risk?'<span class="'+riskCls(res.risk)+'">Risk: '+esc(res.risk)+'</span>':'')+'<span class="lbl src-tag">'+esc(srcLabel(res.source))+(res.ms?' &middot; '+(res.ms/1000).toFixed(1)+' s':'')+'</span>'+
     '<div class="counts lbl"><span class="grn"><i class="sq"></i>'+nP+' pass</span><span class="saf"><i class="sq flag"></i>'+nF+' flag</span><span class="bad"><i class="sq fail"></i>'+nX+' fail</span></div></div></div>'+why+
-    '<ul class="checks">'+res.checks.map(function(c){ var k=stCls(c.status); return '<li class="chk '+k+'"><i class="sq '+(k==='pass'?'':k)+'"></i><div><h5>'+esc(c.name)+'</h5><p>'+esc(c.reason)+'</p></div><span class="st">'+esc(c.status)+(c.weight!=null?'<small>'+(+c.points)+' / '+c.weight+'</small>':'')+'</span></li>'; }).join('')+'</ul>'+
+    '<ul class="checks">'+groupChecks(res.checks)+'</ul>'+
     '<div class="reco"><span class="lbl">Reasoning</span><p>'+esc(res.reasoning)+'</p></div>'+
+    '<div class="docv"><span class="lbl">Document check &middot; reads a bid PDF and cross-checks it against this bid</span>'+
+      '<div class="docv-row"><label class="btn" for="docFile">Choose PDF</label><input type="file" id="docFile" accept="application/pdf" hidden><span class="lbl grey" id="docName">No file chosen</span><button type="button" class="btn btn--ink" id="docGo" disabled>Read and cross-check</button></div>'+
+      '<p class="docv-note">Or try a sample document: <button type="button" class="smp" data-sample="petrotech-registration-sample.pdf">Petrotech</button> <button type="button" class="smp" data-sample="vantage-registration-sample.pdf">Vantage</button> <button type="button" class="smp" data-sample="trident-registration-sample.pdf">Trident</button>. Scanned PDFs need OCR, which is planned.</p>'+
+      '<div id="docOut"></div></div>'+
     '<div class="decide"><span class="lbl">Officer decision &middot; '+esc(S.user)+' ('+esc(ROLE_LABEL[S.role]||S.role)+')</span><div class="decide-row" id="decRow">'+
       E.decisions.map(function(x){ return '<button type="button" class="btn" data-dec="'+esc(x)+'"'+(dec?' disabled':'')+'>'+esc(x)+'</button>'; }).join('')+
     '</div><div id="ovr"></div><p class="decide-note" id="decNote">'+(dec?'Decision recorded.':'Press a decision twice to record it. It goes to the audit log with your name.')+'</p></div></div>';
   var sc=$('.score',run), n=$('#scoreN',run);
+  wireDocCheck(t,b,run);
   requestAnimationFrame(function(){ sc.style.setProperty('--s',res.score); });
   if(G&&!RM){ var o={v:0}; G.to(o,{v:res.score,duration:1.1,ease:'power3.out',onUpdate:function(){ n.textContent=Math.round(o.v); }}); G.from($$('.chk',run),{x:-14,opacity:0,duration:.4,stagger:.045,ease:'power2.out',delay:.15}); G.from($$('.why, .reco, .decide',run),{y:14,opacity:0,duration:.45,stagger:.08,delay:.45}); }
   else n.textContent=res.score;
@@ -1108,6 +1311,30 @@ function renderResult(t,b,res){
     if(d==='Qualified' && res.verdict!=='Compliant') return overridePanel(t,b,res,run);
     record(t,b,res,d,'',run);
   }); });
+}
+function groupChecks(checks){
+  var fams=[]; checks.forEach(function(c){ var f=c.family||'Checks'; if(fams.indexOf(f)<0) fams.push(f); });
+  return fams.map(function(f){ var list=checks.filter(function(c){return (c.family||'Checks')===f;}), np=list.filter(function(c){return c.status==='PASS';}).length;
+    return '<li class="fam-h"><h6>'+esc(f)+'</h6><span class="lbl">'+np+' of '+list.length+' pass</span></li>'+list.map(function(c){ var k=stCls(c.status);
+      return '<li class="chk '+k+'"><i class="sq '+(k==='pass'?'':k)+'"></i><div><h5>'+esc(c.name)+'</h5><p>'+esc(c.reason)+'</p>'+(c.source?'<span class="src">Source: '+esc(c.source)+'</span>':'')+'</div><span class="st">'+esc(c.status)+(c.weight!=null?'<small>'+(+c.points)+' / '+c.weight+'</small>':'')+'</span></li>'; }).join(''); }).join('');
+}
+function wireDocCheck(t,b,run){
+  var inp=$('#docFile',run), go=$('#docGo',run), nm=$('#docName',run), out=$('#docOut',run), file=null;
+  var paint=function(r){ var rows=r.fields||[];
+    out.innerHTML='<p class="docv-sum">'+esc(r.summary)+'</p>'+(rows.length?'<table><thead><tr><th>Field</th><th>In the document</th><th>On the bid</th><th>Result</th></tr></thead><tbody>'+rows.map(function(x){ return '<tr><td>'+esc(x.field)+'</td><td class="mono">'+esc(x.found)+'</td><td class="mono">'+esc(x.on_bid)+'</td><td><span class="'+(x.status==='MATCH'?'ok':'no')+'">'+esc(x.status)+'</span>'+(x.note?'<br><span class="grey" style="font-size:12px">'+esc(x.note)+'</span>':'')+'</td></tr>'; }).join('')+'</tbody></table>':'')+
+      '<p class="docv-note">'+esc((r.filename||'')+(r.pages?' · '+r.pages+' page'+(r.pages>1?'s':''):''))+' · logged in the access log</p>';
+    if(G&&!RM) G.from(out.children,{y:8,opacity:0,duration:.3,stagger:.05}); };
+  var send=function(blob,name){
+    if(S.mode!=='live'||!S.token){ out.innerHTML='<p class="docv-note">Reading documents needs the live backend. The demo engine cannot do it offline.</p>'; return; }
+    go.disabled=true; out.innerHTML='<p class="docv-note">Reading '+esc(name)+'…</p>';
+    var fd=new FormData(); fd.append('tender_id',t.id); fd.append('bidder_name',b.name); fd.append('file',blob,name);
+    fetch(apiBase()+'/api/documents/extract',{method:'POST',headers:{'Authorization':'Bearer '+S.token},body:fd}).then(function(r){ return r.json().then(function(j){ if(!r.ok) throw new Error(typeof j.detail==='string'?j.detail:'Could not read this file.'); return j; }); })
+      .then(paint,function(e){ out.innerHTML='<p class="docv-note" style="color:var(--fail)">'+esc(e.message||'Could not read this file.')+'</p>'; }).then(function(){ go.disabled=!file; });
+  };
+  inp.addEventListener('change',function(){ file=inp.files&&inp.files[0]; nm.textContent=file?file.name:'No file chosen'; go.disabled=!file; });
+  go.addEventListener('click',function(){ if(file) send(file,file.name); });
+  $$('[data-sample]',run).forEach(function(btn){ btn.addEventListener('click',function(){ var f=btn.dataset.sample; nm.textContent=f;
+    fetch('samples/'+f).then(function(r){ if(!r.ok) throw 0; return r.blob(); }).then(function(bl){ send(bl,f); },function(){ out.innerHTML='<p class="docv-note">The sample file did not load.</p>'; }); }); });
 }
 function overridePanel(t,b,res,run){
   var box=$('#ovr',run), min=E.overrideMin;
@@ -1169,8 +1396,8 @@ function screen(t){
 function loadAudit(){
   var body=$('#auditBody');
   var paint=function(rows){ body.innerHTML=rows.length?rows.map(function(r){ var d=r.officer||'Pending', cls=d==='Qualified'?'grn':d==='Mark Non-Compliant'?'bad':d==='Hold for Review'?'saf':d==='Pending'?'grey':'nvy';
-    return '<tr><td class="mono num">'+esc(fmtTs(r.decidedAt||r.ts))+'</td><td class="mono">'+esc(r.tender)+'</td><td>'+esc(r.bidder)+(r.anonymised?' <span class="lbl grey">anonymised</span>':'')+'</td><td class="mono num">'+esc(r.score==null?'-':r.score)+'</td><td>'+esc(r.aiVerdict)+'</td><td><span class="dec '+cls+'">'+esc(d)+'</span>'+(r.overrideReason?'<span class="why-o">Override: '+esc(r.overrideReason)+'</span>':'')+'</td><td class="mono">'+esc(r.by||r.evaluatedBy||'')+'</td></tr>'; }).join('')
-    :'<tr><td colspan="7" class="grey">No evaluations yet. Evaluate a bid and record a decision to see it here.</td></tr>'; };
+    return '<tr><td class="mono num">'+esc(fmtTs(r.decidedAt||r.ts))+'</td><td class="mono">'+esc(r.tender)+'</td><td>'+esc(r.bidder)+(r.anonymised?' <span class="lbl grey">anonymised</span>':'')+'</td><td class="mono num">'+esc(r.score==null?'-':r.score)+'</td><td>'+(r.risk?'<span class="'+riskCls(r.risk)+'" style="font-size:9.5px;padding:3px 6px">'+esc(r.risk)+'</span>':'-')+'</td><td>'+esc(r.aiVerdict)+'</td><td><span class="dec '+cls+'">'+esc(d)+'</span>'+(r.overrideReason?'<span class="why-o">Override: '+esc(r.overrideReason)+'</span>':'')+'</td><td class="mono">'+esc(r.by||r.evaluatedBy||'')+'</td></tr>'; }).join('')
+    :'<tr><td colspan="8" class="grey">No evaluations yet. Evaluate a bid and record a decision to see it here.</td></tr>'; };
   var eb=$('#exportBtn'), en=$('#exportNote'), isAdmin=S.role==='admin'; eb.disabled=!isAdmin; en.textContent=isAdmin?'Exports and resets are logged':'Admin only'; $('#exportBox').hidden=true;
   var rb=$('#resetBtn'); rb.hidden=!isAdmin; rb.classList.remove('arm'); rb.textContent='Reset demo data'; rb.disabled=false;
   if(S.mode==='live') api('/api/audit-log').then(function(r){ paint(Array.isArray(r)?r:[]); },function(){ paint(demoAudit); toast('Audit log did not load from the backend. Showing the local demo log.'); });

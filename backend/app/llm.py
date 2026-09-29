@@ -1,7 +1,7 @@
 """
 Reasoning layer over an OpenAI-compatible API.
 
-Default (direct mode): one call carrying the tender spec and the ten check
+Default (direct mode): one call carrying the tender spec and the fifteen check
 results. Optional tool mode (LLM_TOOL_CALLING=on): the model fetches the results
 through get_requirement_checks. Either way it writes a recommendation in plain
 language and never sets the verdict or the score; those come from checks.py.
@@ -35,16 +35,16 @@ TOOLS = [{
     "type": "function",
     "function": {
         "name": "get_requirement_checks",
-        "description": ("Returns the ten deterministic compliance checks for this bidder against this tender: EMD, statutory "
-                        "documents, financial turnover, price reasonability, entity name consistency, registry verification, "
-                        "debarment, public interest screening, shell company indicators and past performance, plus the score."),
+        "description": ("Returns the fifteen deterministic compliance checks for this bidder against this tender (tender eligibility, "
+                        "registry verification against GSTN, Income Tax, MCA21, Udyam, DPIIT, EPFO and ESIC, and integrity and risk), "
+                        "plus the score and risk level."),
         "parameters": {"type": "object", "properties": {}, "required": []},
     },
 }]
 
 SYSTEM_PROMPT_DIRECT = (
     "You are the reasoning layer inside Procurement Pilot, a bid compliance tool used by government procurement "
-    "officers. You assist a human officer and never make the decision. You are given the results of ten deterministic "
+    "officers. You assist a human officer and never make the decision. You are given the results of fifteen deterministic "
     "checks. Write a recommendation in plain language, under 110 words, in two short paragraphs. First paragraph: each "
     "check that is FLAG or FAIL, with its status copied exactly, what it found, and what the officer should verify in "
     "person. Do not list checks that passed. If none failed or flagged, say so in one sentence. Second paragraph: any "
@@ -94,8 +94,8 @@ def _clean(text: str) -> str:
 def deterministic_summary(bidder_name: str, checks: list, score: int, verdict: str) -> str:
     bad = [c for c in checks if c["status"] != "PASS"]
     if not bad:
-        return (f"All ten checks passed for {bidder_name}. Nothing needs officer attention beyond the standard sign-off.")
-    lines = [f"{len(bad)} of 10 checks need attention for {bidder_name} (score {score}, {verdict.lower()})."]
+        return (f"All {len(checks)} checks passed for {bidder_name}. Nothing needs officer attention beyond the standard sign-off.")
+    lines = [f"{len(bad)} of {len(checks)} checks need attention for {bidder_name} (score {score}, {verdict.lower()})."]
     for c in bad:
         lines.append(f"{c['name']} ({c['status']}): {c['reason']}")
     lines.append("Verify these in person before recording a decision.")
@@ -113,7 +113,7 @@ def reason(tender: dict, bidder_name: str, checks: list, score: int, verdict: st
     ]
     step = "first call"
     if not LLM_TOOL_CALLING:
-        results = {"checks": [{k: c[k] for k in ("name", "status", "reason")} for c in checks],
+        results = {"checks": [{k: c.get(k) for k in ("name", "status", "reason", "source")} for c in checks],
                    "compliance_score": score, "verdict": verdict}
         direct = [
             {"role": "system", "content": SYSTEM_PROMPT_DIRECT},
@@ -152,7 +152,7 @@ def reason(tender: dict, bidder_name: str, checks: list, score: int, verdict: st
             messages.append({"role": "assistant", "content": msg.get("content") or "", "tool_calls": calls})
             for call in calls:
                 if call.get("function", {}).get("name") == "get_requirement_checks":
-                    result = {"checks": [{k: c[k] for k in ("name", "status", "reason")} for c in checks],
+                    result = {"checks": [{k: c.get(k) for k in ("name", "status", "reason", "source")} for c in checks],
                               "compliance_score": score, "verdict": verdict}
                 else:
                     result = {"error": "unknown tool"}
