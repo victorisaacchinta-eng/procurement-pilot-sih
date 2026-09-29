@@ -1,0 +1,20 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: pip install -r backend/requirements-dev.txt
+      - name: API tests
+        run: cd backend && python -m pytest -q
+      - name: Frontend demo engine matches the backend
+        run: python scripts/dump_backend.py > /tmp/backend.json && node scripts/parity_test.js /tmp/backend.json
+      - name: Seed in the frontend is up to date
+        run: python scripts/sync_seed.py && git diff --exit-code frontend/index.html

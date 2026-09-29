@@ -1,0 +1,22 @@
+# One web service: FastAPI serves the API at /api and the frontend at /.
+services:
+  - type: web
+    name: procurement-pilot
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: JWT_SECRET
+        generateValue: true
+      - key: RETENTION_DAYS
+        value: "180"
+      - key: LLM_BASE_URL
+        value: https://api.cerebras.ai/v1
+      - key: LLM_MODEL
+        value: gpt-oss-120b
+      - key: LLM_API_KEY
+        sync: false
