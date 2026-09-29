@@ -1,7 +1,7 @@
 # One web service: FastAPI serves the API at /api and the frontend at /.
 services:
   - type: web
-    name: procurement-pilot
+    name: procurement-pilot-sih
     runtime: python
     rootDir: backend
     buildCommand: pip install -r requirements.txt
