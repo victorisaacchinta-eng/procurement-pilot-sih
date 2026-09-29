@@ -63,7 +63,7 @@ The production setup is one Vercel project: FastAPI runs as a Vercel Function an
 1. Import this repo into Vercel. No build settings are needed.
 2. In the project, open **Storage → Create → Neon** and connect it. This adds `DATABASE_URL`, and the app switches from SQLite to Postgres automatically.
 3. In **Settings → Environment Variables**, set `JWT_SECRET` to a long random string. Every function instance must share it, or sign-ins will randomly fail.
-4. Optional: set `LLM_API_KEY` (and `LLM_BASE_URL`, `LLM_MODEL`) to turn on the reasoning layer.
+4. Optional: turn on the reasoning layer with Sarvam's `sarvam-105b`: `LLM_BASE_URL=https://api.sarvam.ai/v1`, `LLM_MODEL=sarvam-105b`, `LLM_REASONING_EFFORT=low`, `LLM_API_KEY=<your Sarvam key>`. Any other OpenAI-compatible provider works the same way.
 5. Redeploy. `GET /api/health` should report `"database": "postgres"`.
 
 Vercel functions do not sleep for minutes the way free always-on hosts do. Neon's free compute idles after 5 minutes and wakes on the next query.
@@ -130,7 +130,7 @@ render.yaml          Render alternative
 - GSTIN legal-name lookup is simulated. Structure and check-digit validation are real.
 - The debarment list is a seeded placeholder, not a live GeM or CPPP lookup.
 - Production runs on a free Neon Postgres; a real deployment needs a paid tier with backups and point-in-time restore.
-- The reasoning layer's provider is configuration. For government data, point `LLM_BASE_URL` at an Indian or self-hosted model.
+- The reasoning layer's provider is configuration. The live build uses Sarvam's `sarvam-105b`, an Indian model; a self-hosted model works the same way.
 
 ## Team
 

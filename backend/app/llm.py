@@ -6,13 +6,15 @@ to call it, reads the real results, and writes a recommendation in plain
 language. It never sets the verdict or the score; those come from checks.py.
 
 Provider is configuration, not code. Any OpenAI-compatible chat-completions
-endpoint works: a hosted API, a sovereign/Indian provider, or a local model via
-Ollama or vLLM. Set LLM_BASE_URL, LLM_API_KEY and LLM_MODEL.
+endpoint works. Production uses Sarvam (sarvam-105b, an Indian model):
+  LLM_BASE_URL=https://api.sarvam.ai/v1  LLM_MODEL=sarvam-105b  LLM_API_KEY=...
+A local model via Ollama or vLLM works the same way.
 
 If no key is set, or the call fails or times out, the endpoint falls back to a
 deterministic summary and says so. The officer always sees every check.
 """
 import os
+import re
 import json
 import urllib.request
 import urllib.error
@@ -21,6 +23,8 @@ LLM_BASE_URL = os.environ.get("LLM_BASE_URL", "https://api.cerebras.ai/v1").rstr
 LLM_API_KEY = (os.environ.get("LLM_API_KEY") or os.environ.get("CEREBRAS_API_KEY") or "").strip()
 LLM_MODEL = os.environ.get("LLM_MODEL", "gpt-oss-120b")
 LLM_TIMEOUT = float(os.environ.get("LLM_TIMEOUT", "25"))
+# Optional, only sent when set (e.g. "low" for reasoning models such as sarvam-105b or gpt-oss).
+LLM_REASONING_EFFORT = os.environ.get("LLM_REASONING_EFFORT", "").strip()
 
 TOOLS = [{
     "type": "function",
@@ -46,6 +50,8 @@ def configured() -> bool:
 
 
 def _post(payload: dict) -> dict:
+    if LLM_REASONING_EFFORT:
+        payload = dict(payload, reasoning_effort=LLM_REASONING_EFFORT)
     req = urllib.request.Request(
         f"{LLM_BASE_URL}/chat/completions",
         data=json.dumps(payload).encode(),
@@ -57,6 +63,12 @@ def _post(payload: dict) -> dict:
     )
     with urllib.request.urlopen(req, timeout=LLM_TIMEOUT) as r:
         return json.loads(r.read().decode())
+
+
+def _clean(text: str) -> str:
+    """Drop any visible chain-of-thought block a reasoning model leaves in the content."""
+    text = re.sub(r"<think>.*?</think>", "", text or "", flags=re.S)
+    return text.strip()
 
 
 def deterministic_summary(bidder_name: str, checks: list, score: int, verdict: str) -> str:
@@ -80,7 +92,7 @@ def reason(tender: dict, bidder_name: str, checks: list, score: int, verdict: st
                                      f"Bidder: {bidder_name}\nEvaluate this bid and give your recommendation.")},
     ]
     try:
-        first = _post({"model": LLM_MODEL, "messages": messages, "tools": TOOLS, "tool_choice": "auto", "max_tokens": 700})
+        first = _post({"model": LLM_MODEL, "messages": messages, "tools": TOOLS, "tool_choice": "auto", "max_tokens": 1500})
         msg = first["choices"][0]["message"]
         calls = msg.get("tool_calls") or []
         if calls:
@@ -92,10 +104,10 @@ def reason(tender: dict, bidder_name: str, checks: list, score: int, verdict: st
                 else:
                     result = {"error": "unknown tool"}
                 messages.append({"role": "tool", "tool_call_id": call.get("id"), "content": json.dumps(result)})
-            final = _post({"model": LLM_MODEL, "messages": messages, "max_tokens": 500})
-            text = (final["choices"][0]["message"].get("content") or "").strip()
+            final = _post({"model": LLM_MODEL, "messages": messages, "max_tokens": 1500})
+            text = _clean(final["choices"][0]["message"].get("content") or "")
         else:
-            text = (msg.get("content") or "").strip()
+            text = _clean(msg.get("content") or "")
         if not text:
             return fallback
         return {"ai_reasoning": text, "ai_source": f"model:{LLM_MODEL}"}
