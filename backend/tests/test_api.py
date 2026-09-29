@@ -220,3 +220,12 @@ def test_reset_is_admin_only_and_logged():
     assert client.get("/api/audit-log", headers=OFF).json() == []
     access = client.get("/api/audit-log/export", headers=ADM).json()["access_log"]
     assert any(a["action"] == "demo_reset" for a in access)
+
+
+def test_model_input_masks_pan_and_gstin():
+    from app import llm, checks as C
+    from app.data import TENDERS
+    t = TENDERS["pipeline-valves"]; n = "Vantage Flow Systems Pvt Ltd"
+    r = C.run_all_checks("pipeline-valves", t, n, t["bidders"][n])
+    blob = str(llm._safe_results(r, 89, "Needs review"))
+    assert "AADCV7310L" not in blob and "33AADCV7310L1ZB" not in blob

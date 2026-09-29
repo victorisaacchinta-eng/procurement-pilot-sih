@@ -85,6 +85,21 @@ def _post(payload: dict) -> dict:
         return json.loads(r.read().decode())
 
 
+_GSTIN = re.compile(r"\b(\d{2})([A-Z]{5}\d{4}[A-Z])([1-9A-Z]Z[0-9A-Z])\b")
+_PAN = re.compile(r"\b([A-Z]{3})[A-Z]{2}\d{4}([A-Z])\b")
+
+
+def mask_ids(text: str) -> str:
+    """The model never sees a full PAN or GSTIN: the PAN part is masked in both."""
+    text = _GSTIN.sub(lambda m: m.group(1) + "XXXXX" + "XXXX" + m.group(2)[-1] + m.group(3), text or "")
+    return _PAN.sub(lambda m: m.group(1) + "XX" + "XXXX" + m.group(2), text)
+
+
+def _safe_results(checks, score, verdict):
+    return {"checks": [{"name": c.get("name"), "status": c.get("status"), "reason": mask_ids(c.get("reason", "")), "source": c.get("source")}
+                       for c in checks], "compliance_score": score, "verdict": verdict}
+
+
 def _clean(text: str) -> str:
     """Drop any visible chain-of-thought block a reasoning model leaves in the content."""
     text = re.sub(r"<think>.*?</think>", "", text or "", flags=re.S)
@@ -113,8 +128,7 @@ def reason(tender: dict, bidder_name: str, checks: list, score: int, verdict: st
     ]
     step = "first call"
     if not LLM_TOOL_CALLING:
-        results = {"checks": [{k: c.get(k) for k in ("name", "status", "reason", "source")} for c in checks],
-                   "compliance_score": score, "verdict": verdict}
+        results = _safe_results(checks, score, verdict)
         direct = [
             {"role": "system", "content": SYSTEM_PROMPT_DIRECT},
             {"role": "user", "content": (f"Tender: {tender['title']}\nMandatory specification: {tender['spec']}\n"
@@ -152,8 +166,7 @@ def reason(tender: dict, bidder_name: str, checks: list, score: int, verdict: st
             messages.append({"role": "assistant", "content": msg.get("content") or "", "tool_calls": calls})
             for call in calls:
                 if call.get("function", {}).get("name") == "get_requirement_checks":
-                    result = {"checks": [{k: c.get(k) for k in ("name", "status", "reason", "source")} for c in checks],
-                              "compliance_score": score, "verdict": verdict}
+                    result = _safe_results(checks, score, verdict)
                 else:
                     result = {"error": "unknown tool"}
                 messages.append({"role": "tool", "tool_call_id": call.get("id"), "content": json.dumps(result)})
