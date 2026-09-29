@@ -103,8 +103,10 @@ def reason(tender: dict, bidder_name: str, checks: list, score: int, verdict: st
         # Status and the provider's error code only; never the request, which carries the key.
         detail = ""
         try:
-            err = json.loads(e.read().decode() or "{}").get("error", {})
-            detail = " " + str(err.get("code") or err.get("type") or "")[:60] if isinstance(err, dict) else ""
+            body = json.loads(e.read().decode() or "{}")
+            err = body.get("error") if isinstance(body.get("error"), dict) else body  # OpenAI-style or flat
+            code = str(err.get("code") or err.get("type") or "")[:60]
+            detail = f" {code}" if code else ""
         except (ValueError, OSError):
             pass
         print(f"[llm] HTTP {e.code}{detail} from {LLM_BASE_URL} model={LLM_MODEL}", flush=True)
