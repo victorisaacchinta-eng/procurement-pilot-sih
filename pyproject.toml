@@ -9,6 +9,8 @@ dependencies = [
   "PyJWT==2.10.1",
   "python-dotenv==1.0.1",
   "psycopg[binary]==3.2.3",
+  "pypdf==5.1.0",
+  "python-multipart==0.0.20",
 ]
 
 [tool.vercel]
