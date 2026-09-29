@@ -49,7 +49,10 @@ def _post(payload: dict) -> dict:
     req = urllib.request.Request(
         f"{LLM_BASE_URL}/chat/completions",
         data=json.dumps(payload).encode(),
-        headers={"Content-Type": "application/json", "Authorization": f"Bearer {LLM_API_KEY}"},
+        # A named User-Agent matters: some providers sit behind Cloudflare, which rejects
+        # Python's default "Python-urllib" agent with a bare 403 (error 1010).
+        headers={"Content-Type": "application/json", "Authorization": f"Bearer {LLM_API_KEY}",
+                 "User-Agent": "procurement-pilot/2.0"},
         method="POST",
     )
     with urllib.request.urlopen(req, timeout=LLM_TIMEOUT) as r:
