@@ -23,6 +23,7 @@ LLM_BASE_URL = os.environ.get("LLM_BASE_URL", "https://api.cerebras.ai/v1").rstr
 LLM_API_KEY = (os.environ.get("LLM_API_KEY") or os.environ.get("CEREBRAS_API_KEY") or "").strip()
 LLM_MODEL = os.environ.get("LLM_MODEL", "gpt-oss-120b")
 LLM_TIMEOUT = float(os.environ.get("LLM_TIMEOUT", "25"))
+MAX_TOOL_ROUNDS = 3
 # Optional, only sent when set (e.g. "low" for reasoning models such as sarvam-105b or gpt-oss).
 LLM_REASONING_EFFORT = os.environ.get("LLM_REASONING_EFFORT", "").strip()
 
@@ -93,10 +94,17 @@ def reason(tender: dict, bidder_name: str, checks: list, score: int, verdict: st
     ]
     step = "first call"
     try:
-        first = _post({"model": LLM_MODEL, "messages": messages, "tools": TOOLS, "tool_choice": "auto", "max_tokens": 1500})
-        msg = first["choices"][0]["message"]
-        calls = msg.get("tool_calls") or []
-        if calls:
+        # Tool loop. The tool list is sent on every round: some providers (Sarvam) reject a
+        # conversation that contains tool messages unless tools are also provided.
+        text = ""
+        for round_no in range(1, MAX_TOOL_ROUNDS + 1):
+            step = "first call" if round_no == 1 else f"call {round_no}"
+            resp = _post({"model": LLM_MODEL, "messages": messages, "tools": TOOLS, "tool_choice": "auto", "max_tokens": 1500})
+            msg = resp["choices"][0]["message"]
+            calls = msg.get("tool_calls") or []
+            if not calls:
+                text = _clean(msg.get("content") or "")
+                break
             messages.append({"role": "assistant", "content": msg.get("content") or "", "tool_calls": calls})
             for call in calls:
                 if call.get("function", {}).get("name") == "get_requirement_checks":
@@ -105,11 +113,6 @@ def reason(tender: dict, bidder_name: str, checks: list, score: int, verdict: st
                 else:
                     result = {"error": "unknown tool"}
                 messages.append({"role": "tool", "tool_call_id": call.get("id"), "content": json.dumps(result)})
-            step = "second call"
-            final = _post({"model": LLM_MODEL, "messages": messages, "max_tokens": 1500})
-            text = _clean(final["choices"][0]["message"].get("content") or "")
-        else:
-            text = _clean(msg.get("content") or "")
         if not text:
             return fallback
         return {"ai_reasoning": text, "ai_source": f"model:{LLM_MODEL}"}
