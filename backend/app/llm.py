@@ -1,9 +1,10 @@
 """
-Reasoning layer: one real tool-calling step over an OpenAI-compatible API.
+Reasoning layer over an OpenAI-compatible API.
 
-The model gets the tender spec and one tool, get_requirement_checks. It decides
-to call it, reads the real results, and writes a recommendation in plain
-language. It never sets the verdict or the score; those come from checks.py.
+Default (direct mode): one call carrying the tender spec and the ten check
+results. Optional tool mode (LLM_TOOL_CALLING=on): the model fetches the results
+through get_requirement_checks. Either way it writes a recommendation in plain
+language and never sets the verdict or the score; those come from checks.py.
 
 Provider is configuration, not code. Any OpenAI-compatible chat-completions
 endpoint works. Production uses Sarvam (sarvam-105b, an Indian model):

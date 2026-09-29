@@ -2,7 +2,7 @@
 
 Bid compliance checking for government procurement officers. Built by **Team Ace Azael** (ACE Engineering College, Hyderabad) for **Smart India Hackathon 2026, problem statement SIH26100** (Ministry of Petroleum and Natural Gas).
 
-Every bid runs through ten fixed checks written in plain code. A reasoning layer reads those results through one tool call and explains every flag in plain language. A named officer records the decision, and overruling a flagged bid needs a senior approver and a written reason. Everything lands in an audit log.
+Every bid runs through ten fixed checks written in plain code. A reasoning layer (Sarvam's sarvam-105b) reads those results and explains every flag in plain language. A named officer records the decision, and overruling a flagged bid needs a senior approver and a written reason. Everything lands in an audit log.
 
 **Live:** https://procurement-pilot-sih.vercel.app (sign in with a demo account below)
 
@@ -16,7 +16,7 @@ Every bid runs through ten fixed checks written in plain code. A reasoning layer
 | **Weighted score** | Weights sum to 100. PASS earns the full weight, FLAG half, FAIL nothing. A FAIL on EMD, documents or debarment caps the score at 45; any other FAIL caps it at 72. The UI shows exactly where points were lost. |
 | **Registry verification** | Real GSTIN structure and check-digit validation. Legal-name match runs against a simulated registry and every result says `simulated`. |
 | **Collusion screen** | Compares every pair of bids on a tender: price clustering under 0.5%, submissions within 5 minutes, shared registered address, cover bids over 25% above the benchmark. |
-| **Reasoning layer** | One real tool-calling step over any OpenAI-compatible API. The model cannot set the score or verdict. No key, a timeout or an error falls back to a deterministic summary and says so. |
+| **Reasoning layer** | One call to any OpenAI-compatible API with the check results (a tool-calling mode is available with `LLM_TOOL_CALLING=on`). The model cannot set the score or verdict. No key, a timeout or an error falls back to a deterministic summary and says so. |
 | **Roles** | `officer`, `senior_approver`, `admin` with JWT sign-in. The override rule is enforced by the server: an officer gets 403, an approver needs 30+ characters of reason (422 otherwise). |
 | **DPDP-style retention** | Evaluations older than `RETENTION_DAYS` (180) are irreversibly anonymised while scores stay. Viewing the log needs sign-in; exporting it is admin only and every export is logged. |
 
@@ -77,7 +77,7 @@ If the API is unreachable for any reason, the frontend falls back to a built-in 
 ```bash
 cd backend
 pip install -r requirements-dev.txt
-python -m pytest -q                      # 15 API tests on SQLite
+python -m pytest -q                      # 16 API tests on SQLite
 TEST_DATABASE_URL=postgresql://... python -m pytest -q   # same suite on Postgres
 cd .. && python scripts/dump_backend.py > /tmp/b.json && node scripts/parity_test.js /tmp/b.json
 ```
@@ -94,7 +94,7 @@ backend/
   app/checks.py      the ten checks, weights, caps, verdict
   app/registry.py    GSTIN / Udyam validation, simulated registry
   app/collusion.py   pairwise collusion screen
-  app/llm.py         tool-calling reasoning layer, provider-agnostic
+  app/llm.py         reasoning layer, provider-agnostic
   app/auth.py        JWT sign-in, roles
   app/db.py          Postgres (DATABASE_URL) or SQLite, access log, retention job
   app/data.py        sample tenders and bids

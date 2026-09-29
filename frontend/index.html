@@ -532,7 +532,7 @@ td .why-o{display:block;font-size:12.5px;color:var(--grey-text);margin-top:4px;m
     </div>
     <div class="cells">
       <div class="cell" data-rev><span class="lbl saf">Code</span><h3>Rules first</h3><p data-split>EMD, documents, turnover and price are pass or fail. Code decides those, so the model never guesses a number.</p></div>
-      <div class="cell" data-rev><span class="lbl nvy">Model</span><h3>It explains, it never approves</h3><p data-split>The reasoning layer calls one tool to read the check results, then names every flag in plain language. The score and verdict are computed, not written.</p></div>
+      <div class="cell" data-rev><span class="lbl nvy">Model</span><h3>It explains, it never approves</h3><p data-split>The reasoning layer reads the check results, then names every flag in plain language. The score and verdict are computed, not written.</p></div>
       <div class="cell" data-rev><span class="lbl grn">Officer</span><h3>A name on every decision</h3><p data-split>Decisions are stamped with who and when. Overruling a flagged bid takes a senior approver and a written reason, both kept in the audit log.</p></div>
     </div>
   </section>
@@ -552,7 +552,7 @@ td .why-o{display:block;font-size:12.5px;color:var(--grey-text);margin-top:4px;m
       <p data-rev>Short answers. The workstation shows each one in practice.</p>
     </div>
     <div class="faq">
-      <details data-rev><summary>What does the model actually see?</summary><p>The tender title and specification, the bidder name, and the results of the ten checks through one tool call. It does not receive bank details or raw bid documents, and it cannot change the score or the verdict.</p></details>
+      <details data-rev><summary>What does the model actually see?</summary><p>The tender title and specification, the bidder name, and the results of the ten checks. It does not receive bank details or raw bid documents, and it cannot change the score or the verdict.</p></details>
       <details data-rev><summary>What happens if the model is down?</summary><p>The ten checks and the score still run, because they are plain code. The recommendation falls back to a deterministic summary and says so on screen. The model provider is a setting, so it can point at an Indian or self-hosted model without code changes.</p></details>
       <details data-rev><summary>Can someone quietly approve a flagged bid?</summary><p>No. Qualifying a bid the system did not mark compliant needs a senior approver and at least 30 characters of written reason. An officer gets refused by the server, not just the screen, and every override is kept in the audit log.</p></details>
       <details data-rev><summary>Who can see and export the audit log?</summary><p>Any signed-in user can view it. Only an admin can export it, and every export is itself written to an access log.</p></details>
@@ -1066,7 +1066,7 @@ function evaluate(t,b){
   var fallback=false;
   var work=function(){ if(S.mode==='live') return api('/api/evaluate-seed?tender_id='+encodeURIComponent(t.id)+'&bidder_name='+encodeURIComponent(b.name),{timeout:70000}).then(null,function(e){ if(e.kind==='http'&&e.status===401) throw e; fallback=true; return E.evaluate(t.id,b.name,demoHistory()); });
     return new Promise(function(res){ setTimeout(function(){ res(E.evaluate(t.id,b.name,demoHistory())); },900); }); };
-  var lines=['Loading tender '+t.id,'Reading bid from '+b.name].concat(CHECK_DESC.map(function(c){return c[0].replace(' *','');})).concat([S.mode==='live'?'Reasoning layer: tool call, then recommendation':'Writing deterministic summary']);
+  var lines=['Loading tender '+t.id,'Reading bid from '+b.name].concat(CHECK_DESC.map(function(c){return c[0].replace(' *','');})).concat([S.mode==='live'?'Reasoning layer: writing the recommendation':'Writing deterministic summary']);
   $('#run').scrollIntoView({behavior:RM?'auto':'smooth',block:'start'});
   think({kicker:'Evaluating',title:esc(b.name.split(' ').slice(0,3).join(' '))+' <span class="hl">&rarr; '+esc(t.id)+'</span>',meta:(S.mode==='live'?'Live backend':'Demo engine')+' · 10 checks',lines:lines,work:work}).then(function(o){
     $$('[data-eval]').forEach(function(x){x.disabled=false;});
