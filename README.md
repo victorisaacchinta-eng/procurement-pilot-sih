@@ -63,7 +63,7 @@ The production setup is one Vercel project: FastAPI runs as a Vercel Function an
 1. Import this repo into Vercel. No build settings are needed.
 2. In the project, open **Storage → Create → Neon** and connect it. This adds `DATABASE_URL`, and the app switches from SQLite to Postgres automatically.
 3. In **Settings → Environment Variables**, set `JWT_SECRET` to a long random string. Every function instance must share it, or sign-ins will randomly fail.
-4. Optional: turn on the reasoning layer with Sarvam's `sarvam-105b`: `LLM_BASE_URL=https://api.sarvam.ai/v1`, `LLM_MODEL=sarvam-105b`, `LLM_REASONING_EFFORT=low`, `LLM_API_KEY=<your Sarvam key>`. Any other OpenAI-compatible provider works the same way.
+4. Optional: turn on the reasoning layer with Sarvam's `sarvam-105b`: `LLM_BASE_URL=https://api.sarvam.ai/v1`, `LLM_MODEL=sarvam-105b`, `LLM_REASONING_EFFORT=none` (switches off hidden reasoning, which keeps answers fast), `LLM_API_KEY=<your Sarvam key>`. Any other OpenAI-compatible provider works the same way.
 5. Redeploy. `GET /api/health` should report `"database": "postgres"`.
 
 Vercel functions do not sleep for minutes the way free always-on hosts do. Neon's free compute idles after 5 minutes and wakes on the next query.

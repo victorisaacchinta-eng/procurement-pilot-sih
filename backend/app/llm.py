@@ -27,7 +27,7 @@ MAX_TOOL_ROUNDS = 3
 # "on": the model fetches the check results through a tool call (two round trips; best on fast providers).
 # "off" (default): the check results go straight into the prompt (one round trip; better for slower models).
 LLM_TOOL_CALLING = os.environ.get("LLM_TOOL_CALLING", "off").strip().lower() in ("1", "on", "true", "yes")
-# Optional, only sent when set (e.g. "low" for reasoning models such as sarvam-105b or gpt-oss).
+# Optional, only sent when set: "low"/"high"/"max", or "none" to send null and switch hidden reasoning off (Sarvam).
 LLM_REASONING_EFFORT = os.environ.get("LLM_REASONING_EFFORT", "").strip()
 
 TOOLS = [{
@@ -63,7 +63,10 @@ def configured() -> bool:
 
 
 def _post(payload: dict) -> dict:
-    if LLM_REASONING_EFFORT:
+    if LLM_REASONING_EFFORT.lower() in ("none", "null", "off"):
+        # Sarvam: an explicit null disables hidden reasoning (their advice for latency-sensitive calls).
+        payload = dict(payload, reasoning_effort=None)
+    elif LLM_REASONING_EFFORT:
         payload = dict(payload, reasoning_effort=LLM_REASONING_EFFORT)
     req = urllib.request.Request(
         f"{LLM_BASE_URL}/chat/completions",
