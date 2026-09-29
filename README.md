@@ -6,6 +6,8 @@ Every bid runs through fifteen fixed checks written in plain code, covering all 
 
 **Live:** https://procurement-pilot-sih.vercel.app (sign in with a demo account below)
 
+**Demo video (4:52):** https://youtu.be/D4A3Fv-sczU
+
 > Student prototype. Not an official government system and not affiliated with or endorsed by any ministry or PSU. All tenders, bids, registry records, GSTINs, PANs, CINs and Udyam numbers in this repo are sample data.
 
 ## What it does
