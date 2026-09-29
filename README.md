@@ -99,7 +99,7 @@ If the API is unreachable for any reason, the frontend falls back to a built-in 
 ```bash
 cd backend
 pip install -r requirements-dev.txt
-python -m pytest -q                      # 25 API tests on SQLite
+python -m pytest -q                      # 26 API tests on SQLite
 TEST_DATABASE_URL=postgresql://... python -m pytest -q   # same suite on Postgres
 cd .. && python scripts/dump_backend.py > /tmp/b.json && node scripts/parity_test.js /tmp/b.json
 ```
