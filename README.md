@@ -54,6 +54,8 @@ To turn on the reasoning layer, copy `.env.example` to `backend/.env` and set `L
 6. **Depot security → Falcon → Mark Non-Compliant**, then evaluate **Pipeline survey → Falcon**: past performance now flags the earlier decision.
 7. **Audit log** as `admin1` → **Export log**. The export shows up in the access log inside the export.
 
+Before a recording or a review window, sign in as `admin1`, open **Audit log** and press **Reset demo data** twice to start from a clean log.
+
 ## Deploy (Vercel + Neon, free)
 
 The production setup is one Vercel project: FastAPI runs as a Vercel Function and `frontend/` is served from the CDN. `pyproject.toml` tells Vercel where the app is (`backend.app.main:app`).
@@ -119,6 +121,7 @@ render.yaml          Render alternative
 | GET | `/api/audit-log` | signed in |
 | GET | `/api/audit-log/export` | admin |
 | POST | `/api/admin/retention` | admin |
+| POST | `/api/admin/reset-demo` | admin (clears evaluations before a demo; logged) |
 | GET | `/api/health` | anyone |
 
 ## Known limits

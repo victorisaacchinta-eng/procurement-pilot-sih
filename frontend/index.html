@@ -631,7 +631,7 @@ td .why-o{display:block;font-size:12.5px;color:var(--grey-text);margin-top:4px;m
       <div class="audit-top">
         <div><span class="lbl grey">Every evaluation and decision</span><h2 class="disp" style="margin-top:8px">Audit <span class="saf">log</span></h2></div>
         <div style="display:grid;gap:6px;justify-items:end">
-          <button class="btn" id="exportBtn" type="button">Export log</button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end"><button class="btn" id="resetBtn" type="button" hidden>Reset demo data</button><button class="btn" id="exportBtn" type="button">Export log</button></div>
           <span class="lbl grey" id="exportNote"></span>
         </div>
       </div>
@@ -1171,7 +1171,8 @@ function loadAudit(){
   var paint=function(rows){ body.innerHTML=rows.length?rows.map(function(r){ var d=r.officer||'Pending', cls=d==='Qualified'?'grn':d==='Mark Non-Compliant'?'bad':d==='Hold for Review'?'saf':d==='Pending'?'grey':'nvy';
     return '<tr><td class="mono num">'+esc(fmtTs(r.decidedAt||r.ts))+'</td><td class="mono">'+esc(r.tender)+'</td><td>'+esc(r.bidder)+(r.anonymised?' <span class="lbl grey">anonymised</span>':'')+'</td><td class="mono num">'+esc(r.score==null?'-':r.score)+'</td><td>'+esc(r.aiVerdict)+'</td><td><span class="dec '+cls+'">'+esc(d)+'</span>'+(r.overrideReason?'<span class="why-o">Override: '+esc(r.overrideReason)+'</span>':'')+'</td><td class="mono">'+esc(r.by||r.evaluatedBy||'')+'</td></tr>'; }).join('')
     :'<tr><td colspan="7" class="grey">No evaluations yet. Evaluate a bid and record a decision to see it here.</td></tr>'; };
-  var eb=$('#exportBtn'), en=$('#exportNote'), isAdmin=S.role==='admin'; eb.disabled=!isAdmin; en.textContent=isAdmin?'Exports are logged':'Admin only'; $('#exportBox').hidden=true;
+  var eb=$('#exportBtn'), en=$('#exportNote'), isAdmin=S.role==='admin'; eb.disabled=!isAdmin; en.textContent=isAdmin?'Exports and resets are logged':'Admin only'; $('#exportBox').hidden=true;
+  var rb=$('#resetBtn'); rb.hidden=!isAdmin; rb.classList.remove('arm'); rb.textContent='Reset demo data'; rb.disabled=false;
   if(S.mode==='live') api('/api/audit-log').then(function(r){ paint(Array.isArray(r)?r:[]); },function(){ paint(demoAudit); toast('Audit log did not load from the backend. Showing the local demo log.'); });
   else paint(demoAudit);
 }
@@ -1181,6 +1182,15 @@ $('#exportBtn').addEventListener('click',function(){
   var show=function(data){ txt.value=JSON.stringify(data,null,2); box.hidden=false; $('#copyNote').textContent=''; if(G&&!RM) G.from(box,{y:12,opacity:0,duration:.35}); };
   if(S.mode==='live') api('/api/audit-log/export').then(show,function(e){ toast(e.message||'Export failed.'); });
   else show({exported_at:nowIso(),exported_by:S.user,retention_days:180,records:demoAudit,access_log:[{ts:nowIso(),username:S.user,role:S.role,action:'audit_export',detail:demoAudit.length+' records'}]});
+});
+var resetT=0;
+$('#resetBtn').addEventListener('click',function(){
+  var rb=this; if(S.role!=='admin') return;
+  if(!rb.classList.contains('arm')){ rb.classList.add('arm'); rb.textContent='Confirm: clear all evaluations'; clearTimeout(resetT); resetT=setTimeout(function(){ rb.classList.remove('arm'); rb.textContent='Reset demo data'; },4000); return; }
+  clearTimeout(resetT); rb.disabled=true;
+  var done=function(n){ S.results={}; S.decided={}; S.lastKey=null; toast('Demo data cleared ('+n+' evaluations). The reset is kept in the access log.'); loadAudit(); };
+  if(S.mode==='live') api('/api/admin/reset-demo',{method:'POST'}).then(function(r){ done(r.cleared); },function(e){ rb.disabled=false; toast(e.message||'Reset failed.'); });
+  else { var n=demoAudit.length; demoAudit.length=0; done(n); }
 });
 $('#copyExport').addEventListener('click',function(){ var txt=$('#exportTxt'), note=$('#copyNote');
   try{ navigator.clipboard.writeText(txt.value).then(function(){ note.textContent='Copied'; },function(){ txt.select(); note.textContent='Selected. Press Ctrl or Cmd + C.'; }); }catch(_){ txt.select(); note.textContent='Selected. Press Ctrl or Cmd + C.'; } });

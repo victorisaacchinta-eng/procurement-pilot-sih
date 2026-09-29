@@ -13,6 +13,7 @@ Bid compliance verification for government procurement officers
   GET  /api/audit-log            every evaluation and decision
   GET  /api/audit-log/export     admin only, and the export itself is logged
   POST /api/admin/retention      admin only, run the anonymisation job now
+  POST /api/admin/reset-demo     admin only, clear evaluations before a demo (logged)
   GET  /api/health               status, no auth
 
 The frontend in ../frontend is served at / by the same process.
@@ -181,6 +182,16 @@ def admin_retention(user: dict = Depends(auth.require_roles("admin"))):
     changed = run_retention()
     log_access(user["username"], user["role"], "retention_run", f"{changed} anonymised")
     return {"anonymised": changed, "retention_days": RETENTION_DAYS}
+
+
+@app.post("/api/admin/reset-demo")
+def admin_reset_demo(user: dict = Depends(auth.require_roles("admin"))):
+    """Clear evaluations and decisions so a demo starts clean. The reset itself is kept in the access log."""
+    with get_db() as conn:
+        n = conn.execute("SELECT COUNT(*) AS n FROM audit_log").fetchone()["n"]
+        conn.execute("DELETE FROM audit_log")
+    log_access(user["username"], user["role"], "demo_reset", f"{n} evaluations cleared")
+    return {"cleared": n}
 
 
 @app.get("/api/health")

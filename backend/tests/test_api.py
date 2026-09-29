@@ -131,3 +131,13 @@ def test_retention_anonymises_old_rows():
     rows = client.get("/api/audit-log", headers=OFF).json()
     assert not any(r["bidder"] == "Konkan Bulk Carriers Ltd" for r in rows)
     assert any(r["anonymised"] for r in rows)
+
+
+def test_reset_is_admin_only_and_logged():
+    evaluate("pipeline-valves", "Petrotech Valve Industries Private Limited")
+    assert client.post("/api/admin/reset-demo", headers=OFF).status_code == 403
+    r = client.post("/api/admin/reset-demo", headers=ADM)
+    assert r.status_code == 200 and r.json()["cleared"] >= 1
+    assert client.get("/api/audit-log", headers=OFF).json() == []
+    access = client.get("/api/audit-log/export", headers=ADM).json()["access_log"]
+    assert any(a["action"] == "demo_reset" for a in access)
