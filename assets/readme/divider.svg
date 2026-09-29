@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 24" width="1280" height="24" role="presentation">
+<style>.m{animation:sl 6s cubic-bezier(.65,0,.35,1) infinite alternate} @keyframes sl{from{transform:translateX(0)}to{transform:translateX(1060px)}} @media (prefers-reduced-motion: reduce){*{animation:none!important}}</style>
+<rect x="0" y="11" width="1280" height="2" fill="#8A847A" fill-opacity=".35"/>
+<g class="m"><rect x="0" y="9" width="72" height="6" fill="#FF9933"/><rect x="72" y="9" width="72" height="6" fill="#F4F1EA" stroke="#8A847A" stroke-opacity=".4"/><rect x="144" y="9" width="76" height="6" fill="#138808"/></g>
+</svg>
