@@ -10,7 +10,7 @@ Prepared 29 September 2026 for Team Ace Azael.
 | Target repo | `victorisaacchinta-eng/procurement-pilot-sih` (new, public) |
 | Purpose | The link that goes on the SIH portal and on slide 6 of the national deck |
 | Problem statement | SIH26100, Ministry of Petroleum and Natural Gas, theme Smart Automation |
-| Deploy target | One Render web service from `render.yaml` (API at `/api`, frontend at `/`) |
+| Deploy target | One Vercel project (FastAPI as a Vercel Function, frontend on the CDN) with a free Neon Postgres. `render.yaml` kept as an alternative. |
 
 ## Not in scope, not touched
 
@@ -66,6 +66,6 @@ Both repos can point at each other in their READMEs if you want the lineage visi
 
 - [ ] Confirm the repo name and that it should be public
 - [ ] Decide on a licence (none is included, which means all rights reserved)
-- [ ] Deploy on Render and put the live URL in this README and on slide 6
+- [ ] Deploy on Vercel with Neon attached and `JWT_SECRET` set, then put the live URL in the README and on slide 6
 - [ ] Open the live URL in a private window, sign in as each demo account, run the demo path in the README
 - [ ] Confirm the demo video and deck match this build (score numbers, decision names, 10 checks)

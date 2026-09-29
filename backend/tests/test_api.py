@@ -3,6 +3,10 @@ import tempfile
 
 # isolated database and no reasoning-layer key for every test run
 os.environ["DB_PATH"] = os.path.join(tempfile.mkdtemp(), "test.db")
+if os.environ.get("TEST_DATABASE_URL"):  # run the same suite against Postgres
+    os.environ["DATABASE_URL"] = os.environ["TEST_DATABASE_URL"]
+else:
+    os.environ.pop("DATABASE_URL", None)
 os.environ.pop("LLM_API_KEY", None)
 os.environ.pop("CEREBRAS_API_KEY", None)
 

@@ -52,20 +52,29 @@ To turn on the reasoning layer, copy `.env.example` to `backend/.env` and set `L
 6. **Depot security → Falcon → Mark Non-Compliant**, then evaluate **Pipeline survey → Falcon**: past performance now flags the earlier decision.
 7. **Audit log** as `admin1` → **Export log**. The export shows up in the access log inside the export.
 
-## Deploy (Render, one service)
+## Deploy (Vercel + Neon, free)
 
-The repo includes `render.yaml`. In Render: **New → Blueprint**, pick this repo, then set `LLM_API_KEY` if you want the reasoning layer. `JWT_SECRET` is generated for you. The same service serves the API at `/api` and the frontend at `/`.
+The production setup is one Vercel project: FastAPI runs as a Vercel Function and `frontend/` is served from the CDN. `pyproject.toml` tells Vercel where the app is (`backend.app.main:app`).
 
-Free Render instances sleep when idle and their disk resets on redeploy, so the audit log starts fresh after a deploy. The frontend handles a sleeping backend: it pings `/api/health` on load, and if the API still does not answer it runs a built-in demo engine on the same sample data and labels it "Demo engine".
+1. Import this repo into Vercel. No build settings are needed.
+2. In the project, open **Storage → Create → Neon** and connect it. This adds `DATABASE_URL`, and the app switches from SQLite to Postgres automatically.
+3. In **Settings → Environment Variables**, set `JWT_SECRET` to a long random string. Every function instance must share it, or sign-ins will randomly fail.
+4. Optional: set `LLM_API_KEY` (and `LLM_BASE_URL`, `LLM_MODEL`) to turn on the reasoning layer.
+5. Redeploy. `GET /api/health` should report `"database": "postgres"`.
 
-**Split deploy (optional):** host `frontend/` on any static host and set `window.PP_API` at the top of `frontend/index.html` to the API origin, plus `CORS_ORIGINS` on the backend.
+Vercel functions do not sleep for minutes the way free always-on hosts do. Neon's free compute idles after 5 minutes and wakes on the next query.
+
+**Alternative: Render.** `render.yaml` deploys the same app as one long-running service (`New → Blueprint`). On the free plan it sleeps after 15 minutes idle and loses its SQLite file, so set `DATABASE_URL` there too if you use it.
+
+If the API is unreachable for any reason, the frontend falls back to a built-in demo engine on the same sample data and labels it "Demo engine".
 
 ## Tests
 
 ```bash
 cd backend
 pip install -r requirements-dev.txt
-python -m pytest -q                      # 15 API tests
+python -m pytest -q                      # 15 API tests on SQLite
+TEST_DATABASE_URL=postgresql://... python -m pytest -q   # same suite on Postgres
 cd .. && python scripts/dump_backend.py > /tmp/b.json && node scripts/parity_test.js /tmp/b.json
 ```
 
@@ -83,7 +92,7 @@ backend/
   app/collusion.py   pairwise collusion screen
   app/llm.py         tool-calling reasoning layer, provider-agnostic
   app/auth.py        JWT sign-in, roles
-  app/db.py          SQLite, access log, retention job
+  app/db.py          Postgres (DATABASE_URL) or SQLite, access log, retention job
   app/data.py        sample tenders and bids
   tests/test_api.py
 frontend/
@@ -91,7 +100,8 @@ frontend/
   team-logo.png
 scripts/             seed sync, parity test
 docs/REPO_SCOPE.md   what this repo is and is not
-render.yaml
+pyproject.toml       Vercel entrypoint
+render.yaml          Render alternative
 ```
 
 ## API
@@ -114,7 +124,7 @@ render.yaml
 - Tenders and bids are seeded; there is no document upload or PDF parsing in this build.
 - GSTIN legal-name lookup is simulated. Structure and check-digit validation are real.
 - The debarment list is a seeded placeholder, not a live GeM or CPPP lookup.
-- SQLite is fine for the prototype; a real deployment needs a managed database and backups.
+- Production runs on a free Neon Postgres; a real deployment needs a paid tier with backups and point-in-time restore.
 - The reasoning layer's provider is configuration. For government data, point `LLM_BASE_URL` at an Indian or self-hosted model.
 
 ## Team

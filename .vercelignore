@@ -1,0 +1,6 @@
+backend/tests
+backend/*.db
+scripts
+docs
+.github
+*.db

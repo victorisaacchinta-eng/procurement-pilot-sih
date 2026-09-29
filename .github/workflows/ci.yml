@@ -3,6 +3,14 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: pp
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -12,8 +20,10 @@ jobs:
         with:
           node-version: "20"
       - run: pip install -r backend/requirements-dev.txt
-      - name: API tests
+      - name: API tests (SQLite)
         run: cd backend && python -m pytest -q
+      - name: API tests (Postgres)
+        run: cd backend && TEST_DATABASE_URL=postgresql://postgres:postgres@localhost:5432/pp python -m pytest -q
       - name: Frontend demo engine matches the backend
         run: python scripts/dump_backend.py > /tmp/backend.json && node scripts/parity_test.js /tmp/backend.json
       - name: Seed in the frontend is up to date

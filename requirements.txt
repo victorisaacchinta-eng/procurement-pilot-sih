@@ -1,5 +1,5 @@
+# Used by Vercel. Same pins as backend/requirements.txt (uvicorn is not needed there).
 fastapi==0.115.6
-uvicorn[standard]==0.32.1
 pydantic==2.10.4
 PyJWT==2.10.1
 python-dotenv==1.0.1

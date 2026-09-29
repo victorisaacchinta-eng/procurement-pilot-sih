@@ -34,7 +34,7 @@ from pydantic import BaseModel
 
 from . import auth, checks as C, collusion, llm, registry
 from .data import TENDERS
-from .db import RETENTION_DAYS, get_db, init_db, log_access, now_iso, run_retention
+from .db import IS_PG, RETENTION_DAYS, get_db, init_db, log_access, now_iso, run_retention
 
 DECISIONS = ("Qualified", "Request Clarification", "Hold for Review", "Mark Non-Compliant")
 OVERRIDE_MIN_CHARS = 30
@@ -112,11 +112,10 @@ def evaluate_seed(tender_id: str, bidder_name: str, user: dict = Depends(auth.cu
     score, verdict, breakdown = C.score_and_verdict(results)
     ai = llm.reason(tender, bidder_name, results, score, verdict)
     with get_db() as conn:
-        cur = conn.execute(
+        eid = conn.insert(
             "INSERT INTO audit_log (ts, tender_id, bidder_name, checks_json, compliance_score, ai_verdict, ai_reasoning, ai_source, evaluated_by) "
             "VALUES (?,?,?,?,?,?,?,?,?)",
             (now_iso(), tender_id, bidder_name, json.dumps(results), score, verdict, ai["ai_reasoning"], ai["ai_source"], user["username"]))
-        eid = cur.lastrowid
     return {"evaluation_id": eid, "tender_id": tender_id, "bidder_name": bidder_name, "checks": results,
             "compliance_score": score, "score_breakdown": breakdown, "verdict": verdict,
             "ai_reasoning": ai["ai_reasoning"], "ai_source": ai["ai_source"], "registry_mode": registry.MODE}
@@ -188,7 +187,7 @@ def admin_retention(user: dict = Depends(auth.require_roles("admin"))):
 def health():
     return {"status": "ok", "reasoning_layer": "configured" if llm.configured() else "deterministic only",
             "model": llm.LLM_MODEL if llm.configured() else None, "registry_mode": registry.MODE,
-            "retention_days": RETENTION_DAYS, "tenders": len(TENDERS)}
+            "retention_days": RETENTION_DAYS, "tenders": len(TENDERS), "database": "postgres" if IS_PG else "sqlite"}
 
 
 if FRONTEND_DIR.is_dir():
