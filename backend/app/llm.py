@@ -96,14 +96,21 @@ def reason(tender: dict, bidder_name: str, checks: list, score: int, verdict: st
     try:
         # Tool loop. The tool list is sent on every round: some providers (Sarvam) reject a
         # conversation that contains tool messages unless tools are also provided.
-        text = ""
+        text, why = "", ""
         for round_no in range(1, MAX_TOOL_ROUNDS + 1):
             step = "first call" if round_no == 1 else f"call {round_no}"
-            resp = _post({"model": LLM_MODEL, "messages": messages, "tools": TOOLS, "tool_choice": "auto", "max_tokens": 1500})
-            msg = resp["choices"][0]["message"]
+            have_results = any(m["role"] == "tool" for m in messages)
+            # Once the check results are in, ask for the written answer only (no more tool calls),
+            # with room for a reasoning model's hidden thinking.
+            resp = _post({"model": LLM_MODEL, "messages": messages, "tools": TOOLS,
+                          "tool_choice": "none" if have_results else "auto",
+                          "max_tokens": 3000 if have_results else 1500})
+            choice = resp["choices"][0]
+            msg = choice["message"]
             calls = msg.get("tool_calls") or []
-            if not calls:
+            if not calls or have_results:
                 text = _clean(msg.get("content") or "")
+                why = f"finish_reason={choice.get('finish_reason')}"
                 break
             messages.append({"role": "assistant", "content": msg.get("content") or "", "tool_calls": calls})
             for call in calls:
@@ -114,6 +121,8 @@ def reason(tender: dict, bidder_name: str, checks: list, score: int, verdict: st
                     result = {"error": "unknown tool"}
                 messages.append({"role": "tool", "tool_call_id": call.get("id"), "content": json.dumps(result)})
         if not text:
+            print(f"[llm] empty answer on {step} ({why or 'tool rounds exhausted'}) model={LLM_MODEL}", flush=True)
+            fallback["ai_reasoning"] += f"\n(Reasoning layer returned no text this run, {why or 'tool rounds exhausted'}. The checks above are unaffected.)"
             return fallback
         return {"ai_reasoning": text, "ai_source": f"model:{LLM_MODEL}"}
     except urllib.error.HTTPError as e:
