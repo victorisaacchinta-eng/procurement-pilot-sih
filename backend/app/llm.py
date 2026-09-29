@@ -22,8 +22,11 @@ import urllib.error
 LLM_BASE_URL = os.environ.get("LLM_BASE_URL", "https://api.cerebras.ai/v1").rstrip("/")
 LLM_API_KEY = (os.environ.get("LLM_API_KEY") or os.environ.get("CEREBRAS_API_KEY") or "").strip()
 LLM_MODEL = os.environ.get("LLM_MODEL", "gpt-oss-120b")
-LLM_TIMEOUT = float(os.environ.get("LLM_TIMEOUT", "25"))
+LLM_TIMEOUT = float(os.environ.get("LLM_TIMEOUT", "45"))
 MAX_TOOL_ROUNDS = 3
+# "on": the model fetches the check results through a tool call (two round trips; best on fast providers).
+# "off" (default): the check results go straight into the prompt (one round trip; better for slower models).
+LLM_TOOL_CALLING = os.environ.get("LLM_TOOL_CALLING", "off").strip().lower() in ("1", "on", "true", "yes")
 # Optional, only sent when set (e.g. "low" for reasoning models such as sarvam-105b or gpt-oss).
 LLM_REASONING_EFFORT = os.environ.get("LLM_REASONING_EFFORT", "").strip()
 
@@ -37,6 +40,15 @@ TOOLS = [{
         "parameters": {"type": "object", "properties": {}, "required": []},
     },
 }]
+
+SYSTEM_PROMPT_DIRECT = (
+    "You are the reasoning layer inside Procurement Pilot, a bid compliance tool used by government procurement "
+    "officers. You assist a human officer and never make the decision. You are given the results of ten deterministic "
+    "checks. Write a short, specific recommendation in plain language (under 120 words). Name every FLAG and FAIL and "
+    "say what the officer should verify in person, including any requirement in the tender specification that the "
+    "checks did not cover. Use only facts from the check results and the tender. Do not invent documents, numbers or "
+    "history. No markdown."
+)
 
 SYSTEM_PROMPT = (
     "You are the reasoning layer inside Procurement Pilot, a bid compliance tool used by government procurement "
@@ -93,7 +105,25 @@ def reason(tender: dict, bidder_name: str, checks: list, score: int, verdict: st
                                      f"Bidder: {bidder_name}\nEvaluate this bid and give your recommendation.")},
     ]
     step = "first call"
+    if not LLM_TOOL_CALLING:
+        results = {"checks": [{k: c[k] for k in ("name", "status", "reason")} for c in checks],
+                   "compliance_score": score, "verdict": verdict}
+        direct = [
+            {"role": "system", "content": SYSTEM_PROMPT_DIRECT},
+            {"role": "user", "content": (f"Tender: {tender['title']}\nMandatory specification: {tender['spec']}\n"
+                                         f"Bidder: {bidder_name}\nCheck results: {json.dumps(results)}\n"
+                                         "Write your recommendation.")},
+        ]
     try:
+        if not LLM_TOOL_CALLING:
+            resp = _post({"model": LLM_MODEL, "messages": direct, "max_tokens": 3000})
+            choice = resp["choices"][0]
+            text = _clean(choice["message"].get("content") or "")
+            if not text:
+                why = f"finish_reason={choice.get('finish_reason')}"
+                fallback["ai_reasoning"] += f"\n(Reasoning layer returned no text this run, {why}. The checks above are unaffected.)"
+                return fallback
+            return {"ai_reasoning": text, "ai_source": f"model:{LLM_MODEL}"}
         # Tool loop. The tool list is sent on every round: some providers (Sarvam) reject a
         # conversation that contains tool messages unless tools are also provided.
         text, why = "", ""

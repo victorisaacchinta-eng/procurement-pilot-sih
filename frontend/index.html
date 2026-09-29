@@ -1064,7 +1064,7 @@ function think(opts){
 function evaluate(t,b){
   $$('[data-eval]').forEach(function(x){x.disabled=true;});
   var fallback=false;
-  var work=function(){ if(S.mode==='live') return api('/api/evaluate-seed?tender_id='+encodeURIComponent(t.id)+'&bidder_name='+encodeURIComponent(b.name),{timeout:40000}).then(null,function(e){ if(e.kind==='http'&&e.status===401) throw e; fallback=true; return E.evaluate(t.id,b.name,demoHistory()); });
+  var work=function(){ if(S.mode==='live') return api('/api/evaluate-seed?tender_id='+encodeURIComponent(t.id)+'&bidder_name='+encodeURIComponent(b.name),{timeout:70000}).then(null,function(e){ if(e.kind==='http'&&e.status===401) throw e; fallback=true; return E.evaluate(t.id,b.name,demoHistory()); });
     return new Promise(function(res){ setTimeout(function(){ res(E.evaluate(t.id,b.name,demoHistory())); },900); }); };
   var lines=['Loading tender '+t.id,'Reading bid from '+b.name].concat(CHECK_DESC.map(function(c){return c[0].replace(' *','');})).concat([S.mode==='live'?'Reasoning layer: tool call, then recommendation':'Writing deterministic summary']);
   $('#run').scrollIntoView({behavior:RM?'auto':'smooth',block:'start'});
