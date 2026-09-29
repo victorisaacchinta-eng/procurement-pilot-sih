@@ -76,8 +76,8 @@ TENDERS = {
     "tanker-transport": {
         "title": "Tank truck transportation services for petroleum product distribution (12 months)",
         "category": "Services",
-        "authority": "BPCL",
-        "authority_full": "Bharat Petroleum Corporation Limited",
+        "authority": "CPCL",
+        "authority_full": "Chennai Petroleum Corporation Limited",
         "spec": "Bidder must hold a valid PESO licence for petroleum tanker transport and a fleet of at least 8 verified vehicles.",
         "min_turnover": 4_000_000,
         "benchmark_price": 9_500_000,
