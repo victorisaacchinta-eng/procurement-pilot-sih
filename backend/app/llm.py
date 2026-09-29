@@ -96,6 +96,18 @@ def reason(tender: dict, bidder_name: str, checks: list, score: int, verdict: st
         if not text:
             return fallback
         return {"ai_reasoning": text, "ai_source": f"model:{LLM_MODEL}"}
+    except urllib.error.HTTPError as e:
+        # Status and the provider's error code only; never the request, which carries the key.
+        detail = ""
+        try:
+            err = json.loads(e.read().decode() or "{}").get("error", {})
+            detail = " " + str(err.get("code") or err.get("type") or "")[:60] if isinstance(err, dict) else ""
+        except (ValueError, OSError):
+            pass
+        print(f"[llm] HTTP {e.code}{detail} from {LLM_BASE_URL} model={LLM_MODEL}", flush=True)
+        fallback["ai_reasoning"] += f"\n(Reasoning layer unavailable this run: HTTP {e.code}{detail}. The checks above are unaffected.)"
+        return fallback
     except (urllib.error.URLError, TimeoutError, KeyError, ValueError, OSError) as e:
+        print(f"[llm] {type(e).__name__} from {LLM_BASE_URL}", flush=True)
         fallback["ai_reasoning"] += f"\n(Reasoning layer unavailable this run: {type(e).__name__}. The checks above are unaffected.)"
         return fallback
