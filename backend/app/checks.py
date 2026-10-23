@@ -3,7 +3,7 @@ The fifteen deterministic compliance checks, the score and the risk level.
 
 Every check is plain Python and returns PASS, FLAG or FAIL with a sentence that
 names the actual numbers and the source it was checked against. No model is
-involved here, so nothing with a fixed right answer can be hallucinated.
+involved here.
 
 The checks cover all fourteen outcomes SIH26100 asks for, in three families:
   Tender eligibility     EMD (with MSE / Startup exemption), statutory documents
@@ -69,7 +69,7 @@ def worst(issues):
     return st, " ".join(t for _, t in issues)
 
 
-# ------------------------------------------------------------ Tender eligibility
+# Tender eligibility
 def check_emd(bidder_name, bidder):
     if bidder["emd"] > 0:
         return res("EMD compliance", "PASS", f"EMD of {rs(bidder['emd'])} recorded against this tender.", "Bid record")
@@ -140,7 +140,7 @@ def check_oem(bidder, tender):
     return res(name, "FAIL", "Bidder is not the OEM and has no OEM authorisation letter on file.", "Bid declaration")
 
 
-# ------------------------------------------------------------ Registry verification
+# Registry verification
 def check_gst(bidder_name, bidder):
     name = "GST registration and returns"
     ok, msg = R.validate_gstin(bidder.get("gstin", ""))
@@ -237,7 +237,7 @@ def check_epfo_esic(bidder_name, bidder, tender):
     return res(name, "PASS", f"EPFO and ESIC registered, challans current to {recs['EPFO'][1]['last_challan']}{SIM}.", "EPFO + ESIC")
 
 
-# ------------------------------------------------------------ Integrity and risk
+# Integrity and risk
 def check_entity_name(bidder_name, bidder):
     name = "Entity name consistency"
     doc = bidder.get("document_name", bidder_name)

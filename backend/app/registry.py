@@ -53,7 +53,6 @@ def adapters():
     return [dict(a, mode=MODE) for a in ADAPTERS]
 
 
-# ---------------------------------------------------------------- helpers
 def similar(a: str, b: str) -> float:
     return difflib.SequenceMatcher(None, (a or "").lower().strip(), (b or "").lower().strip()).ratio()
 
@@ -117,11 +116,11 @@ def days_between(start_iso: str, end_iso: str) -> int:
     return (date.fromisoformat(end_iso[:10]) - date.fromisoformat(start_iso[:10])).days
 
 
-# ---------------------------------------------------------------- lookups (one per adapter)
+# lookups, one per adapter
 def _live_guard(source):
     if MODE == "live":
         # A live call goes here. Unimplemented on purpose: a misconfigured live
-        # mode must fail loudly, never fake a match.
+        # mode must fail loudly rather than fake a match.
         raise NotImplementedError(f"Live {source} lookup is not wired yet. Unset GST_API_KEY to run simulated.")
 
 
@@ -167,7 +166,7 @@ def incorporation(bidder):
     return rec["incorporated"] if rec else None
 
 
-# ---------------------------------------------------------------- MSE / Startup / NSIC claims
+# MSE / Startup / NSIC claims
 def verify_claims(bidder_name, bidder):
     """Each claimed benefit, verified at source. Returns a list of {claim, ok, detail}."""
     out = []

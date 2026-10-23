@@ -90,7 +90,7 @@ _PAN = re.compile(r"\b([A-Z]{3})[A-Z]{2}\d{4}([A-Z])\b")
 
 
 def mask_ids(text: str) -> str:
-    """The model never sees a full PAN or GSTIN: the PAN part is masked in both."""
+    """Mask the PAN part of any PAN or GSTIN before it goes to the model."""
     text = _GSTIN.sub(lambda m: m.group(1) + "XXXXX" + "XXXX" + m.group(2)[-1] + m.group(3), text or "")
     return _PAN.sub(lambda m: m.group(1) + "XX" + "XXXX" + m.group(2), text)
 

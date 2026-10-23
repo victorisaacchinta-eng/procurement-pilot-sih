@@ -5,7 +5,7 @@ identifiers in it against the bid on record.
 Real: text extraction from the PDF's text layer (pypdf) and pattern matching for
 GSTIN, PAN, Udyam, CIN, DPIIT numbers and the legal name, followed by the same
 GSTIN check-digit rule the checks use. Scanned PDFs have no text layer; they
-need OCR, which is planned (see docs/REPO_SCOPE.md), and the result says so.
+need OCR, which is not built yet, and the result says so.
 Nothing here changes the score. It is evidence for the officer.
 """
 import io

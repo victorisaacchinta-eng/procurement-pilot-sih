@@ -236,9 +236,7 @@ for _t in TENDERS.values():
         _b.setdefault("nsic", "")
 
 
-# ---------------------------------------------------------------------------
-# Simulated registries. One per source named in the problem statement.
-# ---------------------------------------------------------------------------
+# Simulated registries, one per source named in the problem statement.
 
 # GSTN: registration status, legal name, and GSTR-3B returns filed of the last six due.
 SIMULATED_GST_REGISTRY = {

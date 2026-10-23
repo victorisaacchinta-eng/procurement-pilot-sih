@@ -17,8 +17,8 @@ window.PP_API = '';
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: Swiss poster on warm white, carried in the Tiranga: saffron, white, India green, with Chakra navy for data.
-   44px modular grid. Structure drawn only with 2px ink rules and 1px hairlines. Four pinned stages, then ruled bands. */
+/* Saffron, white and India green on warm white, with navy for data. 44px grid, structure drawn with 2px ink rules
+   and 1px hairlines. The landing page is four pinned scroll stages, then ruled bands. */
 :root{
   --paper:#FBF8F2;
   --paper-2:#F2EDE3;
@@ -65,7 +65,7 @@ a{color:inherit}
 .num{font-variant-numeric:tabular-nums}
 .tri-rule{height:6px;background:var(--tri);box-shadow:inset 0 0 0 1px var(--hair)}
 
-/* ---------- buttons ---------- */
+/* buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 22px;border:2px solid var(--ink);background:var(--paper);color:var(--ink);font:700 13px/1 var(--f-body);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;transition:background .18s,color .18s,border-color .18s,transform .12s}
 .btn:hover{background:var(--ink);color:var(--paper)}
 .btn:active{transform:translateY(2px)}
@@ -77,7 +77,7 @@ a{color:inherit}
 .btn[disabled]{opacity:.38;cursor:not-allowed;transform:none}
 .btn .arr{font-family:var(--f-mono);font-weight:500}
 
-/* ---------- rising nav (PillNav mechanic, squared) ---------- */
+/* rising nav */
 .rn{--rn-base:var(--ink);--rn-tab:var(--paper);--rn-text:var(--ink);--rn-fill:var(--ink);--rn-hover:var(--paper);display:flex;align-items:center;gap:4px;background:var(--rn-base);padding:4px;list-style:none;margin:0}
 .rn-item{position:relative;overflow:hidden;display:inline-flex;align-items:center;height:36px;padding:0 16px;background:var(--rn-tab);color:var(--rn-text);font:600 12px/1 var(--f-body);letter-spacing:.12em;text-transform:uppercase;text-decoration:none;white-space:nowrap}
 .rn-fill{position:absolute;inset:0;background:var(--rn-fill);transform:scaleY(0);transform-origin:50% 100%;z-index:1;pointer-events:none}
@@ -89,7 +89,7 @@ a{color:inherit}
 .no-gsap .rn-item:hover .rn-lab{transform:translateY(-150%);transition:transform .35s}
 .no-gsap .rn-item:hover .rn-lab2{transform:none;transition:transform .35s}
 
-/* ---------- site header ---------- */
+/* site header */
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;height:var(--bar);display:flex;align-items:center;gap:20px;padding-inline:var(--gut);padding-top:4px;background:var(--paper);border-bottom:2px solid var(--ink)}
 .top::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:var(--tri)}
 .brand{display:flex;align-items:center;gap:12px;text-decoration:none;flex:none}
@@ -105,7 +105,7 @@ a{color:inherit}
 .menu-panel a:hover{background:var(--ink);color:var(--paper)}
 @media (max-width:880px){.top .rn,.top-cta{display:none}.menu-btn{display:inline-flex}}
 
-/* ---------- pinned stages ---------- */
+/* pinned stages */
 .stage{position:relative;--p:0}
 .pin{position:sticky;top:0;height:100svh;overflow:hidden}
 
@@ -190,7 +190,7 @@ a{color:inherit}
 .map-copy h2{font-size:clamp(2.3rem,6.2vw,6rem)}
 .map-copy p{margin-top:16px;max-width:52ch;color:var(--grey-text)}
 
-/* ---------- bands ---------- */
+/* bands */
 .band{padding:clamp(56px,9vw,120px) var(--gut);border-top:2px solid var(--ink);scroll-margin-top:var(--bar)}
 .band-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:24px;align-items:end;margin-bottom:clamp(28px,4vw,48px)}
 .band-head h2{font-size:clamp(2.4rem,5.6vw,5.4rem)}
@@ -234,14 +234,14 @@ a{color:inherit}
 .foot .disc{font-size:12px;line-height:1.5;letter-spacing:.02em;text-transform:none;font-family:var(--f-body);max-width:70ch}
 @media (max-width:700px){.foot{grid-template-columns:auto minmax(0,1fr)}.foot .yr{grid-column:1/-1}}
 
-/* ---------- reveal ---------- */
+/* reveal */
 .w{display:inline-block}
 .rev-on [data-split]:not(.in) .w{opacity:0;transform:translateY(.4em)}
 .rev-on [data-split] .w{transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--i) * 36ms)}
 .rev-on [data-rev]:not(.in){opacity:0;transform:translateY(14px)}
 .rev-on [data-rev]{transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0ms)}
 
-/* =================== WORKSTATION =================== */
+/* workstation */
 #ws{position:fixed;inset:0;z-index:100;background:var(--paper);overflow:auto;overscroll-behavior:contain}
 .gate{position:relative;min-height:100%;background:var(--ink);display:grid;place-items:center;padding:clamp(20px,5vh,56px) 16px calc(clamp(20px,5vh,56px) + env(safe-area-inset-bottom,0px))}
 .term{position:absolute;inset:0;overflow:hidden}
@@ -946,14 +946,14 @@ var PS_ASKS=[
 function riskCls(r){ return 'risk r-'+String(r||'').toLowerCase(); }
 function regCards(list){ return list.map(function(a){ return '<div class="reg"><span class="mode">'+esc(a.mode||E.mode)+'</span><h4>'+esc(a.source)+'</h4><p>'+esc(a.verifies)+'</p><span class="live">Live source: '+esc(a.live)+'</span></div>'; }).join(''); }
 
-/* ---------- formatting ---------- */
+/* formatting */
 var inr=new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0});
 function short(n){ if(n==null||isNaN(n)) return '-'; if(n>=1e7) return '₹'+(n/1e7).toFixed(2)+' Cr'; if(n>=1e5){ var l=n/1e5; return '₹'+(Math.round(l*10)===l*10?l.toFixed(1):l.toFixed(2))+' L'; } return inr.format(n); }
 function pad(n){ return (n<10?'0':'')+n; }
 function fmtTs(s){ if(!s) return '-'; var d=new Date(s); if(isNaN(d)) return String(s); var m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]; return pad(d.getDate())+' '+m+' '+pad(d.getHours())+':'+pad(d.getMinutes()); }
 function nowIso(){ return new Date().toISOString(); }
 
-/* ---------- rising nav ---------- */
+/* rising nav */
 function risingNav(root){
   $$('.rn-item',root).forEach(function(a){
     var label=a.textContent.trim();
@@ -975,13 +975,13 @@ var menuBtn=$('#menuBtn'), menuPanel=$('#menuPanel');
 menuBtn.addEventListener('click',function(){ var open=menuPanel.hidden; menuPanel.hidden=!open; menuBtn.setAttribute('aria-expanded',String(open)); if(open&&G&&!RM) G.from(menuPanel,{y:-10,opacity:0,duration:.3,ease:'power3.out'}); });
 $$('a',menuPanel).forEach(function(a){ a.addEventListener('click',function(){ menuPanel.hidden=true; menuBtn.setAttribute('aria-expanded','false'); }); });
 
-/* ---------- checks table ---------- */
+/* checks table */
 $('#rate').innerHTML=E.families.map(function(f){ var list=E.checks.filter(function(c){return c.family===f;}), pts=0; list.forEach(function(c){pts+=c.weight;});
   return '<div class="rate-fam" data-rev>'+esc(f)+'<span class="lbl">'+list.length+' checks &middot; '+pts+' pts</span></div>'+list.map(function(c){ var i=E.checks.indexOf(c); return '<div class="rate-row" data-rev><span class="lbl n num">'+pad(i+1)+'</span><h4>'+esc(c.name)+'</h4><p>'+esc(DESC[c.name]||'')+'</p><span class="lbl w num">'+c.weight+' pts</span></div>'; }).join(''); }).join('');
 $('#psMap').innerHTML=PS_ASKS.map(function(a,i){ return '<div class="ps-row" data-rev><span class="lbl n num">'+pad(i+1)+'</span><h4>'+esc(a[0])+'</h4><p>'+esc(a[1])+'</p><span class="st'+(a[3]?' sim':'')+'">'+esc(a[2])+'</span></div>'; }).join('');
 $('#regGrid').innerHTML=regCards(E.adapters);
 
-/* ---------- reveal ---------- */
+/* reveal */
 function splitWords(el){ var i=0; (function walk(node){ Array.prototype.slice.call(node.childNodes).forEach(function(ch){ if(ch.nodeType===3){ var frag=document.createDocumentFragment(); ch.textContent.split(/(\s+)/).forEach(function(p){ if(!p) return; if(/^\s+$/.test(p)) frag.appendChild(document.createTextNode(p)); else { var s=document.createElement('span'); s.className='w'; s.style.setProperty('--i',i++); s.textContent=p; frag.appendChild(s);} }); ch.parentNode.replaceChild(frag,ch); } else if(ch.nodeType===1) walk(ch); }); })(el); }
 $$('[data-split]').forEach(splitWords);
 $$('[data-rev]').forEach(function(el){ var sib=$$(':scope > [data-rev]',el.parentNode); el.style.setProperty('--d',(Math.max(0,sib.indexOf(el))*70)+'ms'); });
@@ -993,7 +993,7 @@ if(!RM && 'IntersectionObserver' in window){
   targets.forEach(function(el){ if(!el.classList.contains('in')) io.observe(el); });
 }
 
-/* ---------- scroll stages: one rAF-throttled handler ---------- */
+/* scroll stages: one rAF-throttled handler */
 var stages=$$('[data-stage]'), tRows=$$('#tRows .t-row'), cTime=$('#cTime'), cStatus=$('#cStatus'), cChecks=$('#cChecks'), meterEl=$('#clock .meter');
 var MARKS=[0,1,2,4,9,10]; // one series drives rows, clock, checks cleared and status
 var STATUS=['Loading tender','Checking registry','Running rules','Writing reasoning','Awaiting officer'];
@@ -1014,7 +1014,7 @@ addEventListener('scroll',function(){ if(!ticking){ ticking=true; requestAnimati
 addEventListener('resize',function(){ sizeMap(); onScroll(); });
 onScroll();
 
-/* ---------- node lattice map ---------- */
+/* node lattice map */
 var mapCv=$('#mapCv'), mctx=mapCv.getContext('2d'), mapNodes=[], mapEdges=[], route=[], routeLen=[], mapW=0, mapH=0, mapDpr=1, mapRun=false;
 function sizeMap(){
   var r=mapCv.getBoundingClientRect(); mapDpr=Math.min(devicePixelRatio||1,2); mapW=r.width; mapH=r.height; mapCv.width=Math.round(mapW*mapDpr); mapCv.height=Math.round(mapH*mapDpr);
@@ -1055,7 +1055,7 @@ function mapLoop(t){ if(!mapRun) return; drawMap(t); requestAnimationFrame(mapLo
 new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting && !mapRun){ mapRun=true; requestAnimationFrame(mapLoop);} else if(!e.isIntersecting) mapRun=false; }); }).observe($('#collusion'));
 drawMap(0);
 
-/* ---------- faulty terminal (WebGL, no deps) ---------- */
+/* glitchy terminal effect on the sign-in screen (WebGL, no deps) */
 function FaultyTerminal(host,o){
   var cv=document.createElement('canvas'); host.appendChild(cv);
   var gl=cv.getContext('webgl',{antialias:false,premultipliedAlpha:false}), NOOP={start:function(){},stop:function(){}};
@@ -1091,7 +1091,7 @@ function FaultyTerminal(host,o){
            stop:function(){ running=false; cancelAnimationFrame(raf); } };
 }
 
-/* ---------- particle gimbal: tricolour rings while the agent thinks ---------- */
+/* tricolour rings shown while an evaluation runs */
 function Gimbal(canvas,opt){
   var TAU=Math.PI*2, PERIOD=6.2, SPREAD=.29, PV=3.5, ctx=canvas.getContext('2d'), raf=0, last=0, phase=0, running=false;
   var drag={active:false,lx:0,ly:0,lt:0,yaw:0,pitch:0,vx:0,vy:0}, n=opt.density||2.4, dsMul=opt.dotSize||1.3, speed=opt.speed||1;
@@ -1121,7 +1121,7 @@ function Gimbal(canvas,opt){
   return { start:function(){ if(running) return; running=true; last=0; raf=requestAnimationFrame(render); }, stop:function(){ running=false; cancelAnimationFrame(raf); } };
 }
 
-/* ---------- API ---------- */
+/* API */
 function apiBase(){ var q=null,s=null; try{ q=new URLSearchParams(location.search).get('api'); }catch(_){} try{ s=localStorage.getItem('pp_api'); }catch(_){} return (q||s||window.PP_API||'').replace(/\/+$/,''); }
 function api(path,opts){
   opts=opts||{}; var ctl=('AbortController' in window)?new AbortController():null, tm=setTimeout(function(){ if(ctl) ctl.abort(); },opts.timeout||9000);
@@ -1134,7 +1134,7 @@ function api(path,opts){
 }
 if(apiBase()){ try{ fetch(apiBase()+'/api/health').catch(function(){}); }catch(_){} }
 
-/* ---------- state ---------- */
+/* state */
 var S={token:null,user:null,role:null,mode:'demo',tenders:[],current:null,results:{},decided:{},lastKey:null};
 var demoAudit=[];
 function demoHistory(){ return demoAudit.filter(function(r){return r.officer&&r.officer!=='Pending';}).map(function(r){ return {tender:r.tender,bidder:r.bidder,decision:r.officer}; }); }
@@ -1142,13 +1142,13 @@ function normTender(t){ return {id:t.id, authority:t.authority, authority_full:t
   required_documents:t.required_documents||[], oem_authorisation_required:!!t.oem_authorisation_required, labour_services:!!t.labour_services,
   bidders:(t.bidders||[]).map(function(b){ return typeof b==='string'?{name:b}:b; })}; }
 
-/* ---------- ui helpers ---------- */
+/* ui helpers */
 var toastEl=$('#toast'), toastT=0;
 function toast(m){ toastEl.textContent=m; toastEl.hidden=false; clearTimeout(toastT); toastT=setTimeout(function(){toastEl.hidden=true;},3600); }
 function setMode(m){ S.mode=m; var tag=$('#modeTag'); tag.classList.toggle('demo',m==='demo'); $('span',tag).textContent=m==='live'?'Live backend':'Demo engine'; }
 function stCls(s){ return s==='PASS'?'pass':s==='FAIL'?'fail':'flag'; }
 
-/* ---------- open / close ---------- */
+/* open / close */
 var ws=$('#ws'), gate=$('#gate'), consoleEl=$('#console'), term=null, gimbal=null;
 function openWS(){ ws.hidden=false; document.documentElement.style.overflow='hidden'; try{ if(location.hash!=='#workstation') history.replaceState(null,'','#workstation'); }catch(_){} if(S.user) showConsole(); else showGate(); }
 function closeWS(){ ws.hidden=true; document.documentElement.style.overflow=''; if(term) term.stop(); if(gimbal) gimbal.stop(); try{ history.replaceState(null,'',location.pathname+location.search); }catch(_){} }
@@ -1171,7 +1171,7 @@ $('#gateExit').addEventListener('click',closeWS); $('#wsExit').addEventListener(
 addEventListener('keydown',function(e){ if(e.key==='Escape' && !ws.hidden && !gate.hidden) closeWS(); });
 $('#signOut').addEventListener('click',function(){ S.token=S.user=S.role=null; S.results={}; S.decided={}; S.lastKey=null; showGate(); });
 
-/* ---------- login ---------- */
+/* login */
 $$('.acct').forEach(function(b){ b.addEventListener('click',function(){ $('#lgUser').value=b.dataset.u; $('#lgPass').value=b.dataset.p; $('#lgErr').textContent=''; $('#lgBtn').focus(); }); });
 $('#apiUrl').addEventListener('change',function(){ try{ var v=this.value.trim(); if(v) localStorage.setItem('pp_api',v); else localStorage.removeItem('pp_api'); }catch(_){} });
 $('#loginForm').addEventListener('submit',function(e){
@@ -1189,7 +1189,7 @@ $('#loginForm').addEventListener('submit',function(e){
   function(ex){ btn.disabled=false; lbl.textContent='Sign in'; err.textContent=ex.message; if(G&&!RM) G.fromTo('#loginForm',{x:-8},{x:0,duration:.4,ease:'elastic.out(1,0.3)'}); });
 });
 
-/* ---------- views ---------- */
+/* views */
 function setView(v){ $$('#wsNav .rn-item').forEach(function(a){ if(a.dataset.view===v) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); }); $('#viewTenders').hidden=v!=='tenders'; $('#viewAudit').hidden=v!=='audit'; $('#viewReg').hidden=v!=='registries'; if(v==='audit') loadAudit(); if(v==='registries') loadRegistries(); }
 function loadRegistries(){ var paint=function(r){ $('#regView').innerHTML=regCards(r.adapters); $('#regMode').textContent=r.adapters.length+' sources · '+(r.mode||E.mode); };
   if(S.mode==='live') api('/api/registries').then(paint,function(){ paint({adapters:E.adapters,mode:E.mode}); }); else paint({adapters:E.adapters,mode:E.mode}); }
@@ -1233,7 +1233,7 @@ function selectTender(id){
   if(G&&!RM) G.from($$('.d-head, .d-spec, .d-facts, .sec-title, .bid',d),{y:12,opacity:0,duration:.45,stagger:.035,ease:'power2.out'});
 }
 
-/* ---------- thinking ---------- */
+/* thinking */
 function think(opts){
   var run=$('#run');
   run.innerHTML='<div class="think"><div class="gimbal"><canvas aria-hidden="true"></canvas><span class="lbl">Drag to turn</span></div>'+
@@ -1258,7 +1258,7 @@ function think(opts){
   });
 }
 
-/* ---------- evaluate ---------- */
+/* evaluate */
 function evaluate(t,b){
   $$('[data-eval]').forEach(function(x){x.disabled=true;});
   var fallback=false;
@@ -1374,7 +1374,7 @@ function stamp(run,decision,by,ts,animate){
   if(animate&&G&&!RM){ G.fromTo(s,{scale:2.4,opacity:0,rotate:-18},{scale:1,opacity:1,rotate:-7,duration:.5,ease:'back.out(2.2)'}); G.fromTo(run,{x:0},{x:4,duration:.05,repeat:3,yoyo:true,delay:.42,clearProps:'transform'}); }
 }
 
-/* ---------- collusion ---------- */
+/* collusion */
 function screen(t){
   var out=$('#colOut'), btn=$('#screenBtn'); btn.disabled=true; var fb=false;
   var work=function(){ if(S.mode==='live') return api('/api/collusion-check?tender_id='+encodeURIComponent(t.id),{timeout:20000}).then(null,function(){ fb=true; return E.screen(t.id); });
@@ -1392,7 +1392,7 @@ function screen(t){
   });
 }
 
-/* ---------- audit ---------- */
+/* audit */
 function loadAudit(){
   var body=$('#auditBody');
   var paint=function(rows){ body.innerHTML=rows.length?rows.map(function(r){ var d=r.officer||'Pending', cls=d==='Qualified'?'grn':d==='Mark Non-Compliant'?'bad':d==='Hold for Review'?'saf':d==='Pending'?'grey':'nvy';
