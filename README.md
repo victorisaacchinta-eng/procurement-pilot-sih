@@ -5,13 +5,13 @@
 <p align="center">
   <a href="https://procurement-pilot-sih.vercel.app"><img alt="Live" src="https://img.shields.io/badge/live-procurement--pilot--sih.vercel.app-FF9933?style=flat-square&labelColor=111010&logo=vercel&logoColor=FBF8F2"></a>
   <a href="https://youtu.be/D4A3Fv-sczU"><img alt="Demo video" src="https://img.shields.io/badge/demo-4%3A52-C8102E?style=flat-square&labelColor=111010&logo=youtube&logoColor=FBF8F2"></a>
-  <img alt="SIH 2026 SIH26100" src="https://img.shields.io/badge/SIH%202026-SIH26100-138808?style=flat-square&labelColor=111010">
-  <img alt="Python 3.11+" src="https://img.shields.io/badge/python-3.11%2B-FBF8F2?style=flat-square&labelColor=111010&logo=python&logoColor=FBF8F2">
-  <img alt="FastAPI" src="https://img.shields.io/badge/api-FastAPI-FBF8F2?style=flat-square&labelColor=111010&logo=fastapi&logoColor=FBF8F2">
-  <img alt="Postgres on Neon" src="https://img.shields.io/badge/db-Postgres%20(Neon)-FBF8F2?style=flat-square&labelColor=111010&logo=postgresql&logoColor=FBF8F2">
+  <a href="https://sih.gov.in/"><img alt="SIH 2026 SIH26100" src="https://img.shields.io/badge/SIH%202026-SIH26100-138808?style=flat-square&labelColor=111010"></a>
+  <a href="https://www.python.org/"><img alt="Python 3.11+" src="https://img.shields.io/badge/python-3.11%2B-FBF8F2?style=flat-square&labelColor=111010&logo=python&logoColor=FBF8F2"></a>
+  <a href="https://fastapi.tiangolo.com/"><img alt="FastAPI" src="https://img.shields.io/badge/api-FastAPI-FBF8F2?style=flat-square&labelColor=111010&logo=fastapi&logoColor=FBF8F2"></a>
+  <a href="https://neon.tech/"><img alt="Postgres on Neon" src="https://img.shields.io/badge/db-Postgres%20(Neon)-FBF8F2?style=flat-square&labelColor=111010&logo=postgresql&logoColor=FBF8F2"></a>
   <a href="https://github.com/victorisaacchinta-eng/procurement-pilot-sih/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/victorisaacchinta-eng/procurement-pilot-sih/actions/workflows/ci.yml/badge.svg"></a>
-  <img alt="26 API tests" src="https://img.shields.io/badge/tests-26%20API%20%2B%20parity-138808?style=flat-square&labelColor=111010">
-  <img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-FF9933?style=flat-square&labelColor=111010">
+  <a href="backend/tests"><img alt="26 API tests" src="https://img.shields.io/badge/tests-26%20API%20%2B%20parity-138808?style=flat-square&labelColor=111010"></a>
+  <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-FF9933?style=flat-square&labelColor=111010"></a>
 </p>
 
 <h3 align="center">Registry-verified bid compliance for government procurement.<br>Code decides. AI explains. A named officer signs.</h3>
