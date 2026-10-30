@@ -186,6 +186,16 @@ def test_approver_override_needs_reason():
     assert r.status_code == 200 and r.json()["decided_by"] == "approver1"
 
 
+def test_decision_input_is_validated():
+    body = {"tender_id": "depot-security", "bidder_name": "Meridian Guard Solutions Pvt Ltd", "decision": "Approved"}
+    assert client.post("/api/officer-decision", headers=OFF, json=body).status_code == 400
+    body.update(decision="Hold for Review", tender_id="no-such-tender")
+    assert client.post("/api/officer-decision", headers=OFF, json=body).status_code == 404
+    body.update(tender_id="depot-security", bidder_name="Never Evaluated Pvt Ltd")
+    r = client.post("/api/officer-decision", headers=OFF, json=body)
+    assert r.status_code == 404 and "Evaluate it first" in r.json()["detail"]
+
+
 def test_past_performance_builds_up():
     evaluate("depot-security", "Falcon Inspection Technologies")
     client.post("/api/officer-decision", headers=OFF,

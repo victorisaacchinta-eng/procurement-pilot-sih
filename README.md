@@ -10,7 +10,7 @@
   <img alt="FastAPI" src="https://img.shields.io/badge/api-FastAPI-FBF8F2?style=flat-square&labelColor=111010&logo=fastapi&logoColor=FBF8F2">
   <img alt="Postgres on Neon" src="https://img.shields.io/badge/db-Postgres%20(Neon)-FBF8F2?style=flat-square&labelColor=111010&logo=postgresql&logoColor=FBF8F2">
   <a href="https://github.com/victorisaacchinta-eng/procurement-pilot-sih/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/victorisaacchinta-eng/procurement-pilot-sih/actions/workflows/ci.yml/badge.svg"></a>
-  <img alt="26 API tests" src="https://img.shields.io/badge/tests-26%20API%20%2B%20parity-138808?style=flat-square&labelColor=111010">
+  <img alt="27 API tests" src="https://img.shields.io/badge/tests-27%20API%20%2B%20parity-138808?style=flat-square&labelColor=111010">
   <img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-FF9933?style=flat-square&labelColor=111010">
 </p>
 
@@ -212,7 +212,7 @@ Before a recording or a review window, sign in as `admin1`, open **Audit log** a
 ```bash
 cd backend
 pip install -r requirements-dev.txt
-python -m pytest -q                      # 26 API tests on SQLite
+python -m pytest -q                      # 27 API tests on SQLite
 TEST_DATABASE_URL=postgresql://... python -m pytest -q   # same suite on Postgres
 cd .. && python scripts/dump_backend.py > /tmp/b.json && node scripts/parity_test.js /tmp/b.json
 ```
