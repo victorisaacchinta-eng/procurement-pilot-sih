@@ -9,12 +9,14 @@ JWT (HS256) bearer tokens. Three roles:
 
 Demo accounts are for the prototype only. Override them with DEMO_USERS
 (format "user:password:role,user2:password2:role2") and set JWT_SECRET
-before any real use.
+before any real use. A password may contain ":"; a username may not.
+Malformed entries are skipped with a warning.
 """
 import os
 import time
 import hmac
 import hashlib
+import logging
 import secrets
 
 import jwt
@@ -24,6 +26,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 JWT_SECRET = os.environ.get("JWT_SECRET") or secrets.token_hex(32)
 JWT_TTL_SECONDS = int(os.environ.get("JWT_TTL_SECONDS", str(8 * 3600)))
 ROLES = ("officer", "senior_approver", "admin")
+log = logging.getLogger(__name__)
 
 _DEFAULT_USERS = "officer1:officer123:officer,approver1:approver123:senior_approver,admin1:admin123:admin"
 
@@ -34,12 +37,20 @@ def _hash(password: str, salt: bytes) -> bytes:
 
 def _load_users() -> dict:
     users = {}
-    for entry in (os.environ.get("DEMO_USERS") or _DEFAULT_USERS).split(","):
-        parts = entry.strip().split(":")
-        if len(parts) != 3 or parts[2] not in ROLES:
+    for n, entry in enumerate((os.environ.get("DEMO_USERS") or _DEFAULT_USERS).split(","), 1):
+        entry = entry.strip()
+        if not entry:
+            continue
+        # user is before the first ":", role after the last, so the password may contain ":"
+        user, _, rest = entry.partition(":")
+        password, _, role = rest.rpartition(":")
+        if not user or not password or role not in ROLES:
+            # never log the entry itself, it holds a password
+            log.warning("DEMO_USERS entry %d skipped: expected user:password:role with role one of %s",
+                        n, ", ".join(ROLES))
             continue
         salt = secrets.token_bytes(16)
-        users[parts[0]] = {"salt": salt, "hash": _hash(parts[1], salt), "role": parts[2]}
+        users[user] = {"salt": salt, "hash": _hash(password, salt), "role": role}
     return users
 
 
