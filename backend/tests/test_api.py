@@ -239,3 +239,16 @@ def test_model_input_masks_pan_and_gstin():
     r = C.run_all_checks("pipeline-valves", t, n, t["bidders"][n])
     blob = str(llm._safe_results(r, 89, "Needs review"))
     assert "AADCV7310L" not in blob and "33AADCV7310L1ZB" not in blob
+
+
+def test_demo_users_allow_colon_in_password_and_warn_on_bad_entries(monkeypatch, caplog):
+    from app import auth
+    monkeypatch.setenv("DEMO_USERS", "o2:pa:ss:officer, x:y:superuser ,nopassword:admin,")
+    with caplog.at_level("WARNING", logger="app.auth"):
+        users = auth._load_users()
+    assert set(users) == {"o2"} and users["o2"]["role"] == "officer"
+    monkeypatch.setattr(auth, "USERS", users)
+    assert auth.authenticate("o2", "pa:ss") == {"username": "o2", "role": "officer"}
+    warnings = [r.getMessage() for r in caplog.records]
+    assert len(warnings) == 2 and "entry 2" in warnings[0] and "entry 3" in warnings[1]
+    assert not any("superuser" in w or "nopassword" in w for w in warnings)
