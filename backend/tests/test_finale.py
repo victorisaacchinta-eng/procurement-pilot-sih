@@ -25,6 +25,9 @@ def fresh():
     assert client.post("/api/admin/reset-demo", headers=ADM).status_code == 200
     with get_db() as conn:
         conn.execute("DELETE FROM rulebooks")
+        conn.execute("DELETE FROM translations")
+    from app import main
+    main._tcache.clear()
     yield
 
 
