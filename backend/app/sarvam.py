@@ -278,13 +278,48 @@ def parse_pdf(blob: bytes, language: str = "en-IN", sleep=time.sleep) -> list:
         except SarvamError as e:
             if "cannot serve" not in str(e) or fmt == RESULT_FORMATS[-1]:
                 raise
-    pages = []
-    for doc in (res or {}).get("documents") or []:
-        for i, p in enumerate(doc.get("pages") or [], 1):
-            content = p.get("content")
-            if content is None and p.get("blocks"):  # JSON results: blocks of text
-                content = "\n".join(str(b.get("text") or "") for b in p["blocks"])
-            pages.append((int(p.get("page_number") or i), _strip_markup(content or "")))
-    if not pages:
+    pages = _pages_of(res or {})
+    if not any(t for _, t in pages):
+        print(f"[sarvam] parse results had no text; shape: {_shape(res)}", flush=True)
         raise SarvamError("Sarvam returned no text for this document")
     return sorted(pages)
+
+
+def _text_of(x) -> str:
+    if isinstance(x, str):
+        return x
+    if isinstance(x, dict):
+        for k in ("content", "html", "markdown", "md", "text"):
+            if isinstance(x.get(k), str):
+                return x[k]
+        if isinstance(x.get("blocks"), list):  # JSON results: blocks of text
+            return "\n".join(_text_of(b) for b in x["blocks"])
+    if isinstance(x, list):
+        return "\n".join(_text_of(b) for b in x)
+    return ""
+
+
+def _pages_of(res: dict) -> list:
+    """Pages from a parse result: documents[].pages[] with page_number and content, read defensively."""
+    docs = res.get("documents")
+    if not isinstance(docs, list):
+        docs = [res]
+    pages = []
+    for doc in docs:
+        plist = doc.get("pages") if isinstance(doc, dict) else None
+        if not isinstance(plist, list):
+            plist = [doc]
+        for i, p in enumerate(plist, 1):
+            num = p.get("page_number") if isinstance(p, dict) else None
+            pages.append((int(num or i), _strip_markup(_text_of(p))))
+    return pages
+
+
+def _shape(x, depth=0):
+    if depth > 3:
+        return "..."
+    if isinstance(x, dict):
+        return {k: _shape(v, depth + 1) for k, v in list(x.items())[:12]}
+    if isinstance(x, list):
+        return [_shape(x[0], depth + 1), f"len {len(x)}"] if x else []
+    return type(x).__name__

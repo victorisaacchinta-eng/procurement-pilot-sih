@@ -227,7 +227,8 @@ async def extract_document(tender_id: str = Form(...), bidder_name: str = Form(.
         raise HTTPException(415, "Upload a PDF file.")
     try:
         out = documents.extract(blob, bidder_name, bidder)
-    except Exception:
+    except Exception as e:
+        print(f"[documents] extract failed: {type(e).__name__}: {e}", flush=True)
         raise HTTPException(422, "This PDF could not be read.")
     log_access(user["username"], user["role"], "document_extract", f"{tender_id} / {bidder_name} / {file.filename}")
     return dict(out, filename=file.filename, tender_id=tender_id, bidder_name=bidder_name)
@@ -310,7 +311,8 @@ async def rulebook_extract(tender_id: str = Form(...), file: UploadFile = File(.
         raise HTTPException(415, "Upload the tender document as a PDF.")
     try:
         doc = documents.read_document(blob)
-    except Exception:
+    except Exception as e:
+        print(f"[rulebook] read failed: {type(e).__name__}: {e}", flush=True)
         raise HTTPException(422, "This PDF could not be read.")
     if not doc["pages"]:
         raise HTTPException(422, doc["note"] or "No text could be read from this PDF.")

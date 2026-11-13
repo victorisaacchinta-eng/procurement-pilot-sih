@@ -65,7 +65,10 @@ def read_document(blob: bytes) -> dict:
         note = f"Only the first {sarvam.OCR_MAX_PAGES} of {len(pages)} pages were read by OCR."
     try:
         ocr = sarvam.parse_pdf(src)
-    except sarvam.SarvamError as e:
+    except Exception as e:  # never let an OCR surprise take the whole check down
+        if not isinstance(e, sarvam.SarvamError):
+            print(f"[documents] OCR failed: {type(e).__name__}: {e}", flush=True)
+            e = f"an unexpected {type(e).__name__} reading Sarvam's reply"
         return {"pages": [], "page_count": len(pages), "method": None,
                 "note": f"This is a scanned document and OCR did not complete: {e}. Nothing was verified from this file."}
     return {"pages": ocr, "page_count": len(pages), "method": f"OCR, {OCR_ENGINE}", "note": note}
