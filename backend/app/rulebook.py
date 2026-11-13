@@ -21,7 +21,7 @@ line it came from.
 Applying a rulebook to a tender is a senior approver's call and goes on the
 ledger. Applied rules change what the checks compare against; they never
 loosen a requirement that is already on record (documents and flags are
-added, not removed).
+only ever added).
 """
 import json
 import re

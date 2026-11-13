@@ -1,5 +1,5 @@
 {
- "about": "Seeded test set built from the three bids that pass every check. Each case plants one known defect, or sits exactly on a threshold where an honest bid must still pass. It measures whether each rule does what it is written to do. It is not a field accuracy figure: that needs real tender outcomes.",
+ "about": "Seeded test set built from the three bids that pass every check. Each case plants one known defect, or sits exactly on a threshold where an honest bid must still pass. It measures whether each rule does what it is written to do, on synthetic records. Field accuracy needs real tender outcomes, which we do not have yet.",
  "summary": {
   "defects_planted": 57,
   "defects_caught": 57,
@@ -486,8 +486,8 @@
  "not_covered": [],
  "timing": {
   "evaluations": 78,
-  "median_ms": 0.34,
-  "p95_ms": 0.55,
+  "median_ms": 0.39,
+  "p95_ms": 0.66,
   "note": "Rules only, one CPU, no network."
  }
 }

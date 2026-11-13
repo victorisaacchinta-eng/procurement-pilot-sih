@@ -94,7 +94,8 @@ class SarvamError(Exception):
     pass
 
 
-def _request(method: str, path: str, *, body: bytes | None = None, content_type: str | None = None, timeout: float = 30) -> dict:
+def _request(method: str, path: str, *, body: bytes | None = None, content_type: str | None = None, timeout: float = 30,
+             retries: int = 2) -> dict:
     headers = {"api-subscription-key": api_key(), "User-Agent": UA, "Accept": "application/json"}
     if content_type:
         headers["Content-Type"] = content_type
@@ -103,6 +104,9 @@ def _request(method: str, path: str, *, body: bytes | None = None, content_type:
         with urllib.request.urlopen(req, timeout=timeout) as r:
             return json.loads(r.read().decode() or "{}")
     except urllib.error.HTTPError as e:
+        if e.code in (429, 502, 503) and retries > 0:  # rate limited or briefly unavailable: wait and try again
+            time.sleep(1.5 * (3 - retries))
+            return _request(method, path, body=body, content_type=content_type, timeout=timeout, retries=retries - 1)
         detail = ""
         try:
             j = json.loads(e.read().decode() or "{}")
@@ -174,7 +178,7 @@ def translate(text: str, target: str) -> str:
 SEP = "\n"
 
 
-def translate_many(texts: list, target: str, cache_get=None, cache_put=None, workers: int = 6) -> dict:
+def translate_many(texts: list, target: str, cache_get=None, cache_put=None, workers: int = 4) -> dict:
     """Translate a list, using an optional cache. Short lines are sent together, one per line,
     and split back; if the line count does not survive, each line is sent on its own."""
     results, todo = {}, []

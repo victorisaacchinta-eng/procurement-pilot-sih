@@ -12,9 +12,8 @@ The collusion screen gets the same treatment: pairs of bids that are clean,
 pairs that sit just outside a threshold, and pairs with one planted link.
 
 What this measures: whether each rule catches the defect it is written for
-and leaves a clean bid alone. It is a regression harness on synthetic
-records, not a field accuracy figure. Field accuracy needs real tender
-outcomes, which we do not have.
+and leaves a clean bid alone, on synthetic records. Field accuracy needs real
+tender outcomes, which we do not have.
 
     python scripts/run_eval.py           write the results
     python scripts/run_eval.py --check   fail if the results changed (CI)
@@ -245,7 +244,7 @@ def main(check=False):
     result = {
         "about": ("Seeded test set built from the three bids that pass every check. Each case plants one known defect, or sits "
                   "exactly on a threshold where an honest bid must still pass. It measures whether each rule does what it is "
-                  "written to do. It is not a field accuracy figure: that needs real tender outcomes."),
+                  "written to do, on synthetic records. Field accuracy needs real tender outcomes, which we do not have yet."),
         "summary": {
             "defects_planted": planted, "defects_caught": caught, "detection_pct": round(caught / planted * 100, 1),
             "clean_cases": len(clean), "clean_flagged": false_flags, "false_flag_pct": round(false_flags / len(clean) * 100, 1),
