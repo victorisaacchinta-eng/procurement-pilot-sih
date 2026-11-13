@@ -70,9 +70,14 @@ def worst(issues):
 
 
 # ------------------------------------------------------------ Tender eligibility
-def check_emd(bidder_name, bidder):
+def check_emd(bidder_name, bidder, tender=None):
+    need = (tender or {}).get("emd_amount")  # set when a tender rulebook has been applied
     if bidder["emd"] > 0:
-        return res("EMD compliance", "PASS", f"EMD of {rs(bidder['emd'])} recorded against this tender.", "Bid record")
+        if need and bidder["emd"] < need:
+            return res("EMD compliance", "FAIL", f"EMD of {rs(bidder['emd'])} is below the {rs(need)} the tender document asks for.",
+                       "Bid record + tender document")
+        return res("EMD compliance", "PASS", f"EMD of {rs(bidder['emd'])} recorded against this tender"
+                   + (f", meeting the {rs(need)} in the tender document." if need else "."), "Bid record")
     ok = [c for c in R.verify_claims(bidder_name, bidder) if c["ok"]]
     if ok:
         return res("EMD compliance", "PASS",
@@ -97,8 +102,10 @@ def check_documents(bidder, tender):
 
 def check_turnover(bidder, tender):
     ok = bidder["turnover"] >= tender["min_turnover"]
+    src = (tender.get("rules_source") or {}).get("min_turnover")  # set when the rule was read from the tender document
     return res("Financial turnover", "PASS" if ok else "FAIL",
-               f"Annual turnover {rs(bidder['turnover'])} against a minimum of {rs(tender['min_turnover'])}.", "Bid record")
+               f"Annual turnover {rs(bidder['turnover'])} against a minimum of {rs(tender['min_turnover'])}"
+               + (f" (tender document, page {src['page']})." if src else "."), "Bid record + tender document" if src else "Bid record")
 
 
 def check_price(bidder, tender):
@@ -255,10 +262,12 @@ def check_entity_name(bidder_name, bidder):
     return res(name, "PASS", f"Bid, documents{src} carry the same name.", "Documents + MCA21" if mca else "Documents")
 
 
-def check_debarment(bidder_name):
-    rec = R.debarment(bidder_name)
+def check_debarment(bidder_name, bidder=None):
+    rec = R.debarment(bidder_name, R.pan_from_gstin((bidder or {}).get("gstin", "")))
     if rec:
-        return res("Debarment status", "FAIL", f"On the debarment list until {rec['until']}: {rec['reason']}{SIM}.", "GeM / CPPP list")
+        how = "" if rec["listed_as"] == bidder_name else (
+            f" Listed as \"{rec['listed_as']}\"; matched by {'the PAN behind the GSTIN' if rec['matched_by'] == 'PAN' else 'name'}.")
+        return res("Debarment status", "FAIL", f"On the debarment list until {rec['until']}: {rec['reason']}{SIM}.{how}", "GeM / CPPP list")
     return res("Debarment status", "PASS", f"Not on the GeM / CPPP debarment list{SIM}.", "GeM / CPPP list")
 
 
@@ -312,7 +321,7 @@ def check_past_performance(bidder_name, tender_id):
 
 def run_all_checks(tender_id, tender, bidder_name, bidder):
     checks = [
-        check_emd(bidder_name, bidder),
+        check_emd(bidder_name, bidder, tender),
         check_documents(bidder, tender),
         check_turnover(bidder, tender),
         check_price(bidder, tender),
@@ -323,7 +332,7 @@ def run_all_checks(tender_id, tender, bidder_name, bidder):
         check_mse(bidder_name, bidder),
         check_epfo_esic(bidder_name, bidder, tender),
         check_entity_name(bidder_name, bidder),
-        check_debarment(bidder_name),
+        check_debarment(bidder_name, bidder),
         check_public_interest(bidder),
         check_shell(bidder_name, bidder, tender["bidders"]),
         check_past_performance(bidder_name, tender_id),

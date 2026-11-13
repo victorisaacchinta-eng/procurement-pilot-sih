@@ -11,6 +11,9 @@ MCA21, Udyam, DPIIT (Startup India), NSIC, EPFO, ESIC, DigiLocker and the
 GeM / CPPP debarment list. registry.py reads them through one adapter per
 source, and every result says it is simulated.
 
+Directors (with DIN), contact details and the bank account (IFSC and the last
+four digits only) feed the collusion screen. All of them are fictional.
+
 Each bid exists to show one behaviour:
   pipeline-valves   Petrotech   clean bid, OEM, Class-I local supplier: 100
                     Vantage     trader with OEM authorisation; documents and GST legal
@@ -18,11 +21,14 @@ Each bid exists to show one behaviour:
   refinery-ppe      SafeGuard   DPIIT-recognised startup: EMD exempt, verified
                     Trident     no EMD and no exemption, BIS licence missing, turnover
                                 short, bad GSTIN check digit, ITR gap, non-local supplier
-                    Apex        on the debarment list; not the OEM and no authorisation
+                    Apex        on the debarment list; not the OEM and no authorisation;
+                                same bank account as Trident (a debarred firm bidding
+                                through another name looks exactly like this)
   tanker-transport  Konkan      verified MSE, EPFO and ESIC current: clean
                     Swift       incorporated weeks before the tender (MCA21); no ESIC
                     Ratnagiri   quote 0.38% from Swift, 2 minutes later; one document
-                                only self-attested
+                                only self-attested; shares a director (DIN 08812345)
+                                and a phone number with Swift
   depot-security    Meridian    adverse public-interest record
                     Falcon      no EMD, PSARA licence missing, GST returns and EPFO
                                 challans behind
@@ -59,6 +65,9 @@ TENDERS = {
                 "local_content_pct": 72, "oem": {"is_oem": True},
                 "epfo": "TNMAS0048211000", "esic": "51000482110001001",
                 "submitted_at": "2026-09-06T11:42:00+05:30",
+                "directors": [{"name": "S. Raghavan", "din": "07114821"}, {"name": "Meena Raghavan", "din": "07114822"}],
+                "contact": {"phone": "+91 94440 48211", "email": "tenders@petrotechvalves.in"},
+                "bank": {"ifsc": "IOBA0001482", "account_last4": "8211"},
             },
             "Vantage Flow Systems Pvt Ltd": {
                 "emd": 250_000, "turnover": 78_000_000, "price": 15_200_000,
@@ -69,6 +78,9 @@ TENDERS = {
                 "local_content_pct": 55, "oem": {"is_oem": False, "authorisation": "verified"},
                 "epfo": "TNMAS0073102000", "esic": "51000731020001001",
                 "submitted_at": "2026-09-06T16:05:00+05:30",
+                "directors": [{"name": "Arvind Menon", "din": "08273102"}],
+                "contact": {"phone": "+91 98410 73102", "email": "bids@vantageflow.in"},
+                "bank": {"ifsc": "HDFC0002731", "account_last4": "3102"},
             },
         },
     },
@@ -93,6 +105,9 @@ TENDERS = {
                 "local_content_pct": 64, "oem": {"is_oem": True},
                 "epfo": "KABNG0055160000", "esic": "53000551600001001",
                 "submitted_at": "2026-09-04T12:10:00+05:30",
+                "directors": [{"name": "Kavya Shetty", "din": "08155160"}],
+                "contact": {"phone": "+91 99000 55160", "email": "tenders@safeguardwear.in"},
+                "bank": {"ifsc": "CNRB0005516", "account_last4": "5160"},
             },
             "Trident Protective Gear & Co": {
                 "emd": 0, "turnover": 1_900_000, "price": 3_990_000,
@@ -103,6 +118,9 @@ TENDERS = {
                 "local_content_pct": 15, "oem": {"is_oem": True},
                 "epfo": "", "esic": "",
                 "submitted_at": "2026-09-04T17:55:00+05:30",
+                "directors": [],
+                "contact": {"phone": "+91 97400 22044", "email": "tridentgear.blr@gmail.com"},
+                "bank": {"ifsc": "KKBK0000774", "account_last4": "4471"},
                 "documents": _docs(_BASE_DOCS + ["BIS licence copy"], **{"BIS licence copy": "missing"}),
             },
             "Apex Safety Products Pvt Ltd": {
@@ -114,6 +132,9 @@ TENDERS = {
                 "local_content_pct": 58, "oem": {"is_oem": False, "authorisation": "missing"},
                 "epfo": "KABNG0077410000", "esic": "53000774100001001",
                 "submitted_at": "2026-09-04T13:30:00+05:30",
+                "directors": [{"name": "Harish Gowda", "din": "07577410"}],
+                "contact": {"phone": "+91 98450 77410", "email": "sales@apexsafety.in"},
+                "bank": {"ifsc": "KKBK0000774", "account_last4": "4471"},
             },
         },
     },
@@ -138,6 +159,9 @@ TENDERS = {
                 "local_content_pct": 100, "oem": {"is_oem": False},
                 "epfo": "MHBAN0090431000", "esic": "35000904310001001",
                 "submitted_at": "2026-09-07T11:20:00+05:30",
+                "directors": [{"name": "Vinayak Sawant", "din": "07090431"}, {"name": "Shirish Desai", "din": "07090432"}],
+                "contact": {"phone": "+91 98200 90431", "email": "logistics@konkanbulk.in"},
+                "bank": {"ifsc": "SBIN0009043", "account_last4": "0431"},
             },
             "Swift Tanker Logistics Pvt Ltd": {
                 "emd": 180_000, "turnover": 42_000_000, "price": 9_100_000,
@@ -148,6 +172,9 @@ TENDERS = {
                 "local_content_pct": 100, "oem": {"is_oem": False},
                 "epfo": "MHBAN0211870000", "esic": "",
                 "submitted_at": "2026-09-07T16:01:00+05:30",
+                "directors": [{"name": "Rakesh Kulkarni", "din": "08812345"}, {"name": "Pooja Iyer", "din": "09211187"}],
+                "contact": {"phone": "+91 98190 16652", "email": "ops@swifttanker.in"},
+                "bank": {"ifsc": "UTIB0002111", "account_last4": "1187"},
             },
             "Ratnagiri Roadlines Pvt Ltd": {
                 "emd": 180_000, "turnover": 38_000_000, "price": 9_135_000,
@@ -158,6 +185,9 @@ TENDERS = {
                 "local_content_pct": 100, "oem": {"is_oem": False},
                 "epfo": "MHRAT0166520000", "esic": "35001665200001001",
                 "submitted_at": "2026-09-07T16:03:00+05:30",
+                "directors": [{"name": "Rakesh Kulkarni", "din": "08812345"}],
+                "contact": {"phone": "+91 98190 16652", "email": "accounts@ratnagiriroadlines.in"},
+                "bank": {"ifsc": "BKID0001665", "account_last4": "6520"},
                 "documents": _docs(_BASE_DOCS + ["PESO licence", "Vehicle registration certificates"],
                                    **{"Vehicle registration certificates": "self-attested"}),
             },
@@ -184,6 +214,9 @@ TENDERS = {
                 "local_content_pct": 100, "oem": {"is_oem": False},
                 "epfo": "TNMAS0133901000", "esic": "51001339010001001",
                 "submitted_at": "2026-09-05T10:14:00+05:30",
+                "directors": [{"name": "J. Prakash", "din": "08333901"}],
+                "contact": {"phone": "+91 94441 33901", "email": "tenders@meridianguard.in"},
+                "bank": {"ifsc": "ICIC0001339", "account_last4": "3901"},
                 "reputational_note": (
                     "Adverse media on record: a labour dispute involving the promoter was "
                     "reported in regional press. Officer should review before award."
@@ -198,6 +231,9 @@ TENDERS = {
                 "local_content_pct": 100, "oem": {"is_oem": False},
                 "epfo": "TNMAS0081200000", "esic": "51000812000001001",
                 "submitted_at": "2026-09-05T17:40:00+05:30",
+                "directors": [],
+                "contact": {"phone": "+91 99620 81200", "email": "falcon.inspect@gmail.com"},
+                "bank": {"ifsc": "IDIB000A812", "account_last4": "8120"},
                 "documents": _docs(_BASE_DOCS + ["PSARA licence copy"], **{"PSARA licence copy": "missing"}),
             },
         },
@@ -223,6 +259,9 @@ TENDERS = {
                 "local_content_pct": 100, "oem": {"is_oem": False},
                 "epfo": "TNMAS0081200000", "esic": "51000812000001001",
                 "submitted_at": "2026-09-08T09:20:00+05:30",
+                "directors": [],
+                "contact": {"phone": "+91 99620 81200", "email": "falcon.inspect@gmail.com"},
+                "bank": {"ifsc": "IDIB000A812", "account_last4": "8120"},
             },
         },
     },
@@ -317,5 +356,6 @@ SIMULATED_ESIC = {
 
 # GeM / CPPP debarment list (seeded). A live build reads the published lists instead.
 DEBARRED = {
-    "Apex Safety Products Pvt Ltd": {"until": "2027-03-31", "reason": "debarred by a procuring entity for supplying non-conforming goods"},
+    "Apex Safety Products Pvt Ltd": {"until": "2027-03-31", "reason": "debarred by a procuring entity for supplying non-conforming goods",
+                                     "pan": "AAKCA7741E"},
 }

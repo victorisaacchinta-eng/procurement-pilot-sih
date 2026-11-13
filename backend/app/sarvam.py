@@ -1,0 +1,271 @@
+"""
+Sarvam AI, India's own model stack, for everything language and vision.
+
+  translate()   sarvam-translate:v1, all 22 scheduled languages of India
+  parse_pdf()   Sarvam Vision through the Document AI parse job: OCR for
+                scanned bid and tender documents, page by page
+  (reasoning)   sarvam-105b through llm.py, already in production
+
+Key: SARVAM_API_KEY, or LLM_API_KEY when the reasoning layer already points
+at api.sarvam.ai, so one key covers all three.
+
+Identifiers never leave the server in the clear for translation: GSTIN, PAN,
+CIN, Udyam, DPIIT, EPFO and ESIC numbers and GeM bid numbers are swapped for
+placeholders before the call and put back after it. If a placeholder does not
+come back intact, the original English line is returned instead, because a
+wrong identifier is worse than an untranslated sentence.
+"""
+import hashlib
+import json
+import os
+import re
+import time
+import urllib.error
+import urllib.request
+import uuid
+from concurrent.futures import ThreadPoolExecutor
+
+BASE_URL = os.environ.get("SARVAM_BASE_URL", "https://api.sarvam.ai").rstrip("/")
+TRANSLATE_MODEL = "sarvam-translate:v1"
+CHUNK = 1900          # the model takes 2,000 characters per request
+OCR_MAX_PAGES = 10    # Document AI limit per PDF
+OCR_TIMEOUT = float(os.environ.get("SARVAM_OCR_TIMEOUT", "90"))
+UA = "procurement-pilot/3.0"
+
+# The 22 languages of the Eighth Schedule, plus English. Codes are Sarvam's (Odia is od-IN).
+LANGUAGES = [
+    ("en-IN", "English", "English", "Latin"),
+    ("as-IN", "Assamese", "অসমীয়া", "Bengali"),
+    ("bn-IN", "Bengali", "বাংলা", "Bengali"),
+    ("brx-IN", "Bodo", "बड़ो", "Devanagari"),
+    ("doi-IN", "Dogri", "डोगरी", "Devanagari"),
+    ("gu-IN", "Gujarati", "ગુજરાતી", "Gujarati"),
+    ("hi-IN", "Hindi", "हिन्दी", "Devanagari"),
+    ("kn-IN", "Kannada", "ಕನ್ನಡ", "Kannada"),
+    ("ks-IN", "Kashmiri", "کٲشُر", "Arabic"),
+    ("kok-IN", "Konkani", "कोंकणी", "Devanagari"),
+    ("mai-IN", "Maithili", "मैथिली", "Devanagari"),
+    ("ml-IN", "Malayalam", "മലയാളം", "Malayalam"),
+    ("mni-IN", "Manipuri", "মৈতৈলোন্", "Bengali"),
+    ("mr-IN", "Marathi", "मराठी", "Devanagari"),
+    ("ne-IN", "Nepali", "नेपाली", "Devanagari"),
+    ("od-IN", "Odia", "ଓଡ଼ିଆ", "Oriya"),
+    ("pa-IN", "Punjabi", "ਪੰਜਾਬੀ", "Gurmukhi"),
+    ("sa-IN", "Sanskrit", "संस्कृतम्", "Devanagari"),
+    ("sat-IN", "Santali", "ᱥᱟᱱᱛᱟᱲᱤ", "Ol Chiki"),
+    ("sd-IN", "Sindhi", "سنڌي", "Arabic"),
+    ("ta-IN", "Tamil", "தமிழ்", "Tamil"),
+    ("te-IN", "Telugu", "తెలుగు", "Telugu"),
+    ("ur-IN", "Urdu", "اردو", "Arabic"),
+]
+CODES = {c for c, *_ in LANGUAGES}
+RTL = {"ks-IN", "sd-IN", "ur-IN"}
+
+_ID = re.compile(
+    r"\b(\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]"      # GSTIN
+    r"|[A-Z]{3}[ABCFGHJLPT][A-Z]\d{4}[A-Z]"              # PAN
+    r"|[LU]\d{5}[A-Z]{2}\d{4}[A-Z]{3}\d{6}"               # CIN
+    r"|UDYAM-[A-Z]{2}-\d{2}-\d{7}"                        # Udyam
+    r"|DIPP\d{3,7}"                                       # DPIIT
+    r"|[A-Z]{5}\d{10}"                                    # EPFO establishment code
+    r"|\d{17}"                                            # ESIC employer code
+    r"|GEM/\d{4}/B/\d+"                                   # GeM bid number
+    r"|[A-Z]{4}0[A-Z0-9]{6})\b")                          # IFSC
+
+
+def api_key() -> str:
+    explicit = (os.environ.get("SARVAM_API_KEY") or "").strip()
+    if explicit:
+        return explicit
+    if "sarvam.ai" in (os.environ.get("LLM_BASE_URL") or ""):
+        return (os.environ.get("LLM_API_KEY") or "").strip()
+    return ""
+
+
+def configured() -> bool:
+    return bool(api_key())
+
+
+def languages() -> list:
+    return [{"code": c, "name": n, "native": nat, "script": s, "rtl": c in RTL} for c, n, nat, s in LANGUAGES]
+
+
+class SarvamError(Exception):
+    pass
+
+
+def _request(method: str, path: str, *, body: bytes | None = None, content_type: str | None = None, timeout: float = 30) -> dict:
+    headers = {"api-subscription-key": api_key(), "User-Agent": UA, "Accept": "application/json"}
+    if content_type:
+        headers["Content-Type"] = content_type
+    req = urllib.request.Request(f"{BASE_URL}{path}", data=body, headers=headers, method=method)
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return json.loads(r.read().decode() or "{}")
+    except urllib.error.HTTPError as e:
+        detail = ""
+        try:
+            j = json.loads(e.read().decode() or "{}")
+            err = j.get("error") if isinstance(j.get("error"), dict) else j
+            detail = str(err.get("message") or err.get("detail") or "")[:200]
+        except (ValueError, OSError, AttributeError):
+            pass
+        raise SarvamError(f"Sarvam returned HTTP {e.code}" + (f": {detail}" if detail else "")) from None
+    except (urllib.error.URLError, TimeoutError, OSError) as e:
+        raise SarvamError(f"Sarvam did not answer ({type(e).__name__})") from None
+
+
+# ------------------------------------------------------------------ translation
+def protect(text: str) -> tuple[str, list]:
+    found = []
+
+    def sub(m):
+        found.append(m.group(0))
+        return f"[{len(found)}]"
+    return _ID.sub(sub, text), found
+
+
+def restore(text: str, found: list) -> str | None:
+    for i, v in enumerate(found, 1):
+        token = f"[{i}]"
+        if token not in text:
+            return None
+        text = text.replace(token, v, 1)
+    return text
+
+
+def _chunks(text: str) -> list:
+    if len(text) <= CHUNK:
+        return [text]
+    parts, cur = [], ""
+    for piece in re.split(r"(?<=[.!?\n])\s+", text):
+        while len(piece) > CHUNK:
+            parts.append(piece[:CHUNK]); piece = piece[CHUNK:]
+        if len(cur) + len(piece) + 1 > CHUNK:
+            parts.append(cur); cur = piece
+        else:
+            cur = (cur + " " + piece).strip()
+    if cur:
+        parts.append(cur)
+    return parts
+
+
+def _translate_raw(text: str, target: str) -> str:
+    out = []
+    for part in _chunks(text):
+        j = _request("POST", "/translate", body=json.dumps({
+            "input": part, "source_language_code": "en-IN", "target_language_code": target,
+            "model": TRANSLATE_MODEL, "numerals_format": "international"}).encode(), content_type="application/json")
+        out.append(j.get("translated_text") or "")
+    return " ".join(out).strip()
+
+
+def translate(text: str, target: str) -> str:
+    """One string, English to `target`. Identifiers are protected (see module docstring)."""
+    if target not in CODES:
+        raise ValueError(f"Unsupported language {target}")
+    if target == "en-IN" or not re.search(r"[A-Za-z]{2}", text or ""):
+        return text
+    safe, found = protect(text)
+    done = restore(_translate_raw(safe, target), found)
+    return text if done is None or not done.strip() else done
+
+
+SEP = "\n"
+
+
+def translate_many(texts: list, target: str, cache_get=None, cache_put=None, workers: int = 6) -> dict:
+    """Translate a list, using an optional cache. Short lines are sent together, one per line,
+    and split back; if the line count does not survive, each line is sent on its own."""
+    results, todo = {}, []
+    unique = list(dict.fromkeys(texts))
+    for t in unique:
+        hit = cache_get(t) if cache_get else None
+        if hit is not None:
+            results[t] = hit
+        else:
+            todo.append(t)
+    groups, cur, size = [], [], 0
+    for t in todo:
+        if "\n" in t or len(t) > 300:
+            groups.append([t]); continue
+        if size + len(t) + 1 > 1500 and cur:
+            groups.append(cur); cur, size = [], 0
+        cur.append(t); size += len(t) + 1
+    if cur:
+        groups.append(cur)
+    failed = []
+
+    def run(group):
+        try:
+            if len(group) == 1:
+                return group, [translate(group[0], target)]
+            safe_lines, founds = zip(*(protect(t) for t in group))
+            joined = _translate_raw(SEP.join(safe_lines), target)
+            lines = [x for x in joined.split(SEP)]
+            if len(lines) != len(group):
+                return group, [translate(t, target) for t in group]
+            back = [restore(line, f) for line, f in zip(lines, founds)]
+            return group, [b if b and b.strip() else t for b, t in zip(back, group)]
+        except SarvamError:
+            failed.extend(group)
+            return group, list(group)
+
+    with ThreadPoolExecutor(max_workers=workers) as ex:
+        for group, out in ex.map(run, groups):
+            for src, tr in zip(group, out):
+                results[src] = tr
+                if cache_put and src not in failed:
+                    cache_put(src, tr)
+    return {"results": results, "translated": len(todo) - len(failed), "cached": len(unique) - len(todo), "failed": len(failed)}
+
+
+def text_hash(text: str) -> str:
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
+# ------------------------------------------------------------------ OCR (Sarvam Vision, Document AI)
+def _multipart(fields: dict, file_field: str, filename: str, blob: bytes, mime: str) -> tuple[bytes, str]:
+    boundary = "pp-" + uuid.uuid4().hex
+    out = bytearray()
+    for k, v in fields.items():
+        out += f"--{boundary}\r\nContent-Disposition: form-data; name=\"{k}\"\r\n\r\n{v}\r\n".encode()
+    out += (f"--{boundary}\r\nContent-Disposition: form-data; name=\"{file_field}\"; filename=\"{filename}\"\r\n"
+            f"Content-Type: {mime}\r\n\r\n").encode() + blob + b"\r\n"
+    out += f"--{boundary}--\r\n".encode()
+    return bytes(out), f"multipart/form-data; boundary={boundary}"
+
+
+def _strip_markup(content: str) -> str:
+    text = re.sub(r"<[^>]+>", " ", content or "")          # HTML tags if any
+    text = re.sub(r"[*_#`>|]+", " ", text)                 # Markdown emphasis, headings, tables
+    text = text.replace("&amp;", "&").replace("&nbsp;", " ")
+    return "\n".join(re.sub(r"[ \t]+", " ", line).strip() for line in text.splitlines())
+
+
+def parse_pdf(blob: bytes, language: str = "en-IN", sleep=time.sleep) -> list:
+    """OCR a PDF with Sarvam Vision. Returns [(page_number, text), ...]. Raises SarvamError."""
+    if not configured():
+        raise SarvamError("No Sarvam API key is configured")
+    body, ctype = _multipart({"language": language}, "file", "document.pdf", blob, "application/pdf")
+    job = _request("POST", "/doc-ai/v1/job/parse", body=body, content_type=ctype, timeout=60)
+    job_id = job.get("job_id")
+    if not job_id:
+        raise SarvamError("Sarvam did not return a job id")
+    deadline, wait, status = time.monotonic() + OCR_TIMEOUT, 1.0, job.get("status")
+    while status not in ("completed", "partially_completed", "failed", "rejected"):
+        if time.monotonic() > deadline:
+            raise SarvamError("OCR took longer than expected; try again in a minute")
+        sleep(wait)
+        wait = min(wait * 1.5, 5)
+        status = _request("GET", f"/doc-ai/v1/job/{job_id}/status").get("status")
+    if status in ("failed", "rejected"):
+        raise SarvamError(f"Sarvam could not read this document (job {status})")
+    res = _request("GET", f"/doc-ai/v1/job/{job_id}/results?format=md", timeout=60)
+    pages = []
+    for doc in res.get("documents") or []:
+        for i, p in enumerate(doc.get("pages") or [], 1):
+            pages.append((int(p.get("page_number") or i), _strip_markup(p.get("content") or "")))
+    if not pages:
+        raise SarvamError("Sarvam returned no text for this document")
+    return sorted(pages)

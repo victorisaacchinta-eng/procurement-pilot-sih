@@ -157,8 +157,26 @@ def esic(code):
     _live_guard("ESIC"); return D.SIMULATED_ESIC.get(code) if code else None
 
 
-def debarment(name):
-    _live_guard("debarment list"); return D.DEBARRED.get(name)
+def entity_key(name: str) -> str:
+    """A firm's name with the formatting a renamed bid usually changes taken out."""
+    s = re.sub(r"[^a-z0-9 ]", " ", (name or "").lower().replace("&", " and "))
+    s = re.sub(r"\bprivate\b", "pvt", s)
+    s = re.sub(r"\blimited\b", "ltd", s)
+    s = re.sub(r"\bcompany\b", "co", s)
+    return re.sub(r"\s+", " ", s).strip()
+
+
+def debarment(name, pan=None):
+    """Debarment by name (ignoring Pvt/Private, Ltd/Limited, punctuation) or by the PAN behind the GSTIN.
+    Returns the record plus how it matched, or None."""
+    _live_guard("debarment list")
+    key = entity_key(name)
+    for listed, rec in D.DEBARRED.items():
+        if entity_key(listed) == key:
+            return dict(rec, listed_as=listed, matched_by="name")
+        if pan and rec.get("pan") and pan.upper() == rec["pan"]:
+            return dict(rec, listed_as=listed, matched_by="PAN")
+    return None
 
 
 def incorporation(bidder):

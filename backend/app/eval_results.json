@@ -1,0 +1,493 @@
+{
+ "about": "Seeded test set built from the three bids that pass every check. Each case plants one known defect, or sits exactly on a threshold where an honest bid must still pass. It measures whether each rule does what it is written to do. It is not a field accuracy figure: that needs real tender outcomes.",
+ "summary": {
+  "defects_planted": 57,
+  "defects_caught": 57,
+  "detection_pct": 100.0,
+  "clean_cases": 21,
+  "clean_flagged": 0,
+  "false_flag_pct": 0.0,
+  "collusion_planted": 8,
+  "collusion_caught": 8,
+  "collusion_clean": 3,
+  "collusion_clean_flagged": 0,
+  "rulebook_fields": 8,
+  "rulebook_read": 8,
+  "checks_covered": 15,
+  "checks_total": 15
+ },
+ "defects": [
+  {
+   "id": "emd_missing",
+   "label": "No EMD and no exemption",
+   "check": "EMD compliance",
+   "planted": 3,
+   "caught": 3,
+   "missed_on": []
+  },
+  {
+   "id": "exemption_unverified",
+   "label": "MSE or Startup claim that the registry cannot find",
+   "check": "MSE and Startup status",
+   "planted": 3,
+   "caught": 3,
+   "missed_on": []
+  },
+  {
+   "id": "turnover_short",
+   "label": "Turnover Rs 1 below the minimum",
+   "check": "Financial turnover",
+   "planted": 3,
+   "caught": 3,
+   "missed_on": []
+  },
+  {
+   "id": "document_missing",
+   "label": "A required document missing",
+   "check": "Statutory documents",
+   "planted": 3,
+   "caught": 3,
+   "missed_on": []
+  },
+  {
+   "id": "document_self_attested",
+   "label": "A required document only self-attested",
+   "check": "Statutory documents",
+   "planted": 3,
+   "caught": 3,
+   "missed_on": []
+  },
+  {
+   "id": "price_low",
+   "label": "Quote 20% under the benchmark",
+   "check": "Price reasonability",
+   "planted": 3,
+   "caught": 3,
+   "missed_on": []
+  },
+  {
+   "id": "price_high",
+   "label": "Quote 20% over the benchmark",
+   "check": "Price reasonability",
+   "planted": 3,
+   "caught": 3,
+   "missed_on": []
+  },
+  {
+   "id": "local_content_low",
+   "label": "Local content 15%",
+   "check": "Make in India local content",
+   "planted": 3,
+   "caught": 3,
+   "missed_on": []
+  },
+  {
+   "id": "gstin_check_digit",
+   "label": "GSTIN with a wrong check digit",
+   "check": "GST registration and returns",
+   "planted": 3,
+   "caught": 3,
+   "missed_on": []
+  },
+  {
+   "id": "pan_holder_type",
+   "label": "GSTIN carries an individual's PAN for a company",
+   "check": "PAN and income tax",
+   "planted": 3,
+   "caught": 3,
+   "missed_on": []
+  },
+  {
+   "id": "name_mismatch",
+   "label": "Documents in another firm's name",
+   "check": "Entity name consistency",
+   "planted": 3,
+   "caught": 3,
+   "missed_on": []
+  },
+  {
+   "id": "adverse_media",
+   "label": "Adverse media on record",
+   "check": "Public interest screening",
+   "planted": 3,
+   "caught": 3,
+   "missed_on": []
+  },
+  {
+   "id": "new_firm",
+   "label": "Declared one month in business",
+   "check": "Shell company indicators",
+   "planted": 3,
+   "caught": 3,
+   "missed_on": []
+  },
+  {
+   "id": "oem_missing",
+   "label": "Reseller with no OEM authorisation",
+   "check": "OEM authorisation",
+   "planted": 2,
+   "caught": 2,
+   "missed_on": []
+  },
+  {
+   "id": "oem_self_attested",
+   "label": "Reseller with a self-attested OEM letter",
+   "check": "OEM authorisation",
+   "planted": 2,
+   "caught": 2,
+   "missed_on": []
+  },
+  {
+   "id": "esic_missing",
+   "label": "Labour contract, no ESIC registration",
+   "check": "EPFO and ESIC compliance",
+   "planted": 1,
+   "caught": 1,
+   "missed_on": []
+  },
+  {
+   "id": "labour_unregistered",
+   "label": "Labour contract, no EPFO or ESIC",
+   "check": "EPFO and ESIC compliance",
+   "planted": 1,
+   "caught": 1,
+   "missed_on": []
+  },
+  {
+   "id": "adverse_history",
+   "label": "Marked non-compliant on an earlier tender",
+   "check": "Past performance history",
+   "planted": 3,
+   "caught": 3,
+   "missed_on": []
+  },
+  {
+   "id": "debarred_exact",
+   "label": "Debarred firm under its listed name",
+   "check": "Debarment status",
+   "planted": 3,
+   "caught": 3,
+   "missed_on": []
+  },
+  {
+   "id": "debarred_renamed",
+   "label": "Debarred firm writing Private Limited for Pvt Ltd",
+   "check": "Debarment status",
+   "planted": 3,
+   "caught": 3,
+   "missed_on": []
+  },
+  {
+   "id": "debarred_new_name",
+   "label": "Debarred firm under a new name, same PAN",
+   "check": "Debarment status",
+   "planted": 3,
+   "caught": 3,
+   "missed_on": []
+  }
+ ],
+ "clean": [
+  {
+   "case": "as_seeded@pipeline-valves",
+   "label": "The seeded bid, unchanged",
+   "score": 100,
+   "flagged": []
+  },
+  {
+   "case": "as_seeded@refinery-ppe",
+   "label": "The seeded bid, unchanged",
+   "score": 100,
+   "flagged": []
+  },
+  {
+   "case": "as_seeded@tanker-transport",
+   "label": "The seeded bid, unchanged",
+   "score": 100,
+   "flagged": []
+  },
+  {
+   "case": "turnover_at_minimum@pipeline-valves",
+   "label": "Turnover exactly at the minimum",
+   "score": 100,
+   "flagged": []
+  },
+  {
+   "case": "turnover_at_minimum@refinery-ppe",
+   "label": "Turnover exactly at the minimum",
+   "score": 100,
+   "flagged": []
+  },
+  {
+   "case": "turnover_at_minimum@tanker-transport",
+   "label": "Turnover exactly at the minimum",
+   "score": 100,
+   "flagged": []
+  },
+  {
+   "case": "price_12_under@pipeline-valves",
+   "label": "Quote exactly 12% under the benchmark",
+   "score": 100,
+   "flagged": []
+  },
+  {
+   "case": "price_12_under@refinery-ppe",
+   "label": "Quote exactly 12% under the benchmark",
+   "score": 100,
+   "flagged": []
+  },
+  {
+   "case": "price_12_under@tanker-transport",
+   "label": "Quote exactly 12% under the benchmark",
+   "score": 100,
+   "flagged": []
+  },
+  {
+   "case": "price_12_over@pipeline-valves",
+   "label": "Quote exactly 12% over the benchmark",
+   "score": 100,
+   "flagged": []
+  },
+  {
+   "case": "price_12_over@refinery-ppe",
+   "label": "Quote exactly 12% over the benchmark",
+   "score": 100,
+   "flagged": []
+  },
+  {
+   "case": "price_12_over@tanker-transport",
+   "label": "Quote exactly 12% over the benchmark",
+   "score": 100,
+   "flagged": []
+  },
+  {
+   "case": "local_content_20@pipeline-valves",
+   "label": "Local content exactly 20% (Class-II floor)",
+   "score": 100,
+   "flagged": []
+  },
+  {
+   "case": "local_content_20@refinery-ppe",
+   "label": "Local content exactly 20% (Class-II floor)",
+   "score": 100,
+   "flagged": []
+  },
+  {
+   "case": "local_content_20@tanker-transport",
+   "label": "Local content exactly 20% (Class-II floor)",
+   "score": 100,
+   "flagged": []
+  },
+  {
+   "case": "local_content_50@pipeline-valves",
+   "label": "Local content exactly 50% (Class-I floor)",
+   "score": 100,
+   "flagged": []
+  },
+  {
+   "case": "local_content_50@refinery-ppe",
+   "label": "Local content exactly 50% (Class-I floor)",
+   "score": 100,
+   "flagged": []
+  },
+  {
+   "case": "local_content_50@tanker-transport",
+   "label": "Local content exactly 50% (Class-I floor)",
+   "score": 100,
+   "flagged": []
+  },
+  {
+   "case": "name_capitals@pipeline-valves",
+   "label": "Documents print the name in capitals",
+   "score": 100,
+   "flagged": []
+  },
+  {
+   "case": "name_capitals@refinery-ppe",
+   "label": "Documents print the name in capitals",
+   "score": 100,
+   "flagged": []
+  },
+  {
+   "case": "name_capitals@tanker-transport",
+   "label": "Documents print the name in capitals",
+   "score": 100,
+   "flagged": []
+  }
+ ],
+ "collusion": [
+  {
+   "case": "clean_pair",
+   "label": "Prices 4% apart, 4 hours apart, nothing shared",
+   "expect": "no signal",
+   "found": [],
+   "ok": true
+  },
+  {
+   "case": "price_gap_0_6",
+   "label": "Prices 0.6% apart (threshold 0.5%)",
+   "expect": "no signal",
+   "found": [],
+   "ok": true
+  },
+  {
+   "case": "timing_6_min",
+   "label": "Submitted 6 minutes apart (threshold 5)",
+   "expect": "no signal",
+   "found": [],
+   "ok": true
+  },
+  {
+   "case": "price_gap_0_3",
+   "label": "Prices 0.3% apart",
+   "expect": "Price clustering",
+   "found": [
+    "Price clustering"
+   ],
+   "ok": true
+  },
+  {
+   "case": "timing_2_min",
+   "label": "Submitted 2 minutes apart",
+   "expect": "Submission timing",
+   "found": [
+    "Submission timing"
+   ],
+   "ok": true
+  },
+  {
+   "case": "same_address",
+   "label": "Same registered address",
+   "expect": "Shared address",
+   "found": [
+    "Shared address"
+   ],
+   "ok": true
+  },
+  {
+   "case": "shared_director",
+   "label": "One director on both",
+   "expect": "Shared director",
+   "found": [
+    "Shared director"
+   ],
+   "ok": true
+  },
+  {
+   "case": "shared_bank",
+   "label": "Same bank account",
+   "expect": "Shared bank account",
+   "found": [
+    "Shared bank account"
+   ],
+   "ok": true
+  },
+  {
+   "case": "shared_phone",
+   "label": "Same phone number",
+   "expect": "Shared contact details",
+   "found": [
+    "Shared contact details"
+   ],
+   "ok": true
+  },
+  {
+   "case": "shared_email",
+   "label": "Same email, different case",
+   "expect": "Shared contact details",
+   "found": [
+    "Shared contact details"
+   ],
+   "ok": true
+  },
+  {
+   "case": "cover_bid",
+   "label": "One quote 40% over the benchmark",
+   "expect": "Possible cover bid",
+   "found": [
+    "Possible cover bid"
+   ],
+   "ok": true
+  }
+ ],
+ "rulebook": {
+  "document": "frontend/samples/tanker-transport-tender-sample.pdf",
+  "fields": [
+   {
+    "field": "min_turnover",
+    "expected": 40000000,
+    "read": 40000000,
+    "page": 1,
+    "ok": true
+   },
+   {
+    "field": "emd_amount",
+    "expected": 180000,
+    "read": 180000,
+    "page": 1,
+    "ok": true
+   },
+   {
+    "field": "estimated_value",
+    "expected": 9500000,
+    "read": 9500000,
+    "page": 1,
+    "ok": true
+   },
+   {
+    "field": "experience_years",
+    "expected": 3,
+    "read": 3,
+    "page": 1,
+    "ok": true
+   },
+   {
+    "field": "labour_services",
+    "expected": true,
+    "read": true,
+    "page": 2,
+    "ok": true
+   },
+   {
+    "field": "bid_end",
+    "expected": "28-11-2026",
+    "read": "28-11-2026",
+    "page": 1,
+    "ok": true
+   },
+   {
+    "field": "bid_number",
+    "expected": "GEM/2026/B/5512874",
+    "read": "GEM/2026/B/5512874",
+    "page": 1,
+    "ok": true
+   },
+   {
+    "field": "required_documents",
+    "expected": [
+     "GST registration certificate",
+     "PAN card",
+     "Audited financial statements",
+     "PESO licence",
+     "Vehicle registration certificates"
+    ],
+    "read": [
+     "GST registration certificate",
+     "PAN card",
+     "Audited financial statements",
+     "PESO licence",
+     "Vehicle registration certificates"
+    ],
+    "page": 1,
+    "ok": true
+   }
+  ],
+  "unexpected": []
+ },
+ "not_covered": [],
+ "timing": {
+  "evaluations": 78,
+  "median_ms": 0.34,
+  "p95_ms": 0.55,
+  "note": "Rules only, one CPU, no network."
+ }
+}

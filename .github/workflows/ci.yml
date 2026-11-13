@@ -28,3 +28,5 @@ jobs:
         run: python scripts/dump_backend.py > /tmp/backend.json && node scripts/parity_test.js /tmp/backend.json
       - name: Seed in the frontend is up to date
         run: python scripts/sync_seed.py && git diff --exit-code frontend/index.html
+      - name: Measured results are current
+        run: python scripts/run_eval.py --check

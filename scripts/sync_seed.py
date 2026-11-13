@@ -4,7 +4,7 @@ Copy the backend's seed data and rules into frontend/index.html.
 The frontend carries an offline demo engine (used only when the API does not
 answer). This script keeps its data identical to the backend's, so the two
 cannot drift. Run it after editing anything in backend/app/data.py,
-checks.py, collusion.py, auth.py or main.py:
+checks.py, collusion.py, auth.py, sarvam.py, main.py or eval_results.json:
 
     python scripts/sync_seed.py
 """
@@ -23,7 +23,7 @@ os.environ.pop("DEMO_USERS", None)
 from app import data as D  # noqa: E402
 from app.data import TENDERS  # noqa: E402
 from app.checks import CHECKS, FAMILIES, HARD_CAP_CHECKS, ADVERSE_DECISIONS  # noqa: E402
-from app import collusion, registry  # noqa: E402
+from app import collusion, registry, sarvam  # noqa: E402
 from app.auth import _DEFAULT_USERS  # noqa: E402
 from app.main import DECISIONS, OVERRIDE_MIN_CHARS  # noqa: E402
 
@@ -48,6 +48,8 @@ seed = {
     "override_min_chars": OVERRIDE_MIN_CHARS,
     "collusion": {"price_gap_pct": collusion.PRICE_GAP_PCT, "timing_minutes": collusion.TIMING_MINUTES, "cover_bid_pct": collusion.COVER_BID_PCT},
     "demo_users": {u: {"password": p, "role": r} for u, p, r in (e.split(":") for e in _DEFAULT_USERS.split(","))},
+    "languages": sarvam.languages(),
+    "eval": json.loads((ROOT / "backend" / "app" / "eval_results.json").read_text()),
 }
 
 payload = json.dumps(seed, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
