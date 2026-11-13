@@ -303,3 +303,9 @@ def test_model_suggestions_that_restate_read_rules_are_dropped(monkeypatch):
     rules = rulebook.extract_rules(doc["pages"])
     got = rulebook.suggest(doc["pages"], rules)
     assert [g["condition"] for g in got] == [said[1]["condition"]] and got[0]["page"] == 2
+
+
+def test_sarvam_replies_that_arrive_gzipped_are_read():
+    import gzip as gz
+    assert sarvam._body(gz.compress('{"a": "ठीक"}'.encode())) == '{"a": "ठीक"}'
+    assert sarvam._body('{"a": 1}'.encode()) == '{"a": 1}'

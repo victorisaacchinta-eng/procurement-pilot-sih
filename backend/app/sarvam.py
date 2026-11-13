@@ -15,6 +15,7 @@ placeholders before the call and put back after it. If a placeholder does not
 come back intact, the original English line is returned instead, because a
 wrong identifier is worse than an untranslated sentence.
 """
+import gzip
 import hashlib
 import html
 import json
@@ -98,20 +99,20 @@ class SarvamError(Exception):
 
 def _request(method: str, path: str, *, body: bytes | None = None, content_type: str | None = None, timeout: float = 30,
              retries: int = 2) -> dict:
-    headers = {"api-subscription-key": api_key(), "User-Agent": UA, "Accept": "application/json"}
+    headers = {"api-subscription-key": api_key(), "User-Agent": UA, "Accept": "application/json", "Accept-Encoding": "gzip"}
     if content_type:
         headers["Content-Type"] = content_type
     req = urllib.request.Request(f"{BASE_URL}{path}", data=body, headers=headers, method=method)
     try:
         with urllib.request.urlopen(req, timeout=timeout) as r:
-            return json.loads(r.read().decode() or "{}")
+            return json.loads(_body(r.read()) or "{}")
     except urllib.error.HTTPError as e:
         if e.code in (429, 502, 503) and retries > 0:  # rate limited or briefly unavailable: wait and try again
             time.sleep(1.5 * (3 - retries))
             return _request(method, path, body=body, content_type=content_type, timeout=timeout, retries=retries - 1)
         detail = ""
         try:
-            j = json.loads(e.read().decode() or "{}")
+            j = json.loads(_body(e.read()) or "{}")
             err = j.get("error") if isinstance(j.get("error"), dict) else j
             detail = str(err.get("message") or err.get("detail") or "")[:200]
         except (ValueError, OSError, AttributeError):
@@ -119,6 +120,16 @@ def _request(method: str, path: str, *, body: bytes | None = None, content_type:
         raise SarvamError(f"Sarvam returned HTTP {e.code}" + (f": {detail}" if detail else "")) from None
     except (urllib.error.URLError, TimeoutError, OSError) as e:
         raise SarvamError(f"Sarvam did not answer ({type(e).__name__})") from None
+
+
+def _body(raw: bytes) -> str:
+    """Response bytes to text. Large replies (parse results) arrive gzip-compressed; urllib does not undo that."""
+    if raw[:2] == b"\x1f\x8b":
+        raw = gzip.decompress(raw)
+    try:
+        return raw.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        raise SarvamError(f"Sarvam sent a reply that is not text (it starts {raw[:6].hex()})") from None
 
 
 # ------------------------------------------------------------------ translation
