@@ -776,7 +776,7 @@ td .why-o{display:block;font-size:12.5px;color:var(--grey-text);margin-top:4px;m
       </ul>
       <label class="lang lbl" for="langSel" title="Interface language. Translated by Sarvam."><span class="vh">Language</span><select id="langSel"></select></label>
       <span class="mode lbl" id="modeTag" title="Backend mode"><i></i><span>Live</span></span>
-      <div class="who lbl"><span><span class="who-pre">Signed in </span><b id="whoName">officer1</b> &middot; <span id="whoRole">Officer</span></span>
+      <div class="who lbl"><span><span class="who-pre">Signed in </span><b id="whoName" translate="no">officer1</b> &middot; <span id="whoRole">Officer</span></span>
         <span style="display:flex;gap:6px"><button class="btn-ghost" id="signOut" type="button">Sign out</button><button class="btn-ghost" id="wsExit" type="button">Site</button></span></div>
     </div>
 
@@ -1431,7 +1431,7 @@ function renderResult(t,b,res){
       '<div class="docv-row"><label class="btn" for="docFile">Choose PDF</label><input type="file" id="docFile" accept="application/pdf" hidden><span class="lbl grey" id="docName">No file chosen</span><button type="button" class="btn btn--ink" id="docGo" disabled>Read and cross-check</button></div>'+
       '<p class="docv-note">Or try a sample document: <button type="button" class="smp" data-sample="petrotech-registration-sample.pdf">Petrotech</button> <button type="button" class="smp" data-sample="vantage-registration-sample.pdf">Vantage</button> <button type="button" class="smp" data-sample="trident-registration-sample.pdf">Trident</button> <button type="button" class="smp" data-sample="ratnagiri-registration-scanned-sample.pdf">Ratnagiri (scanned)</button>. Scanned PDFs are read by Sarvam Vision.</p>'+
       '<div id="docOut"></div></div>'+
-    '<div class="decide"><span class="lbl">Officer decision &middot; '+esc(S.user)+' ('+esc(ROLE_LABEL[S.role]||S.role)+')</span><div class="decide-row" id="decRow">'+
+    '<div class="decide"><span class="lbl">Officer decision &middot; <span translate="no">'+esc(S.user)+'</span> ('+esc(ROLE_LABEL[S.role]||S.role)+')</span><div class="decide-row" id="decRow">'+
       E.decisions.map(function(x){ return '<button type="button" class="btn" data-dec="'+esc(x)+'"'+(dec?' disabled':'')+'>'+esc(x)+'</button>'; }).join('')+
     '</div><div id="ovr"></div><p class="decide-note" id="decNote">'+(dec?'Decision recorded.':'Press a decision twice to record it. It goes to the audit log with your name.')+'</p></div></div>';
   var sc=$('.score',run), n=$('#scoreN',run);
@@ -1508,7 +1508,7 @@ function record(t,b,res,decision,reason,run){
 function stamp(run,decision,by,ts,animate){
   var old=$('.stamp',run); if(old) old.remove();
   var map={'Qualified':['Qualified','s-q'],'Request Clarification':['Clarify','s-c'],'Hold for Review':['On hold','s-h'],'Mark Non-Compliant':['Non-compliant','s-n']}, m=map[decision]||[decision,'s-c'];
-  var s=document.createElement('div'); s.className='stamp '+m[1]; s.innerHTML='<b>'+esc(m[0])+'</b><span>'+esc(by)+' &middot; '+esc(fmtTs(ts))+'</span>';
+  var s=document.createElement('div'); s.className='stamp '+m[1]; s.innerHTML='<b>'+esc(m[0])+'</b><span><span translate="no">'+esc(by)+'</span> &middot; '+esc(fmtTs(ts))+'</span>';
   $('.result',run).appendChild(s);
   if(animate&&G&&!RM){ G.fromTo(s,{scale:2.4,opacity:0,rotate:-18},{scale:1,opacity:1,rotate:-7,duration:.5,ease:'back.out(2.2)'}); G.fromTo(run,{x:0},{x:4,duration:.05,repeat:3,yoyo:true,delay:.42,clearProps:'transform'}); }
 }
@@ -1598,7 +1598,7 @@ function paintRulebook(t,rb,out){
   if((rb.suggestions||[]).length) html+='<div class="rb-sugg"><span class="lbl grey">Also in the document &middot; suggested by '+esc((rb.suggestions[0].method||'').replace(/^suggested by /,''))+' &middot; check against the page, not applied</span><ul>'+
     rb.suggestions.map(function(x){ return '<li>'+esc(x.condition)+(x.page?' <span class="grey">(page '+esc(x.page)+')</span>':'')+'</li>'; }).join('')+'</ul></div>';
   if(applied){
-    html+='<div class="rb-applied">Applied by <b>'+esc(rb.applied_by)+'</b> on '+esc(fmtTs(rb.applied_at))+'. Evaluations of this tender now use these rules. The change is sealed in the ledger.</div>';
+    html+='<div class="rb-applied">Applied by <b translate="no">'+esc(rb.applied_by)+'</b> on '+esc(fmtTs(rb.applied_at))+'. Evaluations of this tender now use these rules. The change is sealed in the ledger.</div>';
     if(canApply) html+='<div class="rb-act"><button type="button" class="btn" id="rbRevert">Revert to the tender record</button></div>';
   } else if(canApply && rules.length){
     var ed=rules.filter(function(r){ return EDITABLE[r.key]; });
@@ -1694,14 +1694,14 @@ function printReport(t,b,res){
   var key=t.id+'|'+b.name, dec=S.decided[key], rep=$('#report'), lost=(res.breakdown&&res.breakdown.lost)||[];
   rep.innerHTML='<div class="rp"><div class="rp-tri"></div>'+
     '<div class="rp-head"><div><div class="rp-k">Procurement Pilot &middot; bid evaluation report</div><h1>'+esc(res.verdict)+'</h1><div style="font-weight:600;margin-top:4px" translate="no">'+esc(b.name)+'</div></div>'+
-      '<div class="rp-meta">Generated '+esc(fmtTs(nowIso()))+'<br>by '+esc(S.user)+' ('+esc(ROLE_LABEL[S.role]||S.role)+')<br>'+(S.mode==='live'&&!res.local?'Live backend':'Demo engine')+'</div></div>'+
+      '<div class="rp-meta">Generated '+esc(fmtTs(nowIso()))+'<br>by <span translate="no">'+esc(S.user)+'</span> ('+esc(ROLE_LABEL[S.role]||S.role)+')<br>'+(S.mode==='live'&&!res.local?'Live backend':'Demo engine')+'</div></div>'+
     '<div class="rp-grid"><div><span class="rp-k">Compliance score</span><b>'+esc(res.score)+' / 100</b></div><div><span class="rp-k">Risk</span><b>'+esc(res.risk||'-')+'</b></div><div><span class="rp-k">Tender</span><b style="font-size:12pt" translate="no">'+esc(t.id)+'</b></div><div><span class="rp-k">Quoted</span><b>'+esc(short(b.price))+'</b></div></div>'+
     '<p style="margin-top:8px"><b>'+esc(t.title)+'</b> &middot; '+esc(t.authority_full||t.authority)+(b.gstin?' &middot; GSTIN <span translate="no">'+esc(b.gstin)+'</span>':'')+'</p>'+
     (lost.length?'<p style="margin-top:4px"><b>Why not 100:</b> '+lost.map(function(l){ return esc(l.name)+' −'+esc(l.points_lost)+' pts'; }).join(', ')+(res.breakdown.cap_reason?'. '+esc(res.breakdown.cap_reason):'.')+'</p>':'')+
     '<h2>Checks</h2><table><thead><tr><th>Family</th><th>Check</th><th>Result</th><th>Finding</th><th>Source</th></tr></thead><tbody>'+
       res.checks.map(function(c){ return '<tr><td>'+esc(c.family||'')+'</td><td>'+esc(c.name)+'</td><td class="'+esc(c.status)+'">'+esc(c.status)+'</td><td>'+esc(c.reason)+'</td><td>'+esc(c.source||'')+'</td></tr>'; }).join('')+'</tbody></table>'+
     '<h2>Recommendation</h2><p>'+esc(res.reasoning)+'</p><p class="rp-k" style="margin-top:4px">'+esc(srcLabel(res.source))+'. Advisory only: the score and verdict are computed by the checks.</p>'+
-    '<h2>Officer decision</h2><p>'+(dec?esc(dec.decision)+' &middot; '+esc(dec.by)+' &middot; '+esc(fmtTs(dec.ts)):'Not recorded yet.')+'</p>'+
+    '<h2>Officer decision</h2><p>'+(dec?esc(dec.decision)+' &middot; <span translate="no">'+esc(dec.by)+'</span> &middot; '+esc(fmtTs(dec.ts)):'Not recorded yet.')+'</p>'+
     '<div class="rp-sign"><div>Evaluating officer, name and signature</div><div>Senior approver, name and signature</div></div>'+
     '<div class="rp-foot">'+(res.ledger?'Ledger entry '+esc(res.ledger.seq)+' &middot; SHA-256 <span translate="no">'+esc(res.ledger.hash)+'</span><br>':'Not sealed: produced by the demo engine.<br>')+
       (res.rulebook?'Evaluated against rules read from the tender document ('+esc(res.rulebook.filename)+').<br>':'')+
