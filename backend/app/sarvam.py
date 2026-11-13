@@ -17,6 +17,7 @@ wrong identifier is worse than an untranslated sentence.
 """
 import gzip
 import hashlib
+import io
 import html
 import json
 import os
@@ -25,6 +26,7 @@ import time
 import urllib.error
 import urllib.request
 import uuid
+import zipfile
 from concurrent.futures import ThreadPoolExecutor
 
 BASE_URL = os.environ.get("SARVAM_BASE_URL", "https://api.sarvam.ai").rstrip("/")
@@ -32,7 +34,7 @@ TRANSLATE_MODEL = "sarvam-translate:v1"
 CHUNK = 1900          # the model takes 2,000 characters per request
 OCR_MAX_PAGES = 10    # Document AI limit per PDF
 OCR_TIMEOUT = float(os.environ.get("SARVAM_OCR_TIMEOUT", "90"))
-RESULT_FORMATS = ("html", "md", "json")
+RESULT_FORMATS = ("json", "html", "md")
 UA = "procurement-pilot/3.0"
 
 # The 22 languages of the Eighth Schedule, plus English. Codes are Sarvam's (Odia is od-IN).
@@ -98,18 +100,21 @@ class SarvamError(Exception):
 
 
 def _request(method: str, path: str, *, body: bytes | None = None, content_type: str | None = None, timeout: float = 30,
-             retries: int = 2) -> dict:
+             retries: int = 2, raw: bool = False):
     headers = {"api-subscription-key": api_key(), "User-Agent": UA, "Accept": "application/json", "Accept-Encoding": "gzip"}
     if content_type:
         headers["Content-Type"] = content_type
     req = urllib.request.Request(f"{BASE_URL}{path}", data=body, headers=headers, method=method)
     try:
         with urllib.request.urlopen(req, timeout=timeout) as r:
-            return json.loads(_body(r.read()) or "{}")
+            data = r.read()
+            if raw:
+                return gzip.decompress(data) if data[:2] == b"\x1f\x8b" else data
+            return json.loads(_body(data) or "{}")
     except urllib.error.HTTPError as e:
         if e.code in (429, 502, 503) and retries > 0:  # rate limited or briefly unavailable: wait and try again
             time.sleep(1.5 * (3 - retries))
-            return _request(method, path, body=body, content_type=content_type, timeout=timeout, retries=retries - 1)
+            return _request(method, path, body=body, content_type=content_type, timeout=timeout, retries=retries - 1, raw=raw)
         detail = ""
         try:
             j = json.loads(_body(e.read()) or "{}")
@@ -282,18 +287,46 @@ def parse_pdf(blob: bytes, language: str = "en-IN", sleep=time.sleep) -> list:
     if status in ("failed", "rejected"):
         raise SarvamError(f"Sarvam could not read this document (job {status})")
     res = None
-    for fmt in RESULT_FORMATS:  # parse jobs produce HTML; the results endpoint refuses a format the job did not produce
+    for fmt in RESULT_FORMATS:  # the results endpoint refuses a format the job did not produce
         try:
-            res = _request("GET", f"/doc-ai/v1/job/{job_id}/results?format={fmt}", timeout=60)
-            break
+            data = _request("GET", f"/doc-ai/v1/job/{job_id}/results?format={fmt}", timeout=60, raw=True)
         except SarvamError as e:
             if "cannot serve" not in str(e) or fmt == RESULT_FORMATS[-1]:
                 raise
+            continue
+        res = _from_zip(data) if data[:4] == b"PK\x03\x04" else json.loads(_body(data) or "{}")
+        break
     pages = _pages_of(res or {})
     if not any(t for _, t in pages):
         print(f"[sarvam] parse results had no text; shape: {_shape(res)}", flush=True)
         raise SarvamError("Sarvam returned no text for this document")
     return sorted(pages)
+
+
+def _from_zip(data: bytes) -> dict:
+    """Some result formats come back as a ZIP archive: a JSON result, or one HTML / Markdown file per page or per document."""
+    with zipfile.ZipFile(io.BytesIO(data)) as z:
+        names = [n for n in z.namelist() if not n.endswith("/")]
+        print(f"[sarvam] results archive: {names[:20]}", flush=True)
+        for n in names:
+            if n.lower().endswith(".json"):
+                try:
+                    j = json.loads(_body(z.read(n)))
+                except (ValueError, SarvamError):
+                    continue
+                if isinstance(j, dict) and (j.get("documents") or j.get("pages")):
+                    return j
+        texts = sorted(n for n in names if n.lower().endswith((".html", ".htm", ".md", ".txt")))
+        pages = []
+        for i, n in enumerate(texts, 1):
+            content = _body(z.read(n))
+            split = re.split(r"(?i)<[^>]+data-page(?:-number)?=[\"']?(\d+)[^>]*>", content)
+            if len(texts) == 1 and len(split) > 2:  # one file, pages marked inside it
+                pages += [{"page_number": int(split[k]), "content": split[k + 1]} for k in range(1, len(split) - 1, 2)]
+                continue
+            num = re.findall(r"(\d+)", n.rsplit("/", 1)[-1])
+            pages.append({"page_number": int(num[-1]) if num and len(texts) > 1 else i, "content": content})
+        return {"documents": [{"pages": pages}]}
 
 
 def _text_of(x) -> str:

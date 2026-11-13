@@ -272,6 +272,15 @@ def test_health_reports_sarvam():
     assert h["version"] == "3.0.0" and h["sarvam"]["languages"] == 22 and h["sarvam"]["translate"] is None
 
 
+def _zip(files):
+    import io, zipfile
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as z:
+        for name, text in files.items():
+            z.writestr(name, text)
+    return buf.getvalue()
+
+
 def test_ocr_asks_for_the_format_the_job_produced(monkeypatch):
     calls = []
 
@@ -281,14 +290,22 @@ def test_ocr_asks_for_the_format_the_job_produced(monkeypatch):
             return {"job_id": "j1", "status": "accepted"}
         if path.endswith("/status"):
             return {"status": "completed"}
-        if "format=html" in path:
-            return {"documents": [{"pages": [{"page_number": 1, "content": "<p>Legal Name of Business: X Ltd<br>GSTIN: 27AAHCR6652N1ZP</p>"}]}]}
-        raise sarvam.SarvamError("Sarvam returned HTTP 400: job produced html, cannot serve md")
+        if "format=html" in path:  # parse results arrive as a ZIP of HTML pages
+            return _zip({"output/page_1.html": "<p>Legal Name of Business: X Ltd<br>GSTIN: 27AAHCR6652N1ZP</p>",
+                         "output/page_2.html": "<p>CIN: U60231MH2023PTC166520</p>"})
+        raise sarvam.SarvamError("Sarvam returned HTTP 400: job produced html, cannot serve json")
     monkeypatch.setattr(sarvam, "configured", lambda: True)
     monkeypatch.setattr(sarvam, "_request", fake_request)
     pages = sarvam.parse_pdf(b"%PDF-1.4", sleep=lambda s: None)
-    assert pages == [(1, "Legal Name of Business: X Ltd\nGSTIN: 27AAHCR6652N1ZP")]
+    assert pages == [(1, "Legal Name of Business: X Ltd\nGSTIN: 27AAHCR6652N1ZP"), (2, "CIN: U60231MH2023PTC166520")]
     assert calls[-1].endswith("format=html")
+
+
+def test_ocr_reads_a_zip_with_a_json_result_or_one_html_file():
+    j = {"documents": [{"pages": [{"page_number": 1, "content": "GSTIN: 27AAHCR6652N1ZP"}]}]}
+    assert sarvam._from_zip(_zip({"result.json": json.dumps(j), "page_1.html": "<p>x</p>"})) == j
+    one = sarvam._from_zip(_zip({"document.html": '<div data-page="1"><p>A</p></div><div data-page="2"><p>B</p></div>'}))
+    assert [(p["page_number"], sarvam._strip_markup(p["content"])) for p in one["documents"][0]["pages"]] == [(1, "A"), (2, "B")]
 
 
 def test_model_suggestions_that_restate_read_rules_are_dropped(monkeypatch):
