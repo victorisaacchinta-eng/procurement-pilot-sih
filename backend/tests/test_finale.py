@@ -267,3 +267,36 @@ def test_eval_results_are_served():
 def test_health_reports_sarvam():
     h = client.get("/api/health").json()
     assert h["version"] == "3.0.0" and h["sarvam"]["languages"] == 22 and h["sarvam"]["translate"] is None
+
+
+def test_ocr_asks_for_the_format_the_job_produced(monkeypatch):
+    calls = []
+
+    def fake_request(method, path, **kw):
+        calls.append(path)
+        if path.endswith("/parse"):
+            return {"job_id": "j1", "status": "accepted"}
+        if path.endswith("/status"):
+            return {"status": "completed"}
+        if "format=html" in path:
+            return {"documents": [{"pages": [{"page_number": 1, "content": "<p>Legal Name of Business: X Ltd<br>GSTIN: 27AAHCR6652N1ZP</p>"}]}]}
+        raise sarvam.SarvamError("Sarvam returned HTTP 400: job produced html, cannot serve md")
+    monkeypatch.setattr(sarvam, "configured", lambda: True)
+    monkeypatch.setattr(sarvam, "_request", fake_request)
+    pages = sarvam.parse_pdf(b"%PDF-1.4", sleep=lambda s: None)
+    assert pages == [(1, "Legal Name of Business: X Ltd\nGSTIN: 27AAHCR6652N1ZP")]
+    assert calls[-1].endswith("format=html")
+
+
+def test_model_suggestions_that_restate_read_rules_are_dropped(monkeypatch):
+    from app import llm, rulebook
+    said = [{"condition": "Bidders must submit GST registration certificate, PAN card, audited balance sheets, PESO licence and vehicle "
+                          "registration certificates.", "page": 1},
+            {"condition": "The bidder shall deploy a fleet of at least 8 tank trucks fitted with GPS.", "page": 2},
+            {"condition": "The service provider shall comply with EPF and ESIC for all drivers.", "page": 2}]
+    monkeypatch.setattr(llm, "configured", lambda: True)
+    monkeypatch.setattr(llm, "_post", lambda payload: {"choices": [{"message": {"content": json.dumps(said)}}]})
+    doc = documents.read_document((SAMPLES / "tanker-transport-tender-sample.pdf").read_bytes())
+    rules = rulebook.extract_rules(doc["pages"])
+    got = rulebook.suggest(doc["pages"], rules)
+    assert [g["condition"] for g in got] == [said[1]["condition"]] and got[0]["page"] == 2

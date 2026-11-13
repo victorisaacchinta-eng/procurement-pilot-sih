@@ -171,7 +171,8 @@ SUGGEST_PROMPT = (
     "You read Indian government tender documents. You are given the text of one tender document, page by page, and the "
     "eligibility rules already read from it by code. List up to six OTHER eligibility or qualification conditions a "
     "procurement officer must verify (for example certifications, licences, fleet size, staff qualifications, past "
-    "orders). Return only a JSON array, each item {\"condition\": short sentence, \"page\": page number}. If there are "
+    "orders). Do not repeat anything in the rules already read, including the documents and labour clauses listed there. "
+    "Return only a JSON array, each item {\"condition\": short sentence, \"page\": page number}. If there are "
     "none, return []. Use only what the text says. No markdown."
 )
 
@@ -181,7 +182,7 @@ def suggest(pages: list, rules: list) -> list:
     if not llm.configured():
         return []
     text = "\n".join(f"[page {p}]\n{llm.mask_ids(t)[:3000]}" for p, t in pages[:6])[:9000]
-    known = ", ".join(r["label"] for r in rules) or "none"
+    known = "; ".join(f"{r['label']}: {r['display']}" for r in rules) or "none"
     try:
         resp = llm._post({"model": llm.LLM_MODEL, "max_tokens": 1500, "messages": [
             {"role": "system", "content": SUGGEST_PROMPT},
@@ -193,7 +194,15 @@ def suggest(pages: list, rules: list) -> list:
         print(f"[rulebook] suggestion pass skipped: {type(e).__name__}", flush=True)
         return []
     out = []
-    for it in items[:6]:
+    docs = [d.lower() for r in rules if r["key"] == "required_documents" for d in r["value"]]
+    labour = any(r["key"] == "labour_services" for r in rules)
+    for it in items[:8]:
+        text = str(it.get("condition") or "").lower() if isinstance(it, dict) else ""
+        # the model sometimes restates a rule the code already read; drop those
+        if sum(any(w in text for w in d.split()[:2] if len(w) > 2) for d in docs) >= 3 or (labour and re.search(r"\b(epf|esic?)\b", text)):
+            continue
+        if len(out) >= 6:
+            break
         if isinstance(it, dict) and str(it.get("condition") or "").strip():
             page = it.get("page")
             out.append({"condition": str(it["condition"]).strip()[:240], "page": page if isinstance(page, int) else None,

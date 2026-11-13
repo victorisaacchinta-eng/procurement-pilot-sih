@@ -16,6 +16,7 @@ come back intact, the original English line is returned instead, because a
 wrong identifier is worse than an untranslated sentence.
 """
 import hashlib
+import html
 import json
 import os
 import re
@@ -30,6 +31,7 @@ TRANSLATE_MODEL = "sarvam-translate:v1"
 CHUNK = 1900          # the model takes 2,000 characters per request
 OCR_MAX_PAGES = 10    # Document AI limit per PDF
 OCR_TIMEOUT = float(os.environ.get("SARVAM_OCR_TIMEOUT", "90"))
+RESULT_FORMATS = ("html", "md", "json")
 UA = "procurement-pilot/3.0"
 
 # The 22 languages of the Eighth Schedule, plus English. Codes are Sarvam's (Odia is od-IN).
@@ -241,10 +243,13 @@ def _multipart(fields: dict, file_field: str, filename: str, blob: bytes, mime: 
 
 
 def _strip_markup(content: str) -> str:
-    text = re.sub(r"<[^>]+>", " ", content or "")          # HTML tags if any
-    text = re.sub(r"[*_#`>|]+", " ", text)                 # Markdown emphasis, headings, tables
-    text = text.replace("&amp;", "&").replace("&nbsp;", " ")
-    return "\n".join(re.sub(r"[ \t]+", " ", line).strip() for line in text.splitlines())
+    """Parse output (HTML or Markdown) to plain lines. Block ends become line breaks, so a label and its
+    value stay on the lines the page printed them on."""
+    text = re.sub(r"(?i)<br\s*/?>|</(?:p|div|h[1-6]|li|tr|table|section|header|footer|caption)>", "\n", content or "")
+    text = re.sub(r"(?i)</t[dh]>", " \t ", text)             # table cells stay on their row
+    text = re.sub(r"<[^>]+>", " ", text)                      # any other tag
+    text = re.sub(r"[*_#`>|]+", " ", html.unescape(text))     # Markdown emphasis, headings, tables
+    return "\n".join(x for x in (re.sub(r"[ \t]+", " ", line).strip() for line in text.splitlines()) if x)
 
 
 def parse_pdf(blob: bytes, language: str = "en-IN", sleep=time.sleep) -> list:
@@ -265,11 +270,21 @@ def parse_pdf(blob: bytes, language: str = "en-IN", sleep=time.sleep) -> list:
         status = _request("GET", f"/doc-ai/v1/job/{job_id}/status").get("status")
     if status in ("failed", "rejected"):
         raise SarvamError(f"Sarvam could not read this document (job {status})")
-    res = _request("GET", f"/doc-ai/v1/job/{job_id}/results?format=md", timeout=60)
+    res = None
+    for fmt in RESULT_FORMATS:  # parse jobs produce HTML; the results endpoint refuses a format the job did not produce
+        try:
+            res = _request("GET", f"/doc-ai/v1/job/{job_id}/results?format={fmt}", timeout=60)
+            break
+        except SarvamError as e:
+            if "cannot serve" not in str(e) or fmt == RESULT_FORMATS[-1]:
+                raise
     pages = []
-    for doc in res.get("documents") or []:
+    for doc in (res or {}).get("documents") or []:
         for i, p in enumerate(doc.get("pages") or [], 1):
-            pages.append((int(p.get("page_number") or i), _strip_markup(p.get("content") or "")))
+            content = p.get("content")
+            if content is None and p.get("blocks"):  # JSON results: blocks of text
+                content = "\n".join(str(b.get("text") or "") for b in p["blocks"])
+            pages.append((int(p.get("page_number") or i), _strip_markup(content or "")))
     if not pages:
         raise SarvamError("Sarvam returned no text for this document")
     return sorted(pages)
