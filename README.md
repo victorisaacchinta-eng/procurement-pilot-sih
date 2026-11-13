@@ -10,7 +10,7 @@
   <img alt="FastAPI" src="https://img.shields.io/badge/api-FastAPI-FBF8F2?style=flat-square&labelColor=111010&logo=fastapi&logoColor=FBF8F2">
   <img alt="Postgres on Neon" src="https://img.shields.io/badge/db-Postgres%20(Neon)-FBF8F2?style=flat-square&labelColor=111010&logo=postgresql&logoColor=FBF8F2">
   <a href="https://github.com/victorisaacchinta-eng/procurement-pilot-sih/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/victorisaacchinta-eng/procurement-pilot-sih/actions/workflows/ci.yml/badge.svg"></a>
-  <img alt="54 API tests" src="https://img.shields.io/badge/tests-54%20API%20%2B%20parity%20%2B%20eval-138808?style=flat-square&labelColor=111010">
+  <img alt="56 API tests" src="https://img.shields.io/badge/tests-56%20API%20%2B%20parity%20%2B%20eval-138808?style=flat-square&labelColor=111010">
   <img alt="Sarvam" src="https://img.shields.io/badge/Sarvam-reasoning%20%C2%B7%20OCR%20%C2%B7%2022%20languages-FF9933?style=flat-square&labelColor=111010">
   <img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-FF9933?style=flat-square&labelColor=111010">
 </p>
@@ -261,7 +261,7 @@ Before a recording or a review window, sign in as `admin1`, open **Audit log** a
 ```bash
 cd backend
 pip install -r requirements-dev.txt
-python -m pytest -q                      # 54 API tests on SQLite (Sarvam calls are mocked)
+python -m pytest -q                      # 56 API tests on SQLite (Sarvam calls are mocked)
 TEST_DATABASE_URL=postgresql://... python -m pytest -q   # same suite on Postgres
 cd .. && python scripts/dump_backend.py > /tmp/b.json && node scripts/parity_test.js /tmp/b.json
 python scripts/run_eval.py --check       # the measured results above are still true

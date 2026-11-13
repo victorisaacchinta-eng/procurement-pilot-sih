@@ -193,12 +193,30 @@ def translate(text: str, target: str) -> str:
     return text if done is None or not done.strip() else done
 
 
-SEP = "\n"
+NUM_LINE = re.compile(r"\s*(\d{1,3})\s*[.)\u0964]\s*(.*)$")
 
 
-def translate_many(texts: list, target: str, cache_get=None, cache_put=None, workers: int = 4) -> dict:
-    """Translate a list, using an optional cache. Short lines are sent together, one per line,
-    and split back; if the line count does not survive, each line is sent on its own."""
+def _numbered(group: list, target: str) -> list | None:
+    """Several short lines in one call, sent as a numbered list. Numbered lists survive translation far better
+    than bare line breaks. Returns None if the numbering does not come back intact."""
+    safe, founds = zip(*(protect(t) for t in group))
+    out = _translate_raw("\n".join(f"{i}. {line}" for i, line in enumerate(safe, 1)), target)
+    got = {}
+    for line in out.split("\n"):
+        m = NUM_LINE.match(line)
+        if m:
+            got[int(m.group(1))] = m.group(2).strip()
+    if sorted(got) != list(range(1, len(group) + 1)):
+        return None
+    back = [restore(got[i], f) for i, f in enumerate(founds, 1)]
+    return [b if b and b.strip() else t for b, t in zip(back, group)]
+
+
+def translate_many(texts: list, target: str, cache_get=None, cache_put=None, workers: int = 6, budget: float = 45.0) -> dict:
+    """Translate a list, using an optional cache. Short lines go together as a numbered list; a list whose
+    numbering does not survive is halved and retried, down to single lines. Anything still waiting when
+    the time budget runs out comes back in English and is counted as failed, so the caller can retry it."""
+    deadline = time.monotonic() + budget
     results, todo = {}, []
     unique = list(dict.fromkeys(texts))
     for t in unique:
@@ -211,24 +229,29 @@ def translate_many(texts: list, target: str, cache_get=None, cache_put=None, wor
     for t in todo:
         if "\n" in t or len(t) > 300:
             groups.append([t]); continue
-        if size + len(t) + 1 > 1500 and cur:
+        if (size + len(t) + 6 > 1400 or len(cur) >= 20) and cur:
             groups.append(cur); cur, size = [], 0
-        cur.append(t); size += len(t) + 1
+        cur.append(t); size += len(t) + 6
     if cur:
         groups.append(cur)
     failed = []
 
+    def solve(group):
+        if time.monotonic() > deadline:
+            raise SarvamError("out of time")
+        if len(group) == 1:
+            return [translate(group[0], target)]
+        done = _numbered(group, target)
+        if done is not None:
+            return done
+        if len(group) <= 3:
+            return [translate(t, target) for t in group]
+        half = len(group) // 2
+        return solve(group[:half]) + solve(group[half:])
+
     def run(group):
         try:
-            if len(group) == 1:
-                return group, [translate(group[0], target)]
-            safe_lines, founds = zip(*(protect(t) for t in group))
-            joined = _translate_raw(SEP.join(safe_lines), target)
-            lines = [x for x in joined.split(SEP)]
-            if len(lines) != len(group):
-                return group, [translate(t, target) for t in group]
-            back = [restore(line, f) for line, f in zip(lines, founds)]
-            return group, [b if b and b.strip() else t for b, t in zip(back, group)]
+            return group, solve(group)
         except SarvamError:
             failed.extend(group)
             return group, list(group)

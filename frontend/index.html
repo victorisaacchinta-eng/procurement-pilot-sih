@@ -1713,7 +1713,7 @@ function printReport(t,b,res){
 /* ---------- languages: the 22 scheduled languages, through Sarvam Translate ---------- */
 var FONT={Bengali:'Noto Sans Bengali',Devanagari:'Noto Sans Devanagari',Gujarati:'Noto Sans Gujarati',Gurmukhi:'Noto Sans Gurmukhi',Kannada:'Noto Sans Kannada',Malayalam:'Noto Sans Malayalam',
   Oriya:'Noto Sans Oriya',Tamil:'Noto Sans Tamil',Telugu:'Noto Sans Telugu','Ol Chiki':'Noto Sans Ol Chiki',Arabic:'Noto Naskh Arabic'};
-var TR={lang:'en-IN',langs:E.languages||[],configured:null,cache:{},failed:{},orig:new WeakMap(),done:new WeakMap(),nodes:new Set(),timer:0,obs:null,inflight:0,partial:false};
+var TR={lang:'en-IN',langs:E.languages||[],configured:null,cache:{},failed:{},pending:{},orig:new WeakMap(),done:new WeakMap(),nodes:new Set(),timer:0,obs:null,inflight:0,partial:false};
 var TR_SKIP='script,style,textarea,input,select,option,code,svg,canvas,.mono,.num,.seal,[translate="no"]';
 function langInfo(c){ return TR.langs.filter(function(l){ return l.code===c; })[0]; }
 function fillLangSel(){ var sel=$('#langSel'); sel.innerHTML=TR.langs.map(function(l){ return '<option value="'+esc(l.code)+'"'+(l.rtl?' dir="rtl"':'')+'>'+esc(l.native)+(l.code==='en-IN'?'':' · '+esc(l.name))+'</option>'; }).join(''); sel.value=TR.lang; }
@@ -1727,18 +1727,23 @@ function collectText(root){ var out=[]; if(!root) return out;
 function trBusy(d){ TR.inflight=Math.max(0,TR.inflight+d); $('.lang').classList.toggle('busy',TR.inflight>0); }
 function translateRoot(root){
   var lang=TR.lang; if(lang==='en-IN') return Promise.resolve();
-  var nodes=collectText(root), cache=TR.cache[lang]||(TR.cache[lang]={}), need=[], seen={};
-  nodes.forEach(function(n){ var v=n.nodeValue; if(TR.done.get(n)!==v) TR.orig.set(n,v); var core=v.trim(); if(!(core in cache)&&!seen[core]){ seen[core]=1; need.push(core); } });
+  var nodes=collectText(root), cache=TR.cache[lang]||(TR.cache[lang]={}), pending=TR.pending[lang]||(TR.pending[lang]={}), need=[], seen={};
+  nodes.forEach(function(n){ var v=n.nodeValue; if(TR.done.get(n)!==v) TR.orig.set(n,v); var core=v.trim(); if(!(core in cache)&&!pending[core]&&!seen[core]){ seen[core]=1; need.push(core); } });
   var apply=function(){ if(TR.lang!==lang) return; nodes.forEach(function(n){ var en=TR.orig.get(n); if(en==null||!n.isConnected) return; var tr=cache[en.trim()]; if(tr==null) return;
     var nv=en.match(/^\s*/)[0]+tr+en.match(/\s*$/)[0]; if(n.nodeValue!==nv){ TR.done.set(n,nv); n.nodeValue=nv; TR.nodes.add(n); } }); };
   if(!need.length){ apply(); return Promise.resolve(); }
-  var chunks=[]; for(var i=0;i<need.length;i+=120) chunks.push(need.slice(i,i+120));
+  var chunks=[]; for(var i=0;i<need.length;i+=40) chunks.push(need.slice(i,i+40));
   var failed=TR.failed[lang]||(TR.failed[lang]={});
+  need.forEach(function(t){ pending[t]=1; });
+  var release=function(c){ c.forEach(function(t){ delete pending[t]; }); };
   trBusy(1);
-  // one request at a time, so a full screen does not hit Sarvam's rate limit; the screen fills in as each part lands
-  return chunks.reduce(function(p,c){ return p.then(function(){ return api('/api/translate',{method:'POST',body:{target:lang,texts:c},timeout:60000}).then(function(r){
-      c.forEach(function(t,i){ cache[t]=r.translations[i]; if(r.failed&&r.translations[i]===t) failed[t]=1; }); if(r.failed) TR.partial=true; apply(); }); }); },Promise.resolve())
-    .then(function(){ trBusy(-1); apply(); },function(e){ trBusy(-1); apply(); throw e; });
+  // two requests at a time, so a full screen stays inside Sarvam's rate limit; the screen fills in as each part lands
+  var send=function(c){ return api('/api/translate',{method:'POST',body:{target:lang,texts:c},timeout:75000}).then(function(r){
+      c.forEach(function(t,i){ cache[t]=r.translations[i]; if(r.failed&&r.translations[i]===t) failed[t]=1; }); if(r.failed) TR.partial=true; release(c); apply(); },
+      function(e){ release(c); throw e; }); };
+  var lanes=[chunks.filter(function(_,i){ return i%2===0; }),chunks.filter(function(_,i){ return i%2===1; })].map(function(list){
+    return list.reduce(function(p,c){ return p.then(function(){ return send(c); }); },Promise.resolve()); });
+  return Promise.all(lanes).then(function(){ trBusy(-1); apply(); },function(e){ trBusy(-1); apply(); throw e; });
 }
 function trSchedule(){ if(TR.lang==='en-IN'||TR.timer) return; TR.timer=setTimeout(function(){ TR.timer=0; translateRoot($('#console')).then(null,function(){}); },350); }
 function trObserve(on){ if(on&&!TR.obs){ TR.obs=new MutationObserver(trSchedule); TR.obs.observe($('#console'),{childList:true,subtree:true,characterData:true}); } if(!on&&TR.obs){ TR.obs.disconnect(); TR.obs=null; } }
@@ -1757,7 +1762,9 @@ function setLang(code,silent){
   var c=TR.cache[code], f=TR.failed[code]; if(c&&f){ Object.keys(f).forEach(function(k){ delete c[k]; }); TR.failed[code]={}; } // retry lines Sarvam missed last time
   loadFont(info.script); trObserve(true);
   translateRoot($('#console')).then(function(){ if(!silent) toast((TR.partial?'Some lines stayed in English. ':'')+'Workstation in '+info.name+'. Translated by Sarvam.'); TR.partial=false; },
-    function(e){ toast(e&&e.status===503?'Translation needs the Sarvam key on the server. Staying in English.':'Sarvam did not answer. Staying in English.'); setLang('en-IN',true); });
+    function(e){ var some=Object.keys(TR.cache[code]||{}).length>0;
+      if(some&&!(e&&e.status===503)){ toast('Workstation in '+info.name+'. Some lines stayed in English because Sarvam was slow; they will fill in as you work.'); return; }
+      toast(e&&e.status===503?'Translation needs the Sarvam key on the server. Staying in English.':'Sarvam did not answer. Staying in English.'); setLang('en-IN',true); });
 }
 function initLang(){
   var want='en-IN'; try{ want=localStorage.getItem('pp_lang')||'en-IN'; }catch(_){}

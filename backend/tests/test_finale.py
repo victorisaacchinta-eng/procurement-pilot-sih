@@ -2,6 +2,7 @@
 import json
 import os
 import pathlib
+import re
 
 os.environ.pop("SARVAM_API_KEY", None)
 
@@ -239,14 +240,16 @@ def test_translate_needs_a_key_and_a_known_language():
 def test_translate_keeps_identifiers_and_caches(monkeypatch):
     sent = []
 
-    def fake_raw(text, target):
+    def fake_raw(text, target):  # keeps the numbering, like the real model does
         sent.append(text)
-        return "\n".join(f"<{target}> {line}" for line in text.split("\n"))
+        return "\n".join(re.sub(r"^(\d+)\. ", lambda m: f"{m.group(1)}. <{target}> ", line) if re.match(r"\d+\. ", line)
+                         else f"<{target}> {line}" for line in text.split("\n"))
     monkeypatch.setattr(sarvam, "configured", lambda: True)
     monkeypatch.setattr(sarvam, "_translate_raw", fake_raw)
     texts = ["GSTIN 27AAHCR6652N1ZP is valid", "Financial turnover", "Financial turnover"]
     r = client.post("/api/translate", json={"target": "ta-IN", "texts": texts}, headers=OFF).json()
     assert r["translations"][0] == "<ta-IN> GSTIN 27AAHCR6652N1ZP is valid"
+    assert len(sent) == 1  # both unique lines went in one call, as a numbered list
     assert "27AAHCR6652N1ZP" not in "".join(sent)  # the identifier never went to the model
     assert r["translations"][1] == r["translations"][2] and r["translated"] == 2
     again = client.post("/api/translate", json={"target": "ta-IN", "texts": texts[:2]}, headers=OFF).json()
@@ -326,3 +329,22 @@ def test_sarvam_replies_that_arrive_gzipped_are_read():
     import gzip as gz
     assert sarvam._body(gz.compress('{"a": "ठीक"}'.encode())) == '{"a": "ठीक"}'
     assert sarvam._body('{"a": 1}'.encode()) == '{"a": 1}'
+
+
+def test_a_batch_whose_numbering_breaks_is_halved_then_sent_line_by_line(monkeypatch):
+    calls = []
+
+    def merging_raw(text, target):  # merges the list into one sentence, as a model sometimes does
+        calls.append(text)
+        return " ".join(re.sub(r"^\d+\. ", "", x) for x in text.split("\n")) + " (" + target + ")"
+    monkeypatch.setattr(sarvam, "_translate_raw", merging_raw)
+    texts = [f"Line {w}" for w in "abcdefgh"]
+    out = sarvam.translate_many(texts, "hi-IN")
+    assert out["translated"] == 8 and out["failed"] == 0
+    assert out["results"]["Line a"] == "Line a (hi-IN)"
+
+
+def test_translation_stops_at_the_time_budget(monkeypatch):
+    monkeypatch.setattr(sarvam, "_translate_raw", lambda text, target: pytest.fail("no call after the budget"))
+    out = sarvam.translate_many(["One line", "Another"], "hi-IN", budget=-1)
+    assert out["failed"] == 2 and out["results"]["One line"] == "One line"
