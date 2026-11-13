@@ -1455,7 +1455,7 @@ function groupChecks(checks){
   var fams=[]; checks.forEach(function(c){ var f=c.family||'Checks'; if(fams.indexOf(f)<0) fams.push(f); });
   return fams.map(function(f){ var list=checks.filter(function(c){return (c.family||'Checks')===f;}), np=list.filter(function(c){return c.status==='PASS';}).length;
     return '<li class="fam-h"><h6>'+esc(f)+'</h6><span class="lbl">'+np+' of '+list.length+' pass</span></li>'+list.map(function(c){ var k=stCls(c.status);
-      return '<li class="chk '+k+'"><i class="sq '+(k==='pass'?'':k)+'"></i><div><h5>'+esc(c.name)+'</h5><p>'+esc(c.reason)+'</p>'+(c.source?'<span class="src">Source: '+esc(c.source)+'</span>':'')+'</div><span class="st">'+esc(c.status)+(c.weight!=null?'<small>'+(+c.points)+' / '+c.weight+'</small>':'')+'</span></li>'; }).join(''); }).join('');
+      return '<li class="chk '+k+'"><i class="sq '+(k==='pass'?'':k)+'"></i><div><h5>'+esc(c.name)+'</h5><p>'+esc(c.reason)+'</p>'+(c.source?'<span class="src">Source: '+esc(c.source)+'</span>':'')+'</div><span class="st" translate="no">'+esc(c.status)+(c.weight!=null?'<small>'+(+c.points)+' / '+c.weight+'</small>':'')+'</span></li>'; }).join(''); }).join('');
 }
 function wireDocCheck(t,b,run){
   var inp=$('#docFile',run), go=$('#docGo',run), nm=$('#docName',run), out=$('#docOut',run), file=null;
