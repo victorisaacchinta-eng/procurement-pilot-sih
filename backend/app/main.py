@@ -135,7 +135,8 @@ def officer_decision(body: DecisionIn, user: dict = Depends(auth.current_user)):
     _tender(body.tender_id)
     reason = (body.override_reason or "").strip()
     with get_db() as conn:
-        row = conn.execute("SELECT id, ai_verdict FROM audit_log WHERE tender_id=? AND bidder_name=? ORDER BY id DESC LIMIT 1",
+        row = conn.execute("SELECT id, ai_verdict, officer_decision, decided_by FROM audit_log "
+                           "WHERE tender_id=? AND bidder_name=? ORDER BY id DESC LIMIT 1",
                            (body.tender_id, body.bidder_name)).fetchone()
         if not row:
             raise HTTPException(404, "No evaluation on record for this bid yet. Evaluate it first.")
@@ -148,6 +149,10 @@ def officer_decision(body: DecisionIn, user: dict = Depends(auth.current_user)):
                 raise HTTPException(422, f"Qualifying this bid overrides a {row['ai_verdict']} recommendation. Write at least {OVERRIDE_MIN_CHARS} characters explaining why.")
         conn.execute("UPDATE audit_log SET officer_decision=?, override_reason=?, decided_by=?, decided_role=?, decided_at=? WHERE id=?",
                      (body.decision, reason or None, user["username"], user["role"], now_iso(), row["id"]))
+    # A new decision replaces the old one on the row, so keep the change in the access log.
+    previous = f"{row['officer_decision']} ({row['decided_by']})" if row["officer_decision"] else "Pending"
+    log_access(user["username"], user["role"], "officer_decision",
+               f"{body.tender_id} / {body.bidder_name}: {previous} -> {body.decision}")
     return {"status": "recorded", "evaluation_id": row["id"], "tender_id": body.tender_id, "bidder_name": body.bidder_name,
             "decision": body.decision, "override_reason": reason or None, "decided_by": user["username"], "ts": now_iso()}
 
